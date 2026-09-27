@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>myxwalk</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌫️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<style>
+  :root{
+    --green:#22C55E;
+    --green-dark:#15803D;
+    --ink:#122417;
+    --ink-soft:#5C7568;
+    --panel:#FFFFFF;
+    --bg:#EAF9EE;
+    --line:#D7ECDC;
+    --danger:#E15A46;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;margin:0;font-family:'Manrope',system-ui,sans-serif;color:var(--ink);}
+  body{display:flex;background:var(--bg);overflow:hidden;}
+
+  #sidebar{
+    width:320px;min-width:320px;height:100%;background:var(--panel);
+    border-right:1px solid var(--line);display:flex;flex-direction:column;
+    box-shadow:2px 0 14px rgba(20,40,25,0.05);z-index:1000;
+    padding-top:env(safe-area-inset-top,0px);
+    overflow-y:auto;
+  }
+  #brand{
+    padding:20px 20px 14px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--line);
+  }
+  #drawerClose{
+    display:none;margin-left:auto;background:none;border:none;font-size:26px;line-height:1;
+    color:var(--ink-soft);cursor:pointer;padding:4px 6px;
+  }
+  #brand .logo{width:24px;height:24px;border-radius:7px;flex:none;}
+  #brand h1{font-size:23px;font-weight:800;letter-spacing:-0.02em;margin:0;}
+  #brand span{color:var(--green);}
+
+  .section{padding:16px 20px;border-bottom:1px solid var(--line);}
+  .section h2{font-size:12px;font-weight:700;color:var(--ink-soft);text-transform:none;margin:0 0 10px;}
+
+  #dropzone{
+    border:1.5px dashed #C6D3CC;border-radius:var(--radius);padding:16px;text-align:center;
+    font-size:13px;color:var(--ink-soft);cursor:pointer;transition:.15s;
+  }
+  #dropzone:hover{border-color:var(--green);color:var(--green-dark);background:#F4FBF6;}
+  #fileInput{display:none;}
+
+  #trackList{max-height:38vh;overflow-y:auto;padding:6px 12px;}
+  .track-item{
+    display:flex;align-items:center;gap:8px;padding:9px 8px;border-radius:8px;font-size:13px;
+  }
+  .track-item:hover{background:#F4F6F4;}
+  .track-item .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .track-item .pts{color:var(--ink-soft);font-size:11px;}
+  .toggle{
+    width:30px;height:18px;border-radius:9px;background:#D9E0DB;position:relative;cursor:pointer;flex:none;transition:.15s;
+  }
+  .toggle.on{background:var(--green);}
+  .toggle::after{
+    content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+    background:#fff;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.25);
+  }
+  .toggle.on::after{left:14px;}
+  .del{
+    width:22px;height:22px;border:none;background:none;color:#B7C0BA;cursor:pointer;font-size:16px;line-height:1;flex:none;
+    border-radius:6px;
+  }
+  .del:hover{color:var(--danger);background:#FBEBE9;}
+  #emptyHint{padding:16px 8px;color:var(--ink-soft);font-size:12.5px;line-height:1.5;}
+
+  .row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:13px;color:var(--ink-soft);font-weight:600;}
+  input[type=range]{
+    flex:1;accent-color:var(--green);
+  }
+  .slider-row{display:flex;align-items:center;gap:10px;}
+  .num-wrap{
+    display:flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:8px;
+    padding:5px 8px;flex:none;background:#F8FAF8;
+  }
+  .num-wrap input[type=number]{
+    width:40px;border:none;background:none;font:inherit;font-weight:700;color:var(--green-dark);
+    text-align:right;padding:0;-moz-appearance:textfield;
+  }
+  .num-wrap input[type=number]::-webkit-inner-spin-button,
+  .num-wrap input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+  .num-wrap span{font-size:12px;color:var(--ink-soft);}
+  .select-input{
+    width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#F8FAF8;
+    font:inherit;font-size:13px;color:var(--ink);cursor:pointer;
+  }
+  .select-input:focus{outline:none;border-color:var(--green);}
+
+  .settings-toggle{
+    display:flex;align-items:center;justify-content:space-between;padding:14px 20px;cursor:pointer;
+    border-bottom:1px solid var(--line);user-select:none;background:#F8FAF8;
+  }
+  .settings-toggle span{font-size:13px;font-weight:700;color:var(--ink);}
+  .settings-toggle svg{width:13px;height:13px;color:var(--ink-soft);transition:transform .2s ease;flex:none;}
+  .settings-toggle.open svg{transform:rotate(180deg);}
+  .settings-panel{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+  .settings-panel.open{max-height:2400px;}
+
+  .maps-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .map-btn{
+    border:1px solid var(--line);background:#F8FAF8;border-radius:8px;padding:8px 6px;font-size:12px;
+    cursor:pointer;text-align:center;color:var(--ink-soft);transition:.15s;font-weight:600;
+  }
+  .map-btn:hover{border-color:var(--green);}
+  .map-btn.active{background:var(--green);border-color:var(--green);color:#fff;}
+
+  #mainToggleRow{display:flex;align-items:center;justify-content:space-between;}
+  #footNote{padding:12px 20px;font-size:11px;color:var(--ink-soft);line-height:1.5;border-top:1px solid var(--line);}
+
+  #mapWrap{position:relative;flex:1;height:100%;}
+  #map{position:absolute;inset:0;background:#0d0f0d;}
+  #fogCanvas{position:absolute;inset:0;pointer-events:none;z-index:450;}
+
+  #menuFab{
+    display:none;position:fixed;left:16px;
+    top:calc(16px + env(safe-area-inset-top,0px));
+    width:48px;height:48px;border-radius:50%;background:var(--green);border:none;
+    box-shadow:0 4px 14px rgba(20,60,30,0.35);z-index:1200;align-items:center;justify-content:center;
+    cursor:pointer;
+  }
+  #menuFab svg{width:22px;height:22px;color:#fff;}
+  #overlayBackdrop{
+    display:none;position:fixed;inset:0;background:rgba(10,20,14,0.4);z-index:1500;
+  }
+
+  @media (max-width: 860px){
+    #menuFab{display:flex;}
+    #sidebar{
+      position:fixed;top:0;left:0;width:88vw;max-width:340px;
+      transform:translateX(-100%);transition:transform .28s ease;z-index:2000;
+      box-shadow:6px 0 24px rgba(10,30,18,0.25);
+      padding-bottom:env(safe-area-inset-bottom,0px);
+    }
+    #sidebar.open{transform:translateX(0);}
+    #overlayBackdrop.show{display:block;}
+    #drawerClose{display:inline-flex;}
+
+    .toggle{width:38px;height:22px;border-radius:11px;}
+    .toggle::after{width:18px;height:18px;}
+    .toggle.on::after{left:18px;}
+    .del{width:32px;height:32px;font-size:19px;}
+    .map-btn{padding:11px 8px;font-size:13px;}
+    .track-item{padding:11px 8px;}
+    #dropzone{padding:20px 16px;font-size:14px;}
+    .settings-toggle{padding:16px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<button id="menuFab" aria-label="открыть меню">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+</button>
+<div id="overlayBackdrop"></div>
+
+<div id="sidebar">
+  <div id="brand">
+    <img class="logo" src="data:image/png;base64,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" alt="myxwalk">
+    <h1>myx<span>walk</span></h1>
+    <button id="drawerClose" aria-label="закрыть меню">×</button>
+  </div>
+
+  <div class="settings-toggle" id="settingsToggle">
+    <span>настройки тумана и карты</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+
+  <div class="settings-panel" id="settingsPanel">
+
+    <div class="section">
+      <div id="mainToggleRow">
+        <h2 style="margin:0;">показывать маршруты</h2>
+        <div class="toggle" id="routesToggle"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>радиус рассеивания тумана</h2>
+      <div class="slider-row">
+        <input type="range" id="radiusSlider" min="5" max="200" value="60" step="1">
+        <div class="num-wrap"><input type="number" id="radiusNumber" min="5" max="200" value="60"><span>м</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>густота тумана</h2>
+      <div class="slider-row">
+        <input type="range" id="opacitySlider" min="0" max="100" value="88" step="1">
+        <div class="num-wrap"><input type="number" id="opacityNumber" min="0" max="100" value="88"><span>%</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>стиль тумана</h2>
+      <div class="row"><span>цвет</span></div>
+      <select id="fogColorSelect" class="select-input">
+        <option value="#121814" selected>чёрный</option>
+        <option value="#0d1b2a">синий</option>
+        <option value="#2e3236">серый</option>
+        <option value="#e9edea">белый</option>
+        <option value="#0e4a28">зелёный</option>
+      </select>
+      <div class="row" style="margin-top:12px;"><span>край рассеивания</span></div>
+      <select id="fogEdgeSelect" class="select-input">
+        <option value="hard" selected>чёткий край</option>
+        <option value="soft">мягкое рассеивание</option>
+        <option value="scalloped">волнистый край (облачка)</option>
+        <option value="organic">рваный туман</option>
+      </select>
+    </div>
+
+    <div class="section" style="border-bottom:none;">
+      <h2>карта</h2>
+      <div class="maps-grid" id="mapsGrid"></div>
+    </div>
+
+    <div id="footNote">© 2026 myx513</div>
+  </div>
+
+  <div class="settings-toggle open" id="tracksToggle">
+    <span>треки</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+
+  <div class="settings-panel open" id="tracksPanel">
+    <div class="section" style="border-bottom:none;">
+      <div id="dropzone">перетащите .gpx файлы сюда<br>или нажмите, чтобы выбрать</div>
+      <input id="fileInput" type="file" accept=".gpx" multiple>
+    </div>
+
+    <div id="trackList"><div id="emptyHint">пока нет ни одного трека. загрузите .gpx-файлы из приложения gpx tracker — туман начнёт рассеиваться там, где вы прошли.</div></div>
+  </div>
+</div>
+
+<div id="mapWrap">
+  <div id="map"></div>
+  <canvas id="fogCanvas"></canvas>
+</div>
+
+<script>
+// ---------- Map providers ----------
+const providers = {
+  yandex_map: { label:'яндекс схема', url:'https://tiles.api-maps.yandex.ru/v1/tiles/?apikey=edf697ec-aa94-4259-9418-c6d517b36c68&lang=ru_RU&l=map&projection=web_mercator&x={x}&y={y}&z={z}', subdomains:'', maxZoom:20 },
+  yandex_sat: { label:'яндекс спутник', url:'https://core-sat.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}&scale=1&lang=ru_RU', subdomains:'', maxZoom:19, crs:'EPSG3395' },
+  google_map: { label:'google схема', url:'https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', subdomains:'0123', maxZoom:20 },
+  google_sat: { label:'google спутник', url:'https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', subdomains:'0123', maxZoom:20 },
+  dgis:       { label:'2гис', url:'https://tile{s}.maps.2gis.com/tiles?x={x}&y={y}&z={z}', subdomains:'0123', maxZoom:18 },
+  osm:        { label:'openstreetmap', url:'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', subdomains:'abcd', maxZoom:20 },
+};
+
+const map = L.map('map', { zoomControl:true, attributionControl:false }).setView([55.751244, 37.618423], 12);
+let currentLayer = null;
+function setProvider(key){
+  if(currentLayer) map.removeLayer(currentLayer);
+  const p = providers[key];
+  currentLayer = L.tileLayer(p.url, { subdomains:p.subdomains, maxZoom:p.maxZoom }).addTo(map);
+  document.querySelectorAll('.map-btn').forEach(b=>b.classList.toggle('active', b.dataset.key===key));
+
+  // Yandex's raw (unofficial) tiles use a different map projection (EPSG:3395)
+  // than every other provider here (standard web mercator, EPSG:3857).
+  const desiredCrs = (p.crs === 'EPSG3395') ? L.CRS.EPSG3395 : L.CRS.EPSG3857;
+  if(map.options.crs !== desiredCrs){
+    const center = map.getCenter();
+    const zoom = map.getZoom();
+    map.options.crs = desiredCrs;
+    try{ map._resetView(center, zoom, true); }catch(err){ /* ignore */ }
+    drawFog();
+  }
+}
+const mapsGrid = document.getElementById('mapsGrid');
+Object.entries(providers).forEach(([key,p])=>{
+  const b = document.createElement('button');
+  b.className='map-btn'; b.textContent=p.label; b.dataset.key=key;
+  b.onclick=()=>setProvider(key);
+  mapsGrid.appendChild(b);
+});
+setProvider('osm');
+
+// ---------- Fog canvas ----------
+const canvas = document.getElementById('fogCanvas');
+const ctx = canvas.getContext('2d');
+const maskCanvas = document.createElement('canvas'); // offscreen hard-edge mask
+const mctx = maskCanvas.getContext('2d');
+
+function resizeCanvas(){
+  const wrap = document.getElementById('mapWrap');
+  canvas.width = maskCanvas.width = wrap.clientWidth;
+  canvas.height = maskCanvas.height = wrap.clientHeight;
+  drawFog();
+}
+window.addEventListener('resize', resizeCanvas);
+
+let radiusMeters = 60;
+let fogOpacity = 0.88;
+let fogColorValue = '#121814';
+let fogEdge = 'hard'; // hard | soft | scalloped | organic
+
+function hexToRgb(hex){
+  const n = parseInt(hex.slice(1), 16);
+  return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+}
+
+// resample a polyline (array of {x,y} in pixels) into points spaced `step` px apart
+function resamplePolyline(pts, step){
+  if(pts.length === 0) return [];
+  const out = [pts[0]];
+  let carry = 0;
+  for(let i=1;i<pts.length;i++){
+    let a = pts[i-1], b = pts[i];
+    let segLen = Math.hypot(b.x-a.x, b.y-a.y);
+    if(segLen < 1e-6) continue;
+    let d = 0;
+    while(carry + (segLen-d) >= step){
+      const need = step - carry;
+      d += need;
+      const t = d/segLen;
+      out.push({ x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t });
+      carry = 0;
+    }
+    carry += segLen - d;
+  }
+  return out;
+}
+// deterministic pseudo-random in [0,1) from an integer seed
+function seededRand(i){
+  const x = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+function metersPerPixel(lat, zoom){
+  return 156543.03392 * Math.cos(lat*Math.PI/180) / Math.pow(2, zoom);
+}
+
+function drawFog(){
+  const w = canvas.width, h = canvas.height;
+  if(!w || !h) return;
+
+  mctx.clearRect(0,0,w,h);
+  mctx.globalCompositeOperation = 'source-over';
+  mctx.globalAlpha = fogOpacity;
+  mctx.fillStyle = fogColorValue;
+  mctx.fillRect(0,0,w,h);
+  mctx.globalAlpha = 1;
+
+  if(tracks.length){
+    const center = map.getCenter();
+    const zoom = map.getZoom();
+    const mpp = metersPerPixel(center.lat, zoom);
+    const radiusPx = Math.max(radiusMeters / mpp, 3);
+    mctx.globalCompositeOperation = 'destination-out';
+
+    tracks.forEach(t=>{
+      if(t.points.length < 1) return;
+      const cps = t.points.map(pt => map.latLngToContainerPoint([pt.lat, pt.lon]));
+
+      if(fogEdge === 'hard' || fogEdge === 'soft'){
+        mctx.lineWidth = radiusPx * 2;
+        mctx.lineCap = 'round';
+        mctx.lineJoin = 'round';
+        mctx.beginPath();
+        cps.forEach((cp,i)=>{ if(i===0) mctx.moveTo(cp.x,cp.y); else mctx.lineTo(cp.x,cp.y); });
+        if(cps.length === 1) mctx.arc(cps[0].x, cps[0].y, 0.01, 0, Math.PI*2);
+        mctx.stroke();
+      } else if(fogEdge === 'scalloped'){
+        // overlapping circular bumps, like a string of cloud puffs
+        const stamps = resamplePolyline(cps, radiusPx * 0.85);
+        stamps.forEach(p=>{
+          mctx.beginPath();
+          mctx.arc(p.x, p.y, radiusPx, 0, Math.PI*2);
+          mctx.fill();
+        });
+      } else if(fogEdge === 'organic'){
+        // jittered radius for a torn / ragged mist edge (stable per point index)
+        const stamps = resamplePolyline(cps, radiusPx * 0.6);
+        stamps.forEach((p,i)=>{
+          const r = radiusPx * (0.7 + 0.55 * seededRand(t.id * 1000 + i));
+          mctx.beginPath();
+          mctx.arc(p.x, p.y, r, 0, Math.PI*2);
+          mctx.fill();
+        });
+      }
+    });
+    mctx.globalCompositeOperation = 'source-over';
+  }
+
+  ctx.clearRect(0,0,w,h);
+  if(fogEdge === 'soft'){
+    ctx.save();
+    ctx.filter = 'blur(9px)';
+    ctx.drawImage(maskCanvas, 0, 0);
+    ctx.restore();
+  } else {
+    ctx.drawImage(maskCanvas, 0, 0);
+  }
+}
+map.on('move zoom viewreset', drawFog);
+
+// ---------- Tracks ----------
+let tracks = []; // {id, name, points:[{lat,lon}], visible, layer}
+let nextId = 1;
+const STORAGE_KEY = 'myxwalk_tracks_v1';
+
+function makeTrackLayer(points){
+  return L.polyline(points.map(p=>[p.lat,p.lon]), { color:'#22C55E', weight:3, opacity:0.85 });
+}
+
+function saveTracks(){
+  try{
+    const plain = tracks.map(t=>({ id:t.id, name:t.name, points:t.points, visible:t.visible }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(plain));
+  }catch(err){ console.warn('не удалось сохранить треки в памяти браузера', err); }
+}
+
+function loadTracks(){
+  let saved = null;
+  try{ saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); }catch(err){ saved = null; }
+  if(!Array.isArray(saved) || !saved.length) return;
+  saved.forEach(st=>{
+    if(!st.points || !st.points.length) return;
+    const track = {
+      id: st.id,
+      name: st.name,
+      points: st.points,
+      visible: !!st.visible,
+      layer: makeTrackLayer(st.points)
+    };
+    tracks.push(track);
+    nextId = Math.max(nextId, track.id + 1);
+  });
+  renderTrackList();
+  if(tracks.length){
+    const group = L.featureGroup(tracks.map(t=>t.layer));
+    map.fitBounds(group.getBounds(), { padding:[40,40] });
+  }
+}
+
+function parseGPX(text, fallbackName){
+  const xml = new DOMParser().parseFromString(text, 'application/xml');
+  const nameEl = xml.querySelector('trk > name');
+  const name = (nameEl && nameEl.textContent.trim()) || fallbackName;
+  const pts = [];
+  xml.querySelectorAll('trkpt').forEach(pt=>{
+    const lat = parseFloat(pt.getAttribute('lat'));
+    const lon = parseFloat(pt.getAttribute('lon'));
+    if(!isNaN(lat) && !isNaN(lon)) pts.push({lat, lon});
+  });
+  return { name, points: pts };
+}
+
+function addTrackFromFile(file){
+  const reader = new FileReader();
+  reader.onload = e => {
+    const parsed = parseGPX(e.target.result, file.name.replace(/\.gpx$/i,''));
+    if(!parsed.points.length) return;
+    const track = {
+      id: nextId++,
+      name: parsed.name,
+      points: parsed.points,
+      visible: false,
+      layer: makeTrackLayer(parsed.points)
+    };
+    tracks.push(track);
+    if(tracks.length === 1){
+      map.fitBounds(track.layer.getBounds(), { padding:[40,40] });
+    }
+    renderTrackList();
+    drawFog();
+    saveTracks();
+  };
+  reader.readAsText(file);
+}
+
+function renderTrackList(){
+  const list = document.getElementById('trackList');
+  list.innerHTML = '';
+  if(!tracks.length){
+    list.innerHTML = '<div id="emptyHint">пока нет ни одного трека. загрузите .gpx-файлы из приложения gpx tracker — туман начнёт рассеиваться там, где вы прошли.</div>';
+    return;
+  }
+  tracks.forEach(t=>{
+    const item = document.createElement('div');
+    item.className = 'track-item';
+    item.innerHTML = `
+      <div class="toggle ${t.visible?'on':''}" data-id="${t.id}" data-action="vis"></div>
+      <div class="name" title="${t.name}">${t.name}</div>
+      <div class="pts">${t.points.length} тчк</div>
+      <button class="del" data-id="${t.id}" data-action="del">×</button>
+    `;
+    list.appendChild(item);
+  });
+}
+
+document.getElementById('trackList').addEventListener('click', e=>{
+  const el = e.target.closest('[data-action]');
+  if(!el) return;
+  const id = Number(el.dataset.id);
+  const track = tracks.find(t=>t.id===id);
+  if(!track) return;
+  if(el.dataset.action === 'vis'){
+    track.visible = !track.visible;
+    if(track.visible && routesShown) track.layer.addTo(map); else map.removeLayer(track.layer);
+    renderTrackList();
+    saveTracks();
+  } else if(el.dataset.action === 'del'){
+    map.removeLayer(track.layer);
+    tracks = tracks.filter(t=>t.id!==id);
+    renderTrackList();
+    drawFog();
+    saveTracks();
+  }
+});
+
+// global route visibility toggle
+let routesShown = false;
+const routesToggle = document.getElementById('routesToggle');
+routesToggle.addEventListener('click', ()=>{
+  routesShown = !routesShown;
+  routesToggle.classList.toggle('on', routesShown);
+  tracks.forEach(t=>{
+    if(routesShown && t.visible) t.layer.addTo(map);
+    else map.removeLayer(t.layer);
+  });
+});
+
+// ---------- Radius ----------
+const radiusSlider = document.getElementById('radiusSlider');
+const radiusNumber = document.getElementById('radiusNumber');
+function setRadius(v){
+  v = Math.min(200, Math.max(5, Math.round(Number(v)||0)));
+  radiusMeters = v;
+  radiusSlider.value = v;
+  radiusNumber.value = v;
+  drawFog();
+}
+radiusSlider.addEventListener('input', ()=>setRadius(radiusSlider.value));
+radiusNumber.addEventListener('input', ()=>setRadius(radiusNumber.value));
+radiusNumber.addEventListener('blur', ()=>setRadius(radiusNumber.value));
+
+// ---------- Opacity ----------
+const opacitySlider = document.getElementById('opacitySlider');
+const opacityNumber = document.getElementById('opacityNumber');
+function setOpacity(v){
+  v = Math.min(100, Math.max(0, Math.round(Number(v)||0)));
+  fogOpacity = v / 100;
+  opacitySlider.value = v;
+  opacityNumber.value = v;
+  drawFog();
+}
+opacitySlider.addEventListener('input', ()=>setOpacity(opacitySlider.value));
+opacityNumber.addEventListener('input', ()=>setOpacity(opacityNumber.value));
+opacityNumber.addEventListener('blur', ()=>setOpacity(opacityNumber.value));
+
+// ---------- Fog style ----------
+const fogColorSelect = document.getElementById('fogColorSelect');
+const fogEdgeSelect = document.getElementById('fogEdgeSelect');
+fogColorSelect.addEventListener('change', ()=>{
+  fogColorValue = fogColorSelect.value;
+  drawFog();
+});
+fogEdgeSelect.addEventListener('change', ()=>{
+  fogEdge = fogEdgeSelect.value;
+  drawFog();
+});
+
+// ---------- Mobile drawer ----------
+const sidebarEl = document.getElementById('sidebar');
+const menuFab = document.getElementById('menuFab');
+const overlayBackdrop = document.getElementById('overlayBackdrop');
+const drawerClose = document.getElementById('drawerClose');
+function openDrawer(){ sidebarEl.classList.add('open'); overlayBackdrop.classList.add('show'); }
+function closeDrawer(){ sidebarEl.classList.remove('open'); overlayBackdrop.classList.remove('show'); }
+menuFab.addEventListener('click', openDrawer);
+overlayBackdrop.addEventListener('click', closeDrawer);
+drawerClose.addEventListener('click', closeDrawer);
+
+// ---------- Collapsible settings ----------
+const settingsToggle = document.getElementById('settingsToggle');
+const settingsPanel = document.getElementById('settingsPanel');
+settingsToggle.addEventListener('click', ()=>{
+  settingsToggle.classList.toggle('open');
+  settingsPanel.classList.toggle('open');
+});
+
+const tracksToggle = document.getElementById('tracksToggle');
+const tracksPanel = document.getElementById('tracksPanel');
+tracksToggle.addEventListener('click', ()=>{
+  tracksToggle.classList.toggle('open');
+  tracksPanel.classList.toggle('open');
+});
+
+// ---------- File input / drag&drop ----------
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+dropzone.addEventListener('click', ()=>fileInput.click());
+fileInput.addEventListener('change', e=>{
+  [...e.target.files].forEach(addTrackFromFile);
+  fileInput.value = '';
+});
+['dragover','dragenter'].forEach(ev=>document.getElementById('mapWrap').addEventListener(ev, e=>{e.preventDefault();}));
+document.getElementById('mapWrap').addEventListener('drop', e=>{
+  e.preventDefault();
+  [...e.dataTransfer.files].filter(f=>f.name.toLowerCase().endsWith('.gpx')).forEach(addTrackFromFile);
+});
+
+loadTracks();
+resizeCanvas();
+</script>
+</body>
+</html>
