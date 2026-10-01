@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>myxwalk</title>
+<link rel="manifest" href="./manifest.json">
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -710,7 +711,7 @@ body{font-size:15px;}
   </div>
 
   <div class="settings-toggle nav-toggle" id="authToggle">
-    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 20c.8-3.6 3-5.5 6.5-5.5s5.7 1.9 6.5 5.5"></path></svg>
+    <span class="nav-icon nav-icon-mask icon-auth" aria-hidden="true"></span>
     <span id="authNavLabel">Авторизация</span>
     <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
   </div>
@@ -725,7 +726,7 @@ body{font-size:15px;}
   </div>
 
   <div class="settings-toggle nav-toggle" id="mapToggle">
-    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5 9 4l6 2.5L20 4v13.5L15 20l-6-2.5L4 20V6.5Z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>
+    <span class="nav-icon nav-icon-mask icon-map" aria-hidden="true"></span>
     <span>Тип карты</span>
     <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
   </div>
@@ -736,7 +737,7 @@ body{font-size:15px;}
   </div>
 
   <div class="settings-toggle nav-toggle" id="settingsToggle">
-    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 1.7-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.1h-2.4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L8 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H6.7v-2.4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L8 8.6l1.7-1.7.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-.1h2.4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 8l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v2.4H21a1.7 1.7 0 0 0-1.6 1.6Z"></path></svg>
+    <span class="nav-icon nav-icon-mask icon-settings" aria-hidden="true"></span>
     <span>Настройки</span>
     <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
   </div>
@@ -790,10 +791,31 @@ body{font-size:15px;}
         <option value="organic">Рваный туман</option>
       </select>
     </div>
+  <div class="settings-section-extra section" id="appearanceSettingsSection">
+    <h2>Тема оформления</h2>
+    <div class="theme-settings-grid" id="themeSettingsGrid">
+      <button type="button" class="theme-choice" data-mode="light">Светлая</button>
+      <button type="button" class="theme-choice" data-mode="dark">Тёмная</button>
+      <button type="button" class="theme-choice" data-mode="auto">Авто</button>
+    </div>
+  </div>
+  <div class="settings-section-extra section" id="languageSettingsSection" style="border-bottom:none;">
+    <h2>Язык</h2>
+    <select id="languageSelect" class="select-input" aria-label="Язык интерфейса">
+      <option value="ru">Русский</option>
+      <option value="en">English</option>
+      <option value="zh">中文</option>
+      <option value="hi">हिन्दी</option>
+      <option value="es">Español</option>
+      <option value="ar">العربية</option>
+      <option value="fr">Français</option>
+      <option value="pt">Português</option>
+    </select>
+  </div>
   </div>
 
   <div class="settings-toggle nav-toggle" id="tracksToggle">
-    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18c3-6 5-10 8-10 2.5 0 3.5 3 5.5 3 1.1 0 1.9-.8 2.5-2"></path><circle cx="4" cy="18" r="1.2"></circle><circle cx="12" cy="8" r="1.2"></circle><circle cx="17.5" cy="11" r="1.2"></circle></svg>
+    <span class="nav-icon nav-icon-mask icon-tracks" aria-hidden="true"></span>
     <span>Треки</span>
     <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
   </div>
@@ -806,9 +828,25 @@ body{font-size:15px;}
       </div>
     </div>
     <div class="section" style="border-bottom:none;">
-      <div id="dropzone">Перетащите .gpx файлы сюда<br>или нажмите, чтобы выбрать</div>
+      <div id="dropzone">Перетащите .gpx файлы сюда<br>или нажмите, чтобы выбрать<br><small id="shareHint">На телефоне: GPX Tracker → Поделиться → myxwalk</small></div>
       <button type="button" class="upload-gpx-btn" id="uploadGpxBtn">Загрузить GPX</button>
       <input id="fileInput" type="file" accept=".gpx" multiple>
+
+      <div class="myxwalk-recorder" id="routeRecorder">
+        <div class="recorder-head">
+          <div><div class="recorder-title">Запись маршрута</div><div class="recorder-sub" id="recorderStatus">Готов к записи GPS-маршрута</div></div>
+          <span class="recorder-dot" id="recorderDot"></span>
+        </div>
+        <div class="recorder-stats">
+          <div><b id="recDistance">0,00</b><span>км</span></div>
+          <div><b id="recDuration">00:00</b><span>время</span></div>
+          <div><b id="recSpeed">0,0</b><span>км/ч</span></div>
+        </div>
+        <div class="recorder-actions">
+          <button type="button" class="mini-btn recorder-start" id="startRecordingBtn">▶ Начать</button>
+          <button type="button" class="mini-btn recorder-stop" id="stopRecordingBtn" disabled>■ Завершить</button>
+        </div>
+      </div>
     </div>
 
     <div id="trackList"><div id="emptyHint">Пока нет ни одного трека. Загрузите .gpx-файлы из приложения GPX Tracker — туман начнёт рассеиваться там, где вы прошли.</div></div>
@@ -823,7 +861,7 @@ body{font-size:15px;}
   </div>
 
   <div class="settings-toggle nav-toggle" id="statsToggle">
-    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V9"></path><path d="M12 19V5"></path><path d="M19 19v-7"></path><path d="M4 19h16"></path></svg>
+    <span class="nav-icon nav-icon-mask icon-stats" aria-hidden="true"></span>
     <span>Статистика</span>
     <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
   </div>
@@ -842,9 +880,9 @@ body{font-size:15px;}
     <div class="section" style="border-bottom:none;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <h2 style="margin:0;">По городам</h2>
-        <button class="mini-btn" id="cityRecalcBtn">определить</button>
+        
       </div>
-      <div id="cityList">ещё не рассчитано — города определяются по интернету (может занять время)</div>
+      <div id="cityList">города определяются автоматически…</div>
     </div>
   </div>
 
@@ -1126,12 +1164,12 @@ function parseGPX(text, fallbackName){
   return {name,points:pts};
 }
 function addTrackFromFile(file){
-  if(activeProfile==='all'){ alert('Профиль «Общее» формируется автоматически. Для загрузки выберите «Авто» или «Пешком».'); return; }
+  if(activeProfile==='all'){ alert(window.myxT('allAlert')); return; }
   const reader=new FileReader();
   reader.onload=e=>{
     const parsed=parseGPX(e.target.result,file.name.replace(/\.gpx$/i,''));
     if(!parsed.points.length) return;
-    const track={id:nextId++,name:parsed.name,points:parsed.points,visible:true,layer:makeTrackLayer(parsed.points)};
+    const track={id:nextId++,name:parsed.name,filename:file.name,points:parsed.points,visible:true,layer:makeTrackLayer(parsed.points)};
     profileTracks[activeProfile].push(track);
     refreshActiveTracks(); saveTracks();
     if(tracks.length===1) map.fitBounds(track.layer.getBounds(),{padding:[40,40]});
@@ -1233,9 +1271,9 @@ let themeMode = appSettings.theme || 'auto';
 function applyTheme(){
   const resolved = themeMode === 'auto' ? (darkQuery.matches ? 'dark' : 'light') : themeMode;
   document.documentElement.dataset.theme = resolved;
-  document.querySelectorAll('.theme-btn').forEach(b=>b.classList.toggle('active', b.dataset.mode === themeMode));
+  document.querySelectorAll('.theme-btn,.theme-choice').forEach(b=>b.classList.toggle('active', b.dataset.mode === themeMode));
 }
-document.querySelectorAll('.theme-btn').forEach(b=>{
+document.querySelectorAll('.theme-btn,.theme-choice').forEach(b=>{
   b.addEventListener('click', ()=>{
     themeMode = b.dataset.mode;
     appSettings.theme = themeMode; saveAppSettings();
@@ -1243,6 +1281,19 @@ document.querySelectorAll('.theme-btn').forEach(b=>{
   });
 });
 if(darkQuery.addEventListener) darkQuery.addEventListener('change', ()=>{ if(themeMode==='auto') applyTheme(); });
+
+// ---------- Language preference ----------
+const languageSelect = document.getElementById('languageSelect');
+const savedLanguage = localStorage.getItem('myxwalk_language') || 'ru';
+if(languageSelect){
+  languageSelect.value = savedLanguage;
+  languageSelect.addEventListener('change', ()=>{
+    localStorage.setItem('myxwalk_language', languageSelect.value);
+    document.documentElement.lang = languageSelect.value;
+  });
+}
+document.documentElement.lang = savedLanguage;
+
 applyTheme();
 updateMapStatus();
 
@@ -1276,7 +1327,10 @@ function toggleSidebarPanel(key){
   closeSidebarPanels(key);
   toggle.classList.toggle('open',willOpen);
   panel.classList.toggle('open',willOpen);
-  if(key==='stats' && willOpen) recomputeLocalStats();
+  if(key==='stats' && willOpen){
+    recomputeLocalStats();
+    updateCityStatsAutomatically();
+  }
 }
 Object.entries(panelPairs).forEach(([key,[toggle]])=>toggle.addEventListener('click',()=>toggleSidebarPanel(key)));
 
@@ -1362,11 +1416,11 @@ function computeExploredAreaM2(list, radiusM){
 }
 function formatKm(km){
   const digits = km < 10 ? 2 : (km < 100 ? 1 : 0);
-  return km.toLocaleString('ru-RU', {minimumFractionDigits:digits, maximumFractionDigits:digits}) + ' км';
+  const locale=({ru:'ru-RU',en:'en-US',zh:'zh-CN',hi:'hi-IN',es:'es-ES',ar:'ar-SA',fr:'fr-FR',pt:'pt-PT'}[localStorage.getItem('myxwalk_language')||'ru']||'ru-RU'); const unit=({ru:'км',en:'km',zh:'公里',hi:'किमी',es:'km',ar:'كم',fr:'km',pt:'km'}[localStorage.getItem('myxwalk_language')||'ru']||'км'); return km.toLocaleString(locale,{minimumFractionDigits:digits,maximumFractionDigits:digits})+' '+unit;
 }
 function formatArea(m2){
   const km2 = m2/1e6;
-  return `${Math.round(m2).toLocaleString('ru-RU')} м² / ${km2.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})} км²`;
+  const code=localStorage.getItem('myxwalk_language')||'ru'; const locale=({ru:'ru-RU',en:'en-US',zh:'zh-CN',hi:'hi-IN',es:'es-ES',ar:'ar-SA',fr:'fr-FR',pt:'pt-PT'}[code]||'ru-RU'); const units={ru:['м²','км²'],en:['m²','km²'],zh:['平方米','平方公里'],hi:['वर्ग मीटर','वर्ग किमी'],es:['m²','km²'],ar:['م²','كم²'],fr:['m²','km²'],pt:['m²','km²']}; const u=units[code]||units.ru; return `${Math.round(m2).toLocaleString(locale)} ${u[0]} / ${km2.toLocaleString(locale,{minimumFractionDigits:2,maximumFractionDigits:2})} ${u[1]}`;
 }
 const DIST_ACHIEVEMENTS = [10,50,100,200,300,500,1000,3000,5000,10000,15000,20000,30000,40075,50000];
 const AREA_ACHIEVEMENTS = [1,3,5,10,30,50,100,300,500,1000];
@@ -1416,20 +1470,22 @@ function renderCityList(results){
   if(!results.length){ el.textContent = 'города не определены'; return; }
   el.innerHTML = results.map(r=>`<div class="city-row"><span>${r.city}</span><span>${formatArea(r.area)}</span></div>`).join('');
 }
-const cityRecalcBtn = document.getElementById('cityRecalcBtn');
-cityRecalcBtn.addEventListener('click', async ()=>{
-  if(!tracks.length){ document.getElementById('cityList').textContent = 'сначала загрузите треки'; return; }
-  cityRecalcBtn.disabled = true;
-  cityRecalcBtn.textContent = 'считаем…';
-  document.getElementById('cityList').textContent = 'определяем города, это может занять до пары минут…';
+let cityStatsBusy = false;
+async function updateCityStatsAutomatically(){
+  const el = document.getElementById('cityList');
+  if(!el || cityStatsBusy) return;
+  if(!tracks.length){ el.textContent = window.myxT ? window.myxT('citiesFirst') : 'сначала загрузите треки'; return; }
+  cityStatsBusy = true;
+  el.textContent = window.myxT ? window.myxT('citiesBusy') : 'определяем города, это может занять до пары минут…';
   try{
     const results = await computeCityBreakdown();
     renderCityList(results);
-  } finally {
-    cityRecalcBtn.disabled = false;
-    cityRecalcBtn.textContent = 'определить';
+  }catch(err){
+    el.textContent = window.myxT ? window.myxT('citiesFail') : 'не удалось определить города';
+  }finally{
+    cityStatsBusy = false;
   }
-});
+}
 
 
 // ---------- Combined GPX export ----------
@@ -1445,7 +1501,7 @@ function buildCombinedGPX(){
   return xml;
 }
 document.getElementById('exportBtn').addEventListener('click', ()=>{
-  if(!tracks.length){ alert('Нет треков для экспорта'); return; }
+  if(!tracks.length){ alert(window.myxT('noTracks')); return; }
   let name = (document.getElementById('exportName').value || 'myxwalk-треки').trim() || 'myxwalk-треки';
   if(!name.toLowerCase().endsWith('.gpx')) name += '.gpx';
   const blob = new Blob([buildCombinedGPX()], {type:'application/gpx+xml'});
@@ -1456,8 +1512,7 @@ document.getElementById('exportBtn').addEventListener('click', ()=>{
   setTimeout(()=>URL.revokeObjectURL(url), 2000);
 });
 
-// ---------- Supabase / Google auth ----------
-// Вставьте сюда данные своего проекта Supabase. Они выдаются в Project Settings -> API.
+// ---------- Supabase / Google auth + cloud tracks ----------
 const SUPABASE_URL = 'https://uearpfmjybuehosbwwpr.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_NmLlz22zXPXR6dGCQqGYDA_fkOSqj8x';
 let supabaseClient = null;
@@ -1472,19 +1527,52 @@ const authUser=document.getElementById('authUser');
 const authNavLabel=document.getElementById('authNavLabel');
 const authStatus=document.getElementById('authStatus');
 function updateAuthUI(){
-  if(currentUser){ const meta=currentUser.user_metadata||{}; const displayName=meta.full_name||meta.name||currentUser.email||'Google аккаунт'; authUser.textContent=displayName; authNavLabel.textContent=displayName; authBtn.textContent='Выйти'; authStatus.textContent='Треки синхронизируются с аккаунтом Supabase.'; }
-  else { authUser.textContent='Не выполнен вход'; authNavLabel.textContent='Авторизация'; authBtn.textContent='Войти через Google'; authStatus.textContent=cloudReady?'Войдите через Google, чтобы хранить треки на сервере.':'Supabase ещё не настроен: приложение пока работает локально.'; }
+  if(currentUser){
+    const meta=currentUser.user_metadata||{};
+    const displayName=meta.full_name||meta.name||currentUser.email||'Google аккаунт';
+    authUser.textContent=displayName;
+    authNavLabel.textContent=displayName;
+    authBtn.textContent='Выйти';
+    authStatus.textContent='Треки синхронизируются с аккаунтом Supabase.';
+  } else {
+    authUser.textContent='Не выполнен вход';
+    authNavLabel.textContent='Авторизация';
+    authBtn.textContent='Войти через Google';
+    authStatus.textContent=cloudReady?'Войдите через Google, чтобы хранить треки в облаке.':'Supabase ещё не настроен: приложение пока работает локально.';
+  }
+}
+function cloudPayload(track,profile){
+  return {
+    user_id:currentUser.id,
+    name:track.name,
+    filename:track.filename||track.name+'.gpx',
+    // Храним точки + профиль + видимость в одном JSON-поле, т.к. текущая таблица tracks имеет фиксированную схему.
+    gpx_data:JSON.stringify({version:1,profile,visible:!!track.visible,points:track.points})
+  };
 }
 async function loadCloudTracks(){
   if(!supabaseClient||!currentUser) return;
-  const {data,error}=await supabaseClient.from('tracks').select('id,profile,name,points,visible').eq('user_id',currentUser.id);
-  if(error){ console.warn(error); authStatus.textContent='Ошибка загрузки треков: '+error.message; return; }
+  const {data,error}=await supabaseClient.from('tracks').select('id,name,filename,gpx_data,created_at').eq('user_id',currentUser.id).order('created_at',{ascending:true});
+  if(error){
+    console.warn(error);
+    authStatus.textContent=window.myxT('cloudError')+error.message;
+    return;
+  }
   const cloud={car:[],walk:[]};
-  (data||[]).forEach(row=>{ if(!cloud[row.profile]||!Array.isArray(row.points)) return; cloud[row.profile].push({id:nextId++,name:row.name,points:row.points,visible:!!row.visible,layer:makeTrackLayer(row.points),cloudId:row.id}); });
+  (data||[]).forEach(row=>{
+    try{
+      const payload=JSON.parse(row.gpx_data||'{}');
+      const profile=payload.profile;
+      const points=Array.isArray(payload.points)?payload.points:[];
+      if(!cloud[profile]||!points.length) return;
+      cloud[profile].push({id:nextId++,name:row.name||row.filename||'Трек',filename:row.filename||((row.name||'track')+'.gpx'),points,visible:payload.visible!==false,layer:makeTrackLayer(points),cloudId:row.id});
+    }catch(err){ console.warn('Пропущен повреждённый облачный трек',row,err); }
+  });
   const hadCloudTracks = cloud.car.length + cloud.walk.length > 0;
   if(hadCloudTracks){
     profileTracks=cloud;
-    refreshActiveTracks(); saveLocalProfiles();
+    refreshActiveTracks();
+    saveLocalProfiles();
   } else {
     // Первый вход: если на устройстве уже были локальные треки, переносим их в облако.
     for(const profile of ['car','walk']) for(const track of profileTracks[profile]) await syncTrackToCloud(track,profile);
@@ -1493,34 +1581,93 @@ async function loadCloudTracks(){
 }
 async function syncTrackToCloud(track,profile){
   if(!supabaseClient||!currentUser||profile==='all') return;
-  const payload={user_id:currentUser.id,profile,name:track.name,points:track.points,visible:!!track.visible};
-  if(track.cloudId){ await supabaseClient.from('tracks').update(payload).eq('id',track.cloudId).eq('user_id',currentUser.id); }
-  else { const {data,error}=await supabaseClient.from('tracks').insert(payload).select('id').single(); if(!error&&data) track.cloudId=data.id; }
+  const payload=cloudPayload(track,profile);
+  if(track.cloudId){
+    const {error}=await supabaseClient.from('tracks').update(payload).eq('id',track.cloudId).eq('user_id',currentUser.id);
+    if(error) console.warn('Ошибка обновления трека в облаке',error);
+  } else {
+    const {data,error}=await supabaseClient.from('tracks').insert(payload).select('id').single();
+    if(error) console.warn('Ошибка сохранения трека в облаке',error);
+    if(!error&&data) track.cloudId=data.id;
+  }
 }
 async function deleteTrackFromCloud(track,profile){
   if(!supabaseClient||!currentUser||!track.cloudId) return;
-  await supabaseClient.from('tracks').delete().eq('id',track.cloudId).eq('user_id',currentUser.id);
+  const {error}=await supabaseClient.from('tracks').delete().eq('id',track.cloudId).eq('user_id',currentUser.id);
+  if(error) console.warn('Ошибка удаления трека из облака',error);
 }
 async function signInGoogle(){
-  if(!supabaseClient){ alert('Сначала укажите SUPABASE_URL и SUPABASE_ANON_KEY в файле приложения.'); return; }
+  if(!supabaseClient){ alert(window.myxT('setupError')); return; }
   const {error}=await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+window.location.pathname}});
-  if(error) alert('Ошибка входа: '+error.message);
+  if(error) alert(window.myxT('authError')+error.message);
 }
-async function signOutGoogle(){ if(supabaseClient) await supabaseClient.auth.signOut(); currentUser=null; updateAuthUI(); }
+async function signOutGoogle(){
+  if(supabaseClient){
+    const {error}=await supabaseClient.auth.signOut();
+    if(error) console.warn('Ошибка выхода',error);
+  }
+  currentUser=null;
+  updateAuthUI();
+  closeSidebarPanels('none');
+  // После выхода показываем локальные данные устройства, не удаляя их и не трогая облако.
+  hydrateProfiles(readLocalProfiles());
+  refreshActiveTracks();
+}
 authBtn.addEventListener('click',()=>currentUser?signOutGoogle():signInGoogle());
 async function initAuth(){
   updateAuthUI();
   if(!supabaseClient) return;
-  const {data}=await supabaseClient.auth.getUser();
-  currentUser=data?.user||null; updateAuthUI();
+  const {data}=await supabaseClient.auth.getSession();
+  currentUser=data?.session?.user||null;
+  updateAuthUI();
   if(currentUser) await loadCloudTracks();
-  supabaseClient.auth.onAuthStateChange(async (_event,session)=>{ currentUser=session?.user||null; updateAuthUI(); if(currentUser) await loadCloudTracks(); });
+  supabaseClient.auth.onAuthStateChange(async (_event,session)=>{
+    currentUser=session?.user||null;
+    updateAuthUI();
+    if(currentUser) await loadCloudTracks();
+  });
 }
+
+// ---------- PWA / GPX Tracker share target ----------
+async function consumeSharedGpx(){
+  if(!('indexedDB' in window)) return;
+  try{
+    const db=await new Promise((resolve,reject)=>{
+      const req=indexedDB.open('myxwalk-share',1);
+      req.onupgradeneeded=()=>req.result.createObjectStore('files',{keyPath:'id',autoIncrement:true});
+      req.onsuccess=()=>resolve(req.result);
+      req.onerror=()=>reject(req.error);
+    });
+    const rows=await new Promise((resolve,reject)=>{
+      const tx=db.transaction('files','readonly'); const req=tx.objectStore('files').getAll();
+      req.onsuccess=()=>resolve(req.result||[]); req.onerror=()=>reject(req.error);
+    });
+    if(!rows.length) return;
+    for(const row of rows){
+      const file=new File([row.buffer],row.name||'track.gpx',{type:row.type||'application/gpx+xml'});
+      addTrackFromFile(file);
+    }
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction('files','readwrite'); tx.objectStore('files').clear();
+      tx.oncomplete=resolve; tx.onerror=()=>reject(tx.error);
+    });
+    db.close();
+    const url=new URL(location.href);
+    if(url.searchParams.has('shared')){
+      history.replaceState({},'',url.pathname+url.hash);
+    }
+  }catch(err){ console.warn('Не удалось принять GPX через Share Target',err); }
+}
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('Service Worker:',err)));
+}
+
 
 loadTracks();
 recomputeLocalStats();
 resizeCanvas();
 initAuth();
+consumeSharedGpx();
 </script>
 
 <style id="user-ui-refinement-20260930-2255">
@@ -1586,6 +1733,119 @@ initAuth();
   position:relative;
 }
 </style>
+<script id="myxwalk-i18n-and-popup-fix-20261001">
+(function(){
+  const T={
+    ru:{
+      car:'На авто',walk:'Пешком',all:'Общее',auth:'Авторизация',map:'Тип карты',settings:'Настройки',tracks:'Треки',stats:'Статистика',
+      carNote:'Здесь хранятся маршруты поездок на автомобиле.',walkNote:'Здесь хранятся пешие прогулки',allNote:'Автоматическое объединение маршрутов из профилей «На авто» и «Пешком». Здесь треки не загружаются отдельно.',
+      notSigned:'Не выполнен вход',login:'Войти через Google',logout:'Выйти',cloudSetup:'Для синхронизации треков между устройствами настройте Supabase ниже в коде приложения.',cloudSync:'Треки синхронизируются с аккаунтом Supabase.',cloudLogin:'Войдите через Google, чтобы хранить треки в облаке.',localOnly:'Supabase ещё не настроен: приложение пока работает локально.',
+      fog:'Туман',fogDesc:'Здесь задаются параметры рассеивания и внешний вид тумана.',radius:'Радиус рассеивания тумана',density:'Густота тумана',style:'Стиль тумана',color:'Цвет',edge:'Край рассеивания',
+      black:'Чёрный',blue:'Синий',gray:'Серый',white:'Белый',green:'Зелёный',hard:'Чёткий край',soft:'Мягкое рассеивание',scalloped:'Волнистый край (облачка)',organic:'Рваный туман',
+      appearance:'Тема оформления',light:'Светлая',dark:'Тёмная',auto:'Авто',language:'Язык',
+      showRoutes:'Показывать маршруты',drop1:'Перетащите .gpx файлы сюда',drop2:'или нажмите, чтобы выбрать',share:'На телефоне: GPX Tracker → Поделиться → myxwalk',upload:'Загрузить GPX',
+      recorder:'Запись маршрута',ready:'Готов к записи GPS-маршрута',start:'▶ Начать',finish:'■ Завершить',time:'время',
+      empty:'Пока нет ни одного трека. Загрузите .gpx-файлы — туман начнёт рассеиваться там, где проходит маршрут.',points:'точек',
+      exportAll:'Экспорт всех треков',filename:'имя файла',export:'Экспорт .gpx',profileStats:'Статистика профиля',distance:'Всего пройдено',area:'Всего исследовано',cities:'По городам',citiesAuto:'города определяются автоматически…',citiesNone:'города не определены',citiesFirst:'сначала загрузите треки',citiesBusy:'определяем города, это может занять до пары минут…',citiesFail:'не удалось определить города',
+      radiusStatus:'радиус',fogStatus:'туман',km:'км',m2:'м²',speed:'км/ч',close:'Закрыть меню',
+      allAlert:'Профиль «Общее» формируется автоматически. Для загрузки выберите «На авто» или «Пешком».',noTracks:'Нет треков для экспорта',cloudError:'Ошибка загрузки треков: ',authError:'Ошибка входа: ',setupError:'Сначала укажите SUPABASE_URL и SUPABASE_ANON_KEY в файле приложения.',
+      mapYandex:'Яндекс Карты (схема)',mapYandexSat:'Яндекс Карты (спутник)',mapGoogle:'Google Maps (схема)',mapGoogleSat:'Google Maps (спутник)',map2gis:'2Гис',mapOsm:'OpenStreetMaps'
+    },
+    en:{
+      car:'By car',walk:'On foot',all:'All',auth:'Authorization',map:'Map type',settings:'Settings',tracks:'Tracks',stats:'Statistics',
+      carNote:'Car trip routes are stored here.',walkNote:'Walking routes are stored here.',allNote:'Routes from the car and walking profiles are combined automatically. Tracks cannot be uploaded separately here.',
+      notSigned:'Not signed in',login:'Sign in with Google',logout:'Sign out',cloudSetup:'Configure Supabase below in the application code to sync tracks between devices.',cloudSync:'Tracks are synchronized with your Supabase account.',cloudLogin:'Sign in with Google to store tracks in the cloud.',localOnly:'Supabase is not configured yet: the app currently works locally.',
+      fog:'Fog',fogDesc:'Set fog clearing parameters and its appearance here.',radius:'Fog clearing radius',density:'Fog density',style:'Fog style',color:'Color',edge:'Clearing edge',
+      black:'Black',blue:'Blue',gray:'Gray',white:'White',green:'Green',hard:'Sharp edge',soft:'Soft fade',scalloped:'Wavy edge (clouds)',organic:'Ragged fog',
+      appearance:'Appearance theme',light:'Light',dark:'Dark',auto:'Auto',language:'Language',
+      showRoutes:'Show routes',drop1:'Drag .gpx files here',drop2:'or click to choose',share:'On phone: GPX Tracker → Share → myxwalk',upload:'Upload GPX',
+      recorder:'Route recording',ready:'Ready to record a GPS route',start:'▶ Start',finish:'■ Finish',time:'time',
+      empty:'There are no tracks yet. Upload .gpx files — the fog will clear where the route passes.',points:'points',
+      exportAll:'Export all tracks',filename:'file name',export:'Export .gpx',profileStats:'Profile statistics',distance:'Total distance',area:'Total explored',cities:'By cities',citiesAuto:'cities are detected automatically…',citiesNone:'cities not determined',citiesFirst:'load tracks first',citiesBusy:'detecting cities, this may take a couple of minutes…',citiesFail:'failed to determine cities',
+      radiusStatus:'radius',fogStatus:'fog',km:'km',m2:'m²',speed:'km/h',close:'Close menu',
+      allAlert:'The “All” profile is generated automatically. Choose “By car” or “On foot” to upload tracks.',noTracks:'No tracks to export',cloudError:'Error loading tracks: ',authError:'Sign-in error: ',setupError:'Enter SUPABASE_URL and SUPABASE_ANON_KEY in the application file first.',
+      mapYandex:'Yandex Maps (map)',mapYandexSat:'Yandex Maps (satellite)',mapGoogle:'Google Maps (map)',mapGoogleSat:'Google Maps (satellite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'
+    },
+    zh:{car:'驾车',walk:'步行',all:'全部',auth:'登录',map:'地图类型',settings:'设置',tracks:'轨迹',stats:'统计',carNote:'这里保存驾车路线。',walkNote:'这里保存步行路线。',allNote:'自动合并驾车和步行资料中的路线。此处不能单独上传轨迹。',notSigned:'未登录',login:'使用 Google 登录',logout:'退出登录',cloudSetup:'请在应用代码中配置 Supabase，以便在设备之间同步轨迹。',cloudSync:'轨迹正在与 Supabase 账户同步。',cloudLogin:'使用 Google 登录，将轨迹保存到云端。',localOnly:'尚未配置 Supabase：应用目前仅在本地运行。',fog:'雾',fogDesc:'在这里设置雾气消散参数和外观。',radius:'雾气消散半径',density:'雾密度',style:'雾样式',color:'颜色',edge:'消散边缘',black:'黑色',blue:'蓝色',gray:'灰色',white:'白色',green:'绿色',hard:'清晰边缘',soft:'柔和渐变',scalloped:'波浪边缘（云朵）',organic:'不规则雾边',appearance:'外观主题',light:'浅色',dark:'深色',auto:'自动',language:'语言',showRoutes:'显示路线',drop1:'将 .gpx 文件拖到这里',drop2:'或点击选择',share:'手机：GPX Tracker → 分享 → myxwalk',upload:'上传 GPX',recorder:'路线记录',ready:'准备记录 GPS 路线',start:'▶ 开始',finish:'■ 完成',time:'时间',empty:'暂无轨迹。上传 .gpx 文件后，路线经过的区域将开始消散雾气。',points:'点',exportAll:'导出所有轨迹',filename:'文件名',export:'导出 .gpx',profileStats:'资料统计',distance:'总行程',area:'总探索面积',cities:'按城市',citiesAuto:'城市将自动识别…',citiesNone:'未确定城市',citiesFirst:'请先加载轨迹',citiesBusy:'正在识别城市，可能需要几分钟…',citiesFail:'无法确定城市',radiusStatus:'半径',fogStatus:'雾',km:'公里',m2:'平方米',speed:'公里/小时',close:'关闭菜单',allAlert:'“全部”资料会自动生成。请选择“驾车”或“步行”来上传轨迹。',noTracks:'没有可导出的轨迹',cloudError:'加载轨迹出错：',authError:'登录出错：',setupError:'请先在应用文件中填写 SUPABASE_URL 和 SUPABASE_ANON_KEY。',mapYandex:'Yandex 地图（地图）',mapYandexSat:'Yandex 地图（卫星）',mapGoogle:'Google 地图（地图）',mapGoogleSat:'Google 地图（卫星）',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    hi:{car:'कार से',walk:'पैदल',all:'सभी',auth:'प्राधिकरण',map:'मानचित्र प्रकार',settings:'सेटिंग्स',tracks:'ट्रैक',stats:'आंकड़े',carNote:'यहाँ कार यात्रा के मार्ग संग्रहीत हैं।',walkNote:'यहाँ पैदल मार्ग संग्रहीत हैं।',allNote:'कार और पैदल प्रोफ़ाइल के मार्ग स्वतः संयुक्त होते हैं। यहाँ अलग से ट्रैक अपलोड नहीं किए जा सकते।',notSigned:'साइन इन नहीं है',login:'Google से साइन इन करें',logout:'साइन आउट',cloudSetup:'डिवाइसों के बीच ट्रैक सिंक करने के लिए ऐप कोड में Supabase कॉन्फ़िगर करें।',cloudSync:'ट्रैक आपके Supabase खाते के साथ सिंक हो रहे हैं।',cloudLogin:'ट्रैक क्लाउड में रखने के लिए Google से साइन इन करें।',localOnly:'Supabase अभी कॉन्फ़िगर नहीं है: ऐप फिलहाल स्थानीय रूप से चलता है।',fog:'कोहरा',fogDesc:'यहाँ कोहरा हटाने के पैरामीटर और उसका रूप सेट करें।',radius:'कोहरा हटाने की त्रिज्या',density:'कोहरे की घनता',style:'कोहरे की शैली',color:'रंग',edge:'हटने का किनारा',black:'काला',blue:'नीला',gray:'धूसर',white:'सफेद',green:'हरा',hard:'स्पष्ट किनारा',soft:'मुलायम किनारा',scalloped:'लहरदार किनारा (बादल)',organic:'अनियमित कोहरा',appearance:'दिखावट थीम',light:'हल्का',dark:'गहरा',auto:'ऑटो',language:'भाषा',showRoutes:'मार्ग दिखाएँ',drop1:'यहाँ .gpx फ़ाइलें खींचें',drop2:'या चुनने के लिए क्लिक करें',share:'फ़ोन पर: GPX Tracker → साझा करें → myxwalk',upload:'GPX अपलोड करें',recorder:'मार्ग रिकॉर्डिंग',ready:'GPS मार्ग रिकॉर्ड करने के लिए तैयार',start:'▶ शुरू',finish:'■ समाप्त',time:'समय',empty:'अभी कोई ट्रैक नहीं है। .gpx फ़ाइलें अपलोड करें — जहाँ मार्ग जाता है वहाँ कोहरा हटेगा।',points:'बिंदु',exportAll:'सभी ट्रैक निर्यात करें',filename:'फ़ाइल नाम',export:'.gpx निर्यात करें',profileStats:'प्रोफ़ाइल आंकड़े',distance:'कुल दूरी',area:'कुल खोजा गया क्षेत्र',cities:'शहरों के अनुसार',citiesAuto:'शहर स्वतः पहचाने जाते हैं…',citiesNone:'शहर निर्धारित नहीं',citiesFirst:'पहले ट्रैक लोड करें',citiesBusy:'शहर निर्धारित किए जा रहे हैं, इसमें कुछ मिनट लग सकते हैं…',citiesFail:'शहर निर्धारित नहीं हो सके',radiusStatus:'त्रिज्या',fogStatus:'कोहरा',km:'किमी',m2:'वर्ग मीटर',speed:'किमी/घं',close:'मेनू बंद करें',allAlert:'“सभी” प्रोफ़ाइल स्वतः बनती है। ट्रैक अपलोड करने के लिए “कार से” या “पैदल” चुनें।',noTracks:'निर्यात के लिए कोई ट्रैक नहीं',cloudError:'ट्रैक लोड करने में त्रुटि: ',authError:'साइन इन त्रुटि: ',setupError:'पहले ऐप फ़ाइल में SUPABASE_URL और SUPABASE_ANON_KEY दर्ज करें।',mapYandex:'Yandex Maps (मानचित्र)',mapYandexSat:'Yandex Maps (सैटेलाइट)',mapGoogle:'Google Maps (मानचित्र)',mapGoogleSat:'Google Maps (सैटेलाइट)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    es:{car:'En coche',walk:'A pie',all:'Todo',auth:'Autorización',map:'Tipo de mapa',settings:'Ajustes',tracks:'Rutas',stats:'Estadísticas',carNote:'Aquí se guardan las rutas en coche.',walkNote:'Aquí se guardan las rutas a pie.',allNote:'Las rutas de los perfiles coche y a pie se combinan automáticamente. Aquí no se pueden cargar rutas por separado.',notSigned:'No has iniciado sesión',login:'Iniciar sesión con Google',logout:'Cerrar sesión',cloudSetup:'Configura Supabase en el código de la aplicación para sincronizar rutas entre dispositivos.',cloudSync:'Las rutas se sincronizan con tu cuenta de Supabase.',cloudLogin:'Inicia sesión con Google para guardar rutas en la nube.',localOnly:'Supabase aún no está configurado: la aplicación funciona localmente.',fog:'Niebla',fogDesc:'Configura aquí los parámetros y el aspecto de la eliminación de niebla.',radius:'Radio de eliminación de niebla',density:'Densidad de niebla',style:'Estilo de niebla',color:'Color',edge:'Borde de eliminación',black:'Negro',blue:'Azul',gray:'Gris',white:'Blanco',green:'Verde',hard:'Borde definido',soft:'Desvanecido suave',scalloped:'Borde ondulado (nubes)',organic:'Niebla irregular',appearance:'Tema de apariencia',light:'Claro',dark:'Oscuro',auto:'Automático',language:'Idioma',showRoutes:'Mostrar rutas',drop1:'Arrastra archivos .gpx aquí',drop2:'o haz clic para elegir',share:'En el teléfono: GPX Tracker → Compartir → myxwalk',upload:'Subir GPX',recorder:'Grabación de ruta',ready:'Listo para grabar una ruta GPS',start:'▶ Iniciar',finish:'■ Finalizar',time:'tiempo',empty:'Aún no hay rutas. Sube archivos .gpx — la niebla se despejará donde pase la ruta.',points:'puntos',exportAll:'Exportar todas las rutas',filename:'nombre del archivo',export:'Exportar .gpx',profileStats:'Estadísticas del perfil',distance:'Distancia total',area:'Total explorado',cities:'Por ciudades',citiesAuto:'las ciudades se detectan automáticamente…',citiesNone:'ciudades no determinadas',citiesFirst:'carga primero las rutas',citiesBusy:'detectando ciudades, puede tardar un par de minutos…',citiesFail:'no se pudieron determinar las ciudades',radiusStatus:'radio',fogStatus:'niebla',km:'km',m2:'m²',speed:'km/h',close:'Cerrar menú',allAlert:'El perfil “Todo” se genera automáticamente. Elige “En coche” o “A pie” para cargar rutas.',noTracks:'No hay rutas para exportar',cloudError:'Error al cargar las rutas: ',authError:'Error de inicio de sesión: ',setupError:'Introduce SUPABASE_URL y SUPABASE_ANON_KEY en el archivo de la aplicación.',mapYandex:'Yandex Maps (mapa)',mapYandexSat:'Yandex Maps (satélite)',mapGoogle:'Google Maps (mapa)',mapGoogleSat:'Google Maps (satélite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    fr:{car:'En voiture',walk:'À pied',all:'Tout',auth:'Connexion',map:'Type de carte',settings:'Paramètres',tracks:'Traces',stats:'Statistiques',carNote:'Les itinéraires en voiture sont stockés ici.',walkNote:'Les itinéraires à pied sont stockés ici.',allNote:'Les itinéraires voiture et à pied sont combinés automatiquement. Les traces ne peuvent pas être importées séparément ici.',notSigned:'Non connecté',login:'Se connecter avec Google',logout:'Se déconnecter',cloudSetup:'Configurez Supabase dans le code de l’application pour synchroniser les traces entre appareils.',cloudSync:'Les traces sont synchronisées avec votre compte Supabase.',cloudLogin:'Connectez-vous avec Google pour enregistrer les traces dans le cloud.',localOnly:'Supabase n’est pas encore configuré : l’application fonctionne localement.',fog:'Brouillard',fogDesc:'Définissez ici les paramètres et l’apparence de la dissipation du brouillard.',radius:'Rayon de dissipation du brouillard',density:'Densité du brouillard',style:'Style du brouillard',color:'Couleur',edge:'Bord de dissipation',black:'Noir',blue:'Bleu',gray:'Gris',white:'Blanc',green:'Vert',hard:'Bord net',soft:'Dégradé doux',scalloped:'Bord ondulé (nuages)',organic:'Brouillard irrégulier',appearance:'Thème',light:'Clair',dark:'Sombre',auto:'Auto',language:'Langue',showRoutes:'Afficher les itinéraires',drop1:'Déposez les fichiers .gpx ici',drop2:'ou cliquez pour choisir',share:'Sur téléphone : GPX Tracker → Partager → myxwalk',upload:'Importer GPX',recorder:'Enregistrement du parcours',ready:'Prêt à enregistrer un parcours GPS',start:'▶ Démarrer',finish:'■ Terminer',time:'temps',empty:'Aucune trace pour le moment. Importez des fichiers .gpx — le brouillard se dissipera sur le parcours.',points:'points',exportAll:'Exporter toutes les traces',filename:'nom du fichier',export:'Exporter .gpx',profileStats:'Statistiques du profil',distance:'Distance totale',area:'Total exploré',cities:'Par villes',citiesAuto:'les villes sont détectées automatiquement…',citiesNone:'villes non déterminées',citiesFirst:'chargez d’abord les traces',citiesBusy:'détection des villes, cela peut prendre quelques minutes…',citiesFail:'impossible de déterminer les villes',radiusStatus:'rayon',fogStatus:'brouillard',km:'km',m2:'m²',speed:'km/h',close:'Fermer le menu',allAlert:'Le profil « Tout » est généré automatiquement. Choisissez « En voiture » ou « À pied » pour importer des traces.',noTracks:'Aucune trace à exporter',cloudError:'Erreur de chargement des traces : ',authError:'Erreur de connexion : ',setupError:'Indiquez d’abord SUPABASE_URL et SUPABASE_ANON_KEY dans le fichier de l’application.',mapYandex:'Yandex Maps (carte)',mapYandexSat:'Yandex Maps (satellite)',mapGoogle:'Google Maps (carte)',mapGoogleSat:'Google Maps (satellite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    pt:{car:'De carro',walk:'A pé',all:'Todos',auth:'Autorização',map:'Tipo de mapa',settings:'Configurações',tracks:'Rotas',stats:'Estatísticas',carNote:'Aqui ficam armazenadas as rotas de carro.',walkNote:'Aqui ficam armazenadas as rotas a pé.',allNote:'As rotas dos perfis carro e a pé são combinadas automaticamente. Não é possível carregar rotas separadamente aqui.',notSigned:'Não conectado',login:'Entrar com Google',logout:'Sair',cloudSetup:'Configure o Supabase no código do aplicativo para sincronizar rotas entre dispositivos.',cloudSync:'As rotas estão sincronizadas com sua conta Supabase.',cloudLogin:'Entre com o Google para guardar rotas na nuvem.',localOnly:'O Supabase ainda não está configurado: o aplicativo funciona localmente.',fog:'Névoa',fogDesc:'Defina aqui os parâmetros e a aparência da dissipação da névoa.',radius:'Raio de dissipação da névoa',density:'Densidade da névoa',style:'Estilo da névoa',color:'Cor',edge:'Borda da dissipação',black:'Preto',blue:'Azul',gray:'Cinza',white:'Branco',green:'Verde',hard:'Borda nítida',soft:'Suave',scalloped:'Borda ondulada (nuvens)',organic:'Névoa irregular',appearance:'Tema de aparência',light:'Claro',dark:'Escuro',auto:'Automático',language:'Idioma',showRoutes:'Mostrar rotas',drop1:'Arraste arquivos .gpx aqui',drop2:'ou clique para escolher',share:'No telefone: GPX Tracker → Compartilhar → myxwalk',upload:'Carregar GPX',recorder:'Gravação de rota',ready:'Pronto para gravar uma rota GPS',start:'▶ Iniciar',finish:'■ Finalizar',time:'tempo',empty:'Ainda não há rotas. Carregue arquivos .gpx — a névoa será removida onde a rota passar.',points:'pontos',exportAll:'Exportar todas as rotas',filename:'nome do arquivo',export:'Exportar .gpx',profileStats:'Estatísticas do perfil',distance:'Distância total',area:'Total explorado',cities:'Por cidades',citiesAuto:'as cidades são detectadas automaticamente…',citiesNone:'cidades não determinadas',citiesFirst:'carregue as rotas primeiro',citiesBusy:'determinando cidades, isso pode levar alguns minutos…',citiesFail:'não foi possível determinar as cidades',radiusStatus:'raio',fogStatus:'névoa',km:'km',m2:'m²',speed:'km/h',close:'Fechar menu',allAlert:'O perfil “Todos” é gerado automaticamente. Escolha “De carro” ou “A pé” para carregar rotas.',noTracks:'Não há rotas para exportar',cloudError:'Erro ao carregar rotas: ',authError:'Erro de login: ',setupError:'Informe primeiro SUPABASE_URL e SUPABASE_ANON_KEY no arquivo do aplicativo.',mapYandex:'Yandex Maps (mapa)',mapYandexSat:'Yandex Maps (satélite)',mapGoogle:'Google Maps (mapa)',mapGoogleSat:'Google Maps (satélite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    ar:{car:'بالسيارة',walk:'مشياً',all:'الكل',auth:'تسجيل الدخول',map:'نوع الخريطة',settings:'الإعدادات',tracks:'المسارات',stats:'الإحصاءات',carNote:'تُحفظ مسارات الرحلات بالسيارة هنا.',walkNote:'تُحفظ مسارات المشي هنا.',allNote:'يتم دمج مسارات السيارة والمشي تلقائياً. لا يمكن رفع المسارات بشكل منفصل هنا.',notSigned:'لم يتم تسجيل الدخول',login:'تسجيل الدخول باستخدام Google',logout:'تسجيل الخروج',cloudSetup:'قم بإعداد Supabase في كود التطبيق لمزامنة المسارات بين الأجهزة.',cloudSync:'تتم مزامنة المسارات مع حساب Supabase.',cloudLogin:'سجّل الدخول باستخدام Google لحفظ المسارات في السحابة.',localOnly:'لم يتم إعداد Supabase بعد: يعمل التطبيق محلياً حالياً.',fog:'الضباب',fogDesc:'اضبط هنا معلمات إزالة الضباب ومظهره.',radius:'نطاق إزالة الضباب',density:'كثافة الضباب',style:'نمط الضباب',color:'اللون',edge:'حافة الإزالة',black:'أسود',blue:'أزرق',gray:'رمادي',white:'أبيض',green:'أخضر',hard:'حافة واضحة',soft:'تدرج ناعم',scalloped:'حافة متموجة (سحب)',organic:'ضباب غير منتظم',appearance:'المظهر',light:'فاتح',dark:'داكن',auto:'تلقائي',language:'اللغة',showRoutes:'إظهار المسارات',drop1:'اسحب ملفات .gpx إلى هنا',drop2:'أو انقر للاختيار',share:'على الهاتف: GPX Tracker ← مشاركة ← myxwalk',upload:'رفع GPX',recorder:'تسجيل المسار',ready:'جاهز لتسجيل مسار GPS',start:'▶ بدء',finish:'■ إنهاء',time:'الوقت',empty:'لا توجد مسارات بعد. ارفع ملفات .gpx — سيزول الضباب حيث يمر المسار.',points:'نقاط',exportAll:'تصدير جميع المسارات',filename:'اسم الملف',export:'تصدير .gpx',profileStats:'إحصاءات الملف',distance:'إجمالي المسافة',area:'إجمالي المساحة المستكشفة',cities:'حسب المدن',citiesAuto:'يتم تحديد المدن تلقائياً…',citiesNone:'لم يتم تحديد المدن',citiesFirst:'حمّل المسارات أولاً',citiesBusy:'جارٍ تحديد المدن، قد يستغرق ذلك بضع دقائق…',citiesFail:'تعذر تحديد المدن',radiusStatus:'النطاق',fogStatus:'الضباب',km:'كم',m2:'م²',speed:'كم/س',close:'إغلاق القائمة',allAlert:'يتم إنشاء ملف «الكل» تلقائياً. اختر «بالسيارة» أو «مشياً» لرفع المسارات.',noTracks:'لا توجد مسارات للتصدير',cloudError:'خطأ في تحميل المسارات: ',authError:'خطأ في تسجيل الدخول: ',setupError:'أدخل SUPABASE_URL وSUPABASE_ANON_KEY في ملف التطبيق أولاً.',mapYandex:'Yandex Maps (خريطة)',mapYandexSat:'Yandex Maps (قمر صناعي)',mapGoogle:'Google Maps (خريطة)',mapGoogleSat:'Google Maps (قمر صناعي)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'}
+  };
+  const langs={ru:'Русский',en:'English',zh:'中文',hi:'हिन्दी',es:'Español',ar:'العربية',fr:'Français',pt:'Português'};
+  let lang=localStorage.getItem('myxwalk_language')||'ru';
+  const tr=k=>(T[lang]&&T[lang][k])||T.ru[k]||k;
+  window.myxT=tr;
+  function setText(sel,key){const e=document.querySelector(sel);if(e)e.textContent=tr(key)}
+  function translateUI(){
+    const q=(s,k)=>setText(s,k);
+    document.documentElement.lang=lang; document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+    q('#authToggle span:nth-of-type(2)','auth'); q('#mapToggle span:nth-of-type(2)','map'); q('#settingsToggle span:nth-of-type(2)','settings'); q('#tracksToggle span:nth-of-type(2)','tracks'); q('#statsToggle span:nth-of-type(2)','stats');
+    document.querySelectorAll('.profile-btn').forEach(b=>b.textContent=tr(b.dataset.profile));
+    const meta={car:'carNote',walk:'walkNote',all:'allNote'}; const note=document.getElementById('profileNote'); if(note)note.textContent=tr(meta[activeProfile]||'carNote');
+    q('#authUser','notSigned');
+    if(typeof currentUser!=='undefined' && currentUser){ const metaData=currentUser.user_metadata||{}; document.getElementById('authUser').textContent=metaData.full_name||metaData.name||currentUser.email||'Google'; }
+    q('#authStatus',currentUser? 'cloudSync' : (cloudReady?'cloudLogin':'localOnly')); q('#authBtn',currentUser?'logout':'login');
+    q('#settingsPanel .section:first-child div:first-child','fog'); q('#settingsPanel .section:first-child div:nth-child(2)','fogDesc');
+    q('#settingsPanel .section:nth-of-type(2) h2','radius'); q('#settingsPanel .section:nth-of-type(3) h2','density'); q('#settingsPanel .section:nth-of-type(4) h2','style');
+    const rows=document.querySelectorAll('#settingsPanel .row span'); if(rows[0])rows[0].textContent=tr('color'); if(rows[1])rows[1].textContent=tr('edge');
+    const colorOpts=document.querySelectorAll('#fogColorSelect option'); ['black','blue','gray','white','green'].forEach((k,i)=>{if(colorOpts[i])colorOpts[i].textContent=tr(k)});
+    const edgeOpts=document.querySelectorAll('#fogEdgeSelect option'); ['hard','soft','scalloped','organic'].forEach((k,i)=>{if(edgeOpts[i])edgeOpts[i].textContent=tr(k)});
+    q('#appearanceSettingsSection h2','appearance'); document.querySelectorAll('.theme-choice').forEach(b=>b.textContent=tr(b.dataset.mode)); q('#languageSettingsSection h2','language');
+    q('#mainToggleRow h2','showRoutes'); q('#shareHint','share'); q('#uploadGpxBtn','upload'); q('.recorder-title','recorder'); q('#recorderStatus','ready'); q('#startRecordingBtn','start'); q('#stopRecordingBtn','finish');
+    q('#emptyHint','empty'); q('#appearanceSettingsSection h2','appearance'); q('#languageSettingsSection h2','language'); q('#exportName','filename'); q('#exportBtn','export');
+    q('#statsPanel .section:first-child div:first-child','profileStats'); q('#statsPanel .section:nth-of-type(2) .stat-row:first-child span','distance'); q('#statsPanel .section:nth-of-type(2) .stat-row:nth-child(2) span','area'); q('#statsPanel .section:nth-of-type(3) h2','cities');
+    if(document.getElementById('cityList')&&!cityStatsBusy) document.getElementById('cityList').textContent=tracks.length?tr('citiesAuto'):tr('citiesFirst');
+    const dn=document.getElementById('drawerClose'); if(dn)dn.setAttribute('aria-label',tr('close'));
+    const radiusMinus=document.getElementById('radiusMinus'),radiusPlus=document.getElementById('radiusPlus'),opacityMinus=document.getElementById('opacityMinus'),opacityPlus=document.getElementById('opacityPlus');
+    if(radiusMinus)radiusMinus.setAttribute('aria-label',lang==='ru'?'Уменьшить радиус':'Decrease radius'); if(radiusPlus)radiusPlus.setAttribute('aria-label',lang==='ru'?'Увеличить радиус':'Increase radius');
+    if(opacityMinus)opacityMinus.setAttribute('aria-label',lang==='ru'?'Уменьшить густоту тумана':'Decrease fog density'); if(opacityPlus)opacityPlus.setAttribute('aria-label',lang==='ru'?'Увеличить густоту тумана':'Increase fog density');
+    translateMapButtons(); updateMapStatus();
+  }
+  function translateMapButtons(){
+    const keys={yandex_map:'mapYandex',yandex_sat:'mapYandexSat',google_map:'mapGoogle',google_sat:'mapGoogleSat',dgis:'map2gis',osm:'mapOsm'};
+    document.querySelectorAll('#mapsGrid .map-btn').forEach(b=>{if(keys[b.dataset.map])b.textContent=tr(keys[b.dataset.map]);});
+  }
+  function updateStatusLocalized(){
+    const radiusEl=document.getElementById('statusRadius'),fogEl=document.getElementById('statusFog');
+    if(radiusEl)radiusEl.textContent=`${tr('radiusStatus')} ${radiusMeters} ${lang==='ru'?'м':'m'}`;
+    if(fogEl)fogEl.textContent=`${tr('fogStatus')} ${Math.round(fogOpacity*100)}%`;
+    const hint=document.getElementById('statsProfileHint'); if(hint){const key={car:'car',walk:'walk',all:'all'}[activeProfile]||'all';hint.textContent=tr(key);}
+  }
+  const oldUpdateStatus=window.updateMapStatus; if(oldUpdateStatus)window.updateMapStatus=updateStatusLocalized;
+  window.updateMapStatus=updateStatusLocalized;
+  const oldRender=window.renderTrackList;
+  window.renderTrackList=function(){
+    const list=document.getElementById('trackList'); if(!list)return; list.innerHTML='';
+    if(!tracks.length){list.innerHTML=`<div id="emptyHint">${tr('empty')}</div>`;return;}
+    tracks.forEach(t=>{const item=document.createElement('div');item.className='track-item';const disabled=activeProfile==='all'?' disabled':'';item.innerHTML=`<div class="toggle ${t.visible?'on':''}${disabled}" data-id="${t.id}" data-action="vis"></div><div class="name" title="${t.name}">${t.name}</div><div class="pts">${t.points.length} ${tr('points')}</div><button class="del" data-id="${t.id}" data-action="del"${disabled}>×</button>`;list.appendChild(item);});
+  };
+  const oldSwitch=window.switchProfile;
+  window.switchProfile=function(profile){if(oldSwitch)oldSwitch(profile);translateUI();};
+  const oldAuth=window.updateAuthUI;
+  window.updateAuthUI=function(){if(oldAuth)oldAuth();translateUI();};
+  const oldCity=window.renderCityList;
+  window.renderCityList=function(results){const el=document.getElementById('cityList');if(!el)return;if(!results.length){el.textContent=tr('citiesNone');return;}el.innerHTML=results.map(r=>`<div class="city-row"><span>${r.city}</span><span>${formatArea(r.area)}</span></div>`).join('');};
+  const oldCloudLoad=window.updateCityStatsAutomatically;
+  window.updateCityStatsAutomatically=async function(){if(oldCloudLoad)return oldCloudLoad.apply(this,arguments);};
+  function setLanguage(v){lang=langs[v]?v:'ru';localStorage.setItem('myxwalk_language',lang);if(languageSelect)languageSelect.value=lang;translateUI();}
+  const languageSelect=document.getElementById('languageSelect');
+  if(languageSelect){languageSelect.value=lang;languageSelect.addEventListener('change',()=>setLanguage(languageSelect.value));}
+  // Desktop: every open sidebar popup closes when clicking outside that popup.
+  document.addEventListener('click',function(e){
+    if(window.matchMedia('(min-width:861px)').matches){
+      for(const [key,[toggle,panel]] of Object.entries(panelPairs||{})){
+        if(panel&&panel.classList.contains('open')&&!panel.contains(e.target)&&!toggle.contains(e.target)){closeSidebarPanels();break;}
+      }
+    }
+  },true);
+  // Keep theme/language inside Settings on both desktop and mobile.
+  const appearance=document.getElementById('appearanceSettingsSection'),language=document.getElementById('languageSettingsSection'),settingsPanel=document.getElementById('settingsPanel');
+  if(appearance&&language&&settingsPanel&&!settingsPanel.contains(appearance)){settingsPanel.append(appearance,language);}
+  translateUI();
+})();
+</script>
 </body>
 
 <style id="user-ui-refinement-20260930-2245">
@@ -1663,6 +1923,164 @@ initAuth();
   #mapStatus{left:16px!important;}
 }
 </style>
+
+<style id="user-ui-refinement-20261001-02">
+/* Final green active state + sidebar spacing + iPhone 15/mobile optimization */
+:root{--myx-green:#22a06b;}
+
+/* Use the logo/app green for every selected control. */
+.settings-toggle.nav-toggle.open,
+.profile-btn.active,
+.map-btn.active,
+#mapThemeControl .theme-btn.active{
+  background:var(--myx-green)!important;
+  border-color:var(--myx-green)!important;
+  color:#fff!important;
+  box-shadow:0 4px 12px rgba(34,160,107,.22)!important;
+}
+.settings-toggle.nav-toggle.open .nav-icon,
+.settings-toggle.nav-toggle.open .chevron,
+.settings-toggle.nav-toggle.open span{color:#fff!important;stroke:#fff!important;}
+
+/* Desktop: +80% spacing above На авто and between Общее / Авторизация. */
+@media (min-width:861px){
+  .profile-section{
+    padding-top:22px!important;
+    padding-bottom:22px!important;
+    margin-bottom:0!important;
+    border-bottom:1px solid var(--line)!important;
+  }
+  .profile-tabs{margin-top:7px!important;margin-bottom:7px!important;}
+  #authToggle{
+    margin-top:0!important;
+    padding-top:22px!important;
+    border-top:0!important;
+  }
+}
+
+/* Mobile: keep the compact layout while preserving the requested breathing room. */
+@media (max-width:860px){
+  .profile-section{
+    padding-top:18px!important;
+    padding-bottom:18px!important;
+    margin-bottom:0!important;
+    border-bottom:1px solid var(--line)!important;
+  }
+  .profile-tabs{margin-top:6px!important;margin-bottom:6px!important;}
+  #authToggle{
+    margin-top:0!important;
+    padding-top:18px!important;
+    border-top:0!important;
+  }
+
+  /* iPhone 15 / narrow screens: prevent horizontal overflow and keep controls touch-friendly. */
+  html,body{max-width:100%;overflow-x:hidden;}
+  #sidebar{max-width:100vw!important;}
+  .settings-toggle.nav-toggle,.profile-btn{
+    min-height:42px!important;
+  }
+  .settings-toggle.nav-toggle{
+    width:min(112px,calc(100vw - 28px))!important;
+  }
+  .profile-btn{
+    width:min(112px,calc(100vw - 28px))!important;
+  }
+  #mapThemeControl,#mapStatus{
+    max-width:calc(100vw - 24px)!important;
+  }
+  #mapThemeControl{left:12px!important;}
+  #mapStatus{left:12px!important;}
+}
+
+/* iPhone 15 viewport is 393px CSS wide; this keeps the sidebar usable without sideways scrolling. */
+@media (max-width:430px){
+  .settings-toggle.nav-toggle{height:42px!important;padding-left:6px!important;padding-right:6px!important;}
+  .settings-toggle.nav-toggle .nav-icon{width:18px!important;height:18px!important;}
+  .settings-toggle.nav-toggle span{font-size:13px!important;}
+  .profile-btn{height:38px!important;font-size:13px!important;}
+  #mapThemeControl,#mapStatus{width:calc(100vw - 24px)!important;}
+  #mapThemeControl .theme-btn{font-size:13px!important;padding-left:4px!important;padding-right:4px!important;}
+}
+</style>
+
+<style id="user-sidebar-final-alignment">
+/* Final sidebar alignment: profiles 1-3 centered, navigation 4-8 left-aligned with minimal icons. */
+@media (min-width:861px){
+  /* Keep the sidebar compact while making every button span the same usable width. */
+  #sidebar{width:132px!important;min-width:132px!important;}
+  .profile-section{padding-left:10px!important;padding-right:10px!important;}
+  .profile-tabs{width:100%!important;margin-left:0!important;margin-right:0!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:6px!important;}
+  .profile-btn{width:100%!important;height:38px!important;margin:0!important;padding:7px 8px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;box-sizing:border-box!important;}
+
+  /* Navigation buttons 4-8: same width, icon + text on the left, chevron on the right. */
+  .settings-toggle.nav-toggle{
+    width:calc(100% - 20px)!important;
+    height:43px!important;
+    margin:4px 10px!important;
+    padding:7px 9px!important;
+    display:grid!important;
+    grid-template-columns:20px minmax(0,1fr) 14px!important;
+    align-items:center!important;
+    justify-content:initial!important;
+    gap:8px!important;
+    box-sizing:border-box!important;
+    text-align:left!important;
+  }
+  .settings-toggle.nav-toggle .nav-icon{
+    width:19px!important;height:19px!important;display:block!important;
+    justify-self:start!important;
+    color:var(--ink-soft)!important;
+  }
+  .settings-toggle.nav-toggle span{
+    min-width:0!important;
+    display:block!important;
+    text-align:left!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    font-size:13.5px!important;
+    font-weight:400!important;
+    line-height:1!important;
+  }
+  .settings-toggle.nav-toggle .chevron{
+    width:14px!important;height:14px!important;
+    display:block!important;
+    justify-self:end!important;
+  }
+
+  /* Authorization text is vertically centered with its icon. */
+  #authToggle{align-items:center!important;}
+  #authNavLabel{align-self:center!important;line-height:1!important;}
+}
+</style>
+
+<style>
+/* myxwalk mobile/PWA pass */
+#shareHint{font-size:11px;opacity:.72;line-height:1.35}
+@media (max-width:860px){
+  html,body{width:100%;max-width:100%;overflow:hidden;overscroll-behavior:none}
+  #map{width:100vw!important;max-width:100vw!important}
+  #sidebar{max-width:86vw!important}
+  .settings-panel{max-width:min(86vw,340px)!important}
+  #authPanel,#mapPanel,#settingsPanel,#tracksPanel,#statsPanel{max-width:calc(100vw - 16px)!important}
+  #mapThemeControl,#mapStatus{max-width:calc(100vw - 24px)!important}
+  #dropzone{min-height:58px;box-sizing:border-box}
+  .upload-gpx-btn,.auth-btn,.profile-btn,.settings-toggle.nav-toggle,.mini-btn{min-height:42px!important}
+  .track-item{grid-template-columns:28px minmax(0,1fr) auto 30px!important;gap:8px!important}
+  .track-item .name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #statsPanel .section{max-width:100%;overflow:hidden}
+}
+@media (max-width:430px){
+  .settings-toggle.nav-toggle,.profile-btn{width:min(112px,calc(100vw - 28px))!important}
+  .settings-toggle.nav-toggle{height:42px!important;padding-left:6px!important;padding-right:6px!important}
+  .settings-toggle.nav-toggle .nav-icon{width:18px!important;height:18px!important}
+  .settings-toggle.nav-toggle span{font-size:13px!important}
+  .profile-btn{height:38px!important;font-size:13px!important}
+  #mapThemeControl,#mapStatus{width:calc(100vw - 24px)!important}
+  #mapThemeControl .theme-btn{font-size:13px!important;padding-left:4px!important;padding-right:4px!important}
+  #shareHint{font-size:10.5px}
+}
+</style>
 </html>
 
 <style id="user-sidebar-final-refinement">
@@ -1723,4 +2141,409 @@ initAuth();
 
 /* Remove the last visible separator around the profile block. */
 .profile-tabs{border-bottom:0!important;}
+</style>
+
+<style id="user-ui-refinement-20261001-01">
+/* Active sidebar navigation: greener app accent with clear white text. */
+@media (min-width:861px){
+  .settings-toggle.nav-toggle.open{
+    background:#24a85a!important;
+    border-color:#24a85a!important;
+    color:#fff!important;
+    box-shadow:0 4px 12px rgba(34,168,90,.20)!important;
+  }
+  .settings-toggle.nav-toggle.open .nav-icon,
+  .settings-toggle.nav-toggle.open .chevron,
+  .settings-toggle.nav-toggle.open span{color:#fff!important;stroke:#fff!important;}
+
+  /* More breathing room around the profile buttons and a matching divider below Общее. */
+  .profile-section{
+    padding-top:12px!important;
+    padding-bottom:12px!important;
+    border-bottom:1px solid var(--line)!important;
+  }
+  .profile-tabs{margin-top:4px!important;}
+}
+
+/* Keep active profile/map buttons in the same greener accent. */
+.profile-btn.active,
+.map-btn.active,
+#mapThemeControl .theme-btn.active{
+  background:#24a85a!important;
+  border-color:#24a85a!important;
+  color:#fff!important;
+  box-shadow:0 4px 12px rgba(34,168,90,.18)!important;
+}
+</style>
+
+<style id="user-ui-refinement-20261001-02">
+/* Unified active green: exactly the same green used by the "Загрузить GPX" button / app accent. */
+.profile-btn.active,
+.settings-toggle.nav-toggle.open,
+#mapThemeControl .theme-btn.active,
+.map-btn.active{
+  background:#22C55E!important;
+  border-color:#22C55E!important;
+  color:#fff!important;
+  box-shadow:0 4px 12px rgba(34,197,94,.20)!important;
+}
+.settings-toggle.nav-toggle.open .nav-icon,
+.settings-toggle.nav-toggle.open .chevron,
+.settings-toggle.nav-toggle.open span{
+  color:#fff!important;
+  stroke:#fff!important;
+}
+
+/* The divider must sit visibly BETWEEN "Общее" and "Авторизация", matching the brand divider. */
+.profile-section{
+  position:relative!important;
+  border-bottom:1px solid var(--line)!important;
+}
+#authToggle{
+  border-top:0!important;
+  border-bottom:0!important;
+}
+/* Explicit divider layer: immune to later button/section border overrides. */
+.profile-section::after{
+  content:""!important;
+  display:block!important;
+  width:100%!important;
+  height:1px!important;
+  background:var(--line)!important;
+  margin-top:18px!important;
+}
+
+/* +80% breathing room requested around the profile block. */
+@media (min-width:861px){
+  .profile-section{
+    padding-top:22px!important;
+    padding-bottom:0!important;
+  }
+  .profile-tabs{
+    margin-top:7px!important;
+    margin-bottom:0!important;
+  }
+  #authToggle{
+    margin-top:0!important;
+    padding-top:22px!important;
+  }
+}
+
+/* Mobile / iPhone 15: preserve the divider and spacing without horizontal overflow. */
+@media (max-width:860px){
+  .profile-section{
+    padding-top:18px!important;
+    padding-bottom:0!important;
+  }
+  .profile-tabs{
+    margin-top:6px!important;
+    margin-bottom:0!important;
+  }
+  .profile-section::after{
+    margin-top:18px!important;
+  }
+  #authToggle{
+    margin-top:0!important;
+    padding-top:18px!important;
+  }
+}
+</style>
+
+<style id="user-ui-refinement-20261001-03">
+/* Desktop sidebar: 30% wider than 132px */
+@media (min-width:861px){
+  #sidebar{width:172px!important;min-width:172px!important;}
+
+  /* Navigation: mobile-style icons + left aligned icon/text group */
+  .settings-toggle.nav-toggle{
+    width:156px!important;
+    height:43px!important;
+    min-height:43px!important;
+    margin:2px 8px!important;
+    padding:4px 8px!important;
+    display:flex!important;
+    flex-direction:row!important;
+    justify-content:flex-start!important;
+    align-items:center!important;
+    gap:8px!important;
+    box-sizing:border-box!important;
+  }
+  .settings-toggle.nav-toggle .nav-icon{
+    width:19px!important;height:19px!important;
+    flex:0 0 19px!important;
+  }
+  .settings-toggle.nav-toggle span{
+    display:flex!important;
+    align-items:center!important;
+    height:100%!important;
+    line-height:1!important;
+    text-align:left!important;
+    white-space:nowrap!important;
+  }
+  .settings-toggle.nav-toggle .chevron{
+    width:12px!important;height:12px!important;
+    margin-left:auto!important;
+    flex:0 0 12px!important;
+  }
+
+  /* Fix vertical centering of Authorization text */
+  #authToggle{
+    align-items:center!important;
+    padding-top:4px!important;
+    padding-bottom:4px!important;
+  }
+  #authToggle #authNavLabel{
+    display:flex!important;
+    align-items:center!important;
+    height:100%!important;
+    line-height:1!important;
+  }
+}
+
+/* On mobile keep the existing compact layout; icons remain the same as the mobile version. */
+@media (max-width:860px){
+  .settings-toggle.nav-toggle{
+    justify-content:flex-start!important;
+    align-items:center!important;
+  }
+  .settings-toggle.nav-toggle span{
+    text-align:left!important;
+  }
+  .settings-toggle.nav-toggle .chevron{
+    margin-left:auto!important;
+  }
+  #authToggle #authNavLabel{
+    display:flex!important;
+    align-items:center!important;
+    line-height:1!important;
+  }
+}
+</style>
+
+
+<style id="user-ui-refinement-20261001-04">
+/* Final desktop navigation geometry: all 8 main buttons have one clean width and are centered. */
+@media (min-width:861px){
+  #sidebar{width:172px!important;min-width:172px!important;}
+
+  /* Profile buttons 1–3 */
+  #profileTabs.profile-tabs,
+  .profile-tabs{
+    width:140px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    box-sizing:border-box!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:5px!important;
+  }
+  .profile-btn{
+    width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+    text-align:center!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+
+  /* Navigation buttons 4–8: same width, centered in the sidebar. */
+  .settings-toggle.nav-toggle{
+    width:140px!important;
+    min-width:140px!important;
+    box-sizing:border-box!important;
+    margin:4px auto!important;
+    padding:5px 10px!important;
+    display:flex!important;
+    flex-direction:row!important;
+    justify-content:flex-start!important;
+    align-items:center!important;
+    gap:9px!important;
+  }
+  .settings-toggle.nav-toggle .nav-icon{
+    width:20px!important;
+    height:20px!important;
+    min-width:20px!important;
+    flex:0 0 20px!important;
+    display:block!important;
+    transform:none!important;
+  }
+  .settings-toggle.nav-toggle .nav-icon-img{
+    object-fit:contain!important;
+    border-radius:0!important;
+  }
+  .settings-toggle.nav-toggle span{
+    flex:1 1 auto!important;
+    min-width:0!important;
+    height:auto!important;
+    text-align:left!important;
+    white-space:nowrap!important;
+    line-height:1.2!important;
+    display:block!important;
+  }
+
+  /* No arrows at the right of the five navigation buttons. */
+  .settings-toggle.nav-toggle .chevron{
+    display:none!important;
+  }
+
+  /* Never rotate the navigation icons when a section is opened. */
+  .settings-toggle.nav-toggle.open .nav-icon,
+  .settings-toggle.nav-toggle.open .nav-icon-img{
+    transform:none!important;
+  }
+
+  /* Floating panels start just to the right of the 172px sidebar. */
+  .settings-panel{
+    left:190px!important;
+  }
+}
+
+/* Keep the mobile version unchanged, including its existing arrows. */
+@media (max-width:860px){
+  .settings-toggle.nav-toggle .nav-icon,
+  .settings-toggle.nav-toggle .nav-icon-img{
+    transform:none!important;
+  }
+}
+</style>
+
+<style id="icon-style-final-20261001">
+/* Final sidebar icons: transparent background, exact requested icon sources, text-colored and never inverted. */
+.settings-toggle.nav-toggle .nav-icon.nav-icon-mask{
+  width:20px!important;height:20px!important;min-width:20px!important;flex:0 0 20px!important;
+  display:block!important;background-color:var(--ink-soft)!important;
+  -webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important;
+  -webkit-mask-position:center!important;mask-position:center!important;
+  -webkit-mask-size:contain!important;mask-size:contain!important;
+  transform:none!important;
+  transition:none!important;
+  border:0!important;box-shadow:none!important;
+}
+.icon-auth{
+  -webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/12500/12500101.png");
+  mask-image:url("https://cdn-icons-png.flaticon.com/512/12500/12500101.png");
+}
+.icon-map{
+  -webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/1535/1535780.png");
+  mask-image:url("https://cdn-icons-png.flaticon.com/512/1535/1535780.png");
+}
+.icon-settings{
+  -webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/2099/2099058.png");
+  mask-image:url("https://cdn-icons-png.flaticon.com/512/2099/2099058.png");
+}
+.icon-tracks{
+  -webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/1061/106153.png");
+  mask-image:url("https://cdn-icons-png.flaticon.com/512/1061/106153.png");
+}
+.icon-stats{
+  -webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/1819/1819876.png");
+  mask-image:url("https://cdn-icons-png.flaticon.com/512/1819/1819876.png");
+}
+/* All eight button labels use one text color in the normal state. */
+.profile-btn,.settings-toggle.nav-toggle{color:var(--ink-soft)!important;}
+.settings-toggle.nav-toggle span{color:var(--ink-soft)!important;}
+/* Selected button: text becomes white, icon intentionally stays the same color. */
+.settings-toggle.nav-toggle.open{color:#fff!important;}
+.settings-toggle.nav-toggle.open span{color:#fff!important;}
+.settings-toggle.nav-toggle.open .nav-icon.nav-icon-mask{background-color:var(--ink-soft)!important;color:var(--ink-soft)!important;transform:none!important;}
+.profile-btn.active{color:#fff!important;}
+/* Never rotate or recolor the icon on open/active state. */
+.settings-toggle.nav-toggle.open .nav-icon,
+.settings-toggle.nav-toggle.open .nav-icon-img{transform:none!important;}
+</style>
+
+
+<style id="final-icons-spacing-footer-20261001">
+/* Final small refinements */
+@media (min-width:861px){
+  /* 50% more space between icon and label: 8px -> 12px */
+  .settings-toggle.nav-toggle{
+    column-gap:12px!important;
+  }
+  /* Reliable inline route icon fallback: transparent background, inherits text color through mask. */
+  .settings-toggle.nav-toggle .icon-tracks{
+    -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M6 3.5a3 3 0 0 1 3 3c0 1.07-.56 2.01-1.4 2.54l4.1 5.1c.4-.09.83-.14 1.3-.14 1.06 0 2.03.33 2.82.88l2.2-2.2A2.99 2.99 0 0 1 20 7.5a3 3 0 1 1-1.42 5.64l-2.2 2.2c.39.58.62 1.28.62 2.03a3 3 0 1 1-5.64-1.42l-4.1-5.1A3 3 0 1 1 6 3.5Zm0 1.7A1.3 1.3 0 1 0 6 7.8a1.3 1.3 0 0 0 0-2.6Zm7 10.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Zm7-9.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Z'/%3E%3C/svg%3E")!important;
+    mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M6 3.5a3 3 0 0 1 3 3c0 1.07-.56 2.01-1.4 2.54l4.1 5.1c.4-.09.83-.14 1.3-.14 1.06 0 2.03.33 2.82.88l2.2-2.2A2.99 2.99 0 0 1 20 7.5a3 3 0 1 1-1.42 5.64l-2.2 2.2c.39.58.62 1.28.62 2.03a3 3 0 1 1-5.64-1.42l-4.1-5.1A3 3 0 1 1 6 3.5Zm0 1.7A1.3 1.3 0 1 0 6 7.8a1.3 1.3 0 0 0 0-2.6Zm7 10.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Zm7-9.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Z'/%3E%3C/svg%3E")!important;
+  }
+}
+/* Copyright text +1px from the current 11px desktop size. */
+#footNote{font-size:12px!important;}
+@media (max-width:860px){
+  #footNote{font-size:11px!important;}
+}
+</style>
+
+<style id="mobile-menu-theme-language-20261001">
+/* Theme is now controlled only from Settings. */
+#mapThemeControl{display:none!important;}
+.theme-settings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;}
+.theme-choice{min-height:38px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);border-radius:6px;padding:7px 8px;font:400 13.5px/1.2 inherit;cursor:pointer;}
+.theme-choice:hover{border-color:var(--green);}
+.theme-choice.active{background:#22C55E!important;border-color:#22C55E!important;color:#fff!important;box-shadow:0 4px 12px rgba(34,197,94,.20);}
+#languageSelect{width:100%;margin-top:8px;min-height:38px;}
+
+@media (max-width:860px){
+  /* Bottom mobile controls: menu left, status right, equal height and full-width distribution. */
+  #menuFab{
+    display:flex!important;
+    left:12px!important;
+    right:auto!important;
+    top:auto!important;
+    bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
+    width:calc(50% - 18px)!important;
+    height:48px!important;
+    min-height:48px!important;
+    border-radius:8px!important;
+    background:var(--green)!important;
+    box-shadow:0 5px 18px rgba(20,60,30,.28)!important;
+  }
+  #menuFab svg{width:21px!important;height:21px!important;}
+  #mapStatus{
+    left:auto!important;
+    right:12px!important;
+    bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
+    width:calc(50% - 18px)!important;
+    max-width:none!important;
+    height:48px!important;
+    min-height:48px!important;
+    border-radius:8px!important;
+    padding:0 8px!important;
+    box-sizing:border-box!important;
+  }
+  #mapStatusText{gap:6px!important;}
+  #mapStatus .status-divider{height:22px!important;}
+
+  /* Full-screen mobile menu. */
+  #sidebar{
+    position:fixed!important;
+    inset:0!important;
+    width:100vw!important;
+    max-width:none!important;
+    min-width:0!important;
+    height:100dvh!important;
+    transform:translateY(100%)!important;
+    transition:transform .28s ease!important;
+    z-index:2000!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))!important;
+  }
+  #sidebar.open{transform:translateY(0)!important;}
+  #overlayBackdrop.show{display:none!important;}
+  #drawerClose{display:inline-flex!important;}
+
+  /* Preserve the desktop menu structure and its exact PC icons. */
+  #sidebar .nav-icon{flex:0 0 auto!important;}
+  #sidebar .settings-toggle.nav-toggle{width:calc(100% - 24px)!important;margin-left:12px!important;margin-right:12px!important;}
+  #sidebar .profile-section{padding-left:12px!important;padding-right:12px!important;}
+  #sidebar .profile-btn{width:100%!important;}
+  #sidebar .settings-panel{width:calc(100% - 24px)!important;margin-left:12px!important;margin-right:12px!important;}
+  #sidebar .settings-panel .section{padding-left:16px!important;padding-right:16px!important;}
+  #sidebar .settings-toggle.nav-toggle{height:48px!important;min-height:48px!important;padding-left:16px!important;padding-right:16px!important;}
+  #sidebar .settings-toggle.nav-toggle span{font-size:14px!important;}
+  #sidebar .settings-toggle.nav-toggle .nav-icon{width:19px!important;height:19px!important;}
+
+  /* Keep language/theme comfortably touchable. */
+  .theme-choice,#languageSelect{min-height:44px!important;font-size:14px!important;}
+}
 </style>
