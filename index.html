@@ -743,11 +743,6 @@ body{font-size:15px;}
   </div>
 
   <div class="settings-panel" id="settingsPanel">
-    <div class="section" style="background:var(--surface);">
-      <div style="font-size:12px;font-weight:800;color:var(--ink);">Туман</div>
-      <div style="font-size:10.5px;color:var(--ink-soft);margin-top:3px;line-height:1.35;">Здесь задаются параметры рассеивания и внешний вид тумана.</div>
-    </div>
-
     <div class="section">
       <h2>Радиус рассеивания тумана</h2>
       <div class="slider-row">
@@ -773,7 +768,6 @@ body{font-size:15px;}
     </div>
 
     <div class="section" style="border-bottom:none;">
-      <h2>Стиль тумана</h2>
       <div class="row"><span>Цвет</span></div>
       <select id="fogColorSelect" class="select-input">
         <option value="#121814" selected>Чёрный</option>
@@ -791,6 +785,7 @@ body{font-size:15px;}
         <option value="organic">Рваный туман</option>
       </select>
     </div>
+  <div class="fog-edge-divider settings-theme-divider" aria-hidden="true"></div>
   <div class="settings-section-extra section" id="appearanceSettingsSection">
     <h2>Тема оформления</h2>
     <div class="theme-settings-grid" id="themeSettingsGrid">
@@ -1087,7 +1082,20 @@ let routesShown = false;
 function makeTrackLayer(points){
   return L.polyline(points.map(p=>[p.lat,p.lon]), { color:'#22C55E', weight:3, opacity:0.85 });
 }
-function serializeTrack(t){ return { id:t.id, name:t.name, points:t.points, visible:!!t.visible }; }
+function normalizeTrackFilename(value){
+  // Do not rename imported files. File.name is the exact filename supplied by the device/browser.
+  const raw=String(value ?? '');
+  return raw || 'track.gpx';
+}
+function trackSignature(points){
+  if(!Array.isArray(points)||!points.length) return '';
+  const a=points[0], b=points[points.length-1], n=points.length;
+  return `${n}|${Number(a.lat).toFixed(6)},${Number(a.lon).toFixed(6)}|${Number(b.lat).toFixed(6)},${Number(b.lon).toFixed(6)}`;
+}
+function serializeTrack(t){
+  const filename=normalizeTrackFilename(t.filename||t.name);
+  return { id:t.id, name:filename, filename, originalFilename:filename, points:t.points, visible:!!t.visible };
+}
 function saveLocalProfiles(){
   try{ localStorage.setItem(PROFILE_KEY, JSON.stringify({car:profileTracks.car.map(serializeTrack), walk:profileTracks.walk.map(serializeTrack)})); }catch(err){ console.warn('не удалось сохранить профили',err); }
 }
@@ -1103,7 +1111,7 @@ function readLocalProfiles(){
 function hydrateProfiles(saved){
   ['car','walk'].forEach(profile=>{
     profileTracks[profile]=(saved[profile]||[]).filter(t=>t.points&&t.points.length).map(st=>({
-      id:Number(st.id)||nextId++, name:st.name||'Без названия', points:st.points, visible:!!st.visible, layer:makeTrackLayer(st.points)
+      id:Number(st.id)||nextId++, name:normalizeTrackFilename(st.originalFilename||st.filename||st.name||'Без названия'), filename:normalizeTrackFilename(st.originalFilename||st.filename||st.name||'Без названия'), originalFilename:normalizeTrackFilename(st.originalFilename||st.filename||st.name||'Без названия'), points:st.points, visible:!!st.visible, layer:makeTrackLayer(st.points)
     }));
     profileTracks[profile].forEach(t=>{nextId=Math.max(nextId,t.id+1);});
   });
@@ -1167,9 +1175,13 @@ function addTrackFromFile(file){
   if(activeProfile==='all'){ alert(window.myxT('allAlert')); return; }
   const reader=new FileReader();
   reader.onload=e=>{
-    const parsed=parseGPX(e.target.result,file.name.replace(/\.gpx$/i,''));
+    // File.name is the browser's original filename from the user's device.
+    // Do not normalize, rename, or rebuild it: the displayed name must stay 1:1.
+    const originalFilename=String(file && file.name ? file.name : 'track.gpx').trim() || 'track.gpx';
+    const fallbackName=originalFilename.replace(/\.gpx$/i,'');
+    const parsed=parseGPX(e.target.result,fallbackName);
     if(!parsed.points.length) return;
-    const track={id:nextId++,name:parsed.name,filename:file.name,points:parsed.points,visible:true,layer:makeTrackLayer(parsed.points)};
+    const track={id:nextId++,name:originalFilename,filename:originalFilename,originalFilename,points:parsed.points,visible:true,layer:makeTrackLayer(parsed.points)};
     profileTracks[activeProfile].push(track);
     refreshActiveTracks(); saveTracks();
     if(tracks.length===1) map.fitBounds(track.layer.getBounds(),{padding:[40,40]});
@@ -1526,28 +1538,38 @@ const authBtn=document.getElementById('authBtn');
 const authUser=document.getElementById('authUser');
 const authNavLabel=document.getElementById('authNavLabel');
 const authStatus=document.getElementById('authStatus');
+function getAuthDisplayName(){
+  const meta=currentUser?.user_metadata||{};
+  return String(meta.full_name||meta.name||meta.preferred_username||meta.user_name||meta.display_name||currentUser?.email||'Google аккаунт').trim();
+}
+function syncAuthNavLabel(){
+  if(!authNavLabel) return;
+  authNavLabel.textContent=currentUser?getAuthDisplayName():(window.myxT?window.myxT('auth'):'Авторизация');
+}
 function updateAuthUI(){
+  const displayName=getAuthDisplayName();
   if(currentUser){
-    const meta=currentUser.user_metadata||{};
-    const displayName=meta.full_name||meta.name||currentUser.email||'Google аккаунт';
     authUser.textContent=displayName;
-    authNavLabel.textContent=displayName;
-    authBtn.textContent='Выйти';
-    authStatus.textContent='Треки синхронизируются с аккаунтом Supabase.';
+    authBtn.textContent=window.myxT?window.myxT('logout'):'Выйти';
+    authStatus.textContent=window.myxT?window.myxT('cloudSync'):'Треки синхронизируются с аккаунтом Supabase.';
   } else {
-    authUser.textContent='Не выполнен вход';
-    authNavLabel.textContent='Авторизация';
-    authBtn.textContent='Войти через Google';
-    authStatus.textContent=cloudReady?'Войдите через Google, чтобы хранить треки в облаке.':'Supabase ещё не настроен: приложение пока работает локально.';
+    authUser.textContent=window.myxT?window.myxT('notSigned'):'Не выполнен вход';
+    authBtn.textContent=window.myxT?window.myxT('login'):'Войти через Google';
+    authStatus.textContent=window.myxT?(cloudReady?window.myxT('cloudLogin'):window.myxT('localOnly')):(cloudReady?'Войдите через Google, чтобы хранить треки в облаке.':'Supabase ещё не настроен: приложение пока работает локально.');
   }
+  syncAuthNavLabel();
 }
 function cloudPayload(track,profile){
+  const filename=normalizeTrackFilename(track.originalFilename||track.filename||track.name);
+  track.name=filename;
+  track.filename=filename;
+  track.originalFilename=filename;
   return {
     user_id:currentUser.id,
-    name:track.name,
-    filename:track.filename||track.name+'.gpx',
+    name:filename,
+    filename:filename,
     // Храним точки + профиль + видимость в одном JSON-поле, т.к. текущая таблица tracks имеет фиксированную схему.
-    gpx_data:JSON.stringify({version:1,profile,visible:!!track.visible,points:track.points})
+    gpx_data:JSON.stringify({version:2,profile,visible:!!track.visible,filename,originalFilename:filename,points:track.points})
   };
 }
 async function loadCloudTracks(){
@@ -1559,13 +1581,24 @@ async function loadCloudTracks(){
     return;
   }
   const cloud={car:[],walk:[]};
+  const localBySignature=new Map();
+  for(const profile of ['car','walk']){
+    for(const localTrack of profileTracks[profile]){
+      const sig=trackSignature(localTrack.points);
+      const localName=normalizeTrackFilename(localTrack.originalFilename||localTrack.filename||localTrack.name);
+      if(sig && localName && localName!=='new file' && localName!=='new file.gpx') localBySignature.set(`${profile}|${sig}`,localName);
+    }
+  }
   (data||[]).forEach(row=>{
     try{
       const payload=JSON.parse(row.gpx_data||'{}');
       const profile=payload.profile;
       const points=Array.isArray(payload.points)?payload.points:[];
       if(!cloud[profile]||!points.length) return;
-      cloud[profile].push({id:nextId++,name:row.name||row.filename||'Трек',filename:row.filename||((row.name||'track')+'.gpx'),points,visible:payload.visible!==false,layer:makeTrackLayer(points),cloudId:row.id});
+      const sig=trackSignature(points);
+      const localFilename=localBySignature.get(`${profile}|${sig}`);
+      const filename=normalizeTrackFilename(localFilename||payload.originalFilename||payload.filename||row.filename||row.name||'Трек');
+      cloud[profile].push({id:nextId++,name:filename,filename,originalFilename:filename,points,visible:payload.visible!==false,layer:makeTrackLayer(points),cloudId:row.id});
     }catch(err){ console.warn('Пропущен повреждённый облачный трек',row,err); }
   });
   const hadCloudTracks = cloud.car.length + cloud.walk.length > 0;
@@ -1597,9 +1630,39 @@ async function deleteTrackFromCloud(track,profile){
   if(error) console.warn('Ошибка удаления трека из облака',error);
 }
 async function signInGoogle(){
-  if(!supabaseClient){ alert(window.myxT('setupError')); return; }
-  const {error}=await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+window.location.pathname}});
-  if(error) alert(window.myxT('authError')+error.message);
+  if(!supabaseClient){
+    const msg=window.myxT?window.myxT('setupError'):'Supabase не настроен.';
+    if(authStatus) authStatus.textContent=msg;
+    alert(msg);
+    return;
+  }
+  // Google OAuth needs an HTTP(S) callback page. A standalone file:// page has no
+  // valid web origin for the OAuth return. Do not send a file:// redirect to Supabase.
+  if(window.location.protocol==='file:'){
+    const msg='Авторизация Google не может завершиться при запуске HTML-файла напрямую (file://). Откройте myxwalk через http://localhost или разместите файл на сайте.';
+    if(authStatus) authStatus.textContent=msg;
+    alert(msg);
+    return;
+  }
+  try{
+    const redirectTo=window.location.href.split('#')[0];
+    const {data,error}=await supabaseClient.auth.signInWithOAuth({
+      provider:'google',
+      options:{redirectTo}
+    });
+    if(error) throw error;
+    if(data?.url){
+      // Explicit redirect is more reliable than relying on an implicit SDK redirect.
+      window.location.assign(data.url);
+    }else{
+      throw new Error('Supabase не вернул URL авторизации Google. Проверьте настройки Google Provider и Redirect URLs в Supabase.');
+    }
+  }catch(err){
+    console.error('Google OAuth error:',err);
+    const msg=(window.myxT?window.myxT('authError'):'Ошибка авторизации: ')+(err?.message||err);
+    if(authStatus) authStatus.textContent=msg;
+    alert(msg);
+  }
 }
 async function signOutGoogle(){
   if(supabaseClient){
@@ -1621,10 +1684,12 @@ async function initAuth(){
   currentUser=data?.session?.user||null;
   updateAuthUI();
   if(currentUser) await loadCloudTracks();
+  syncAuthNavLabel();
   supabaseClient.auth.onAuthStateChange(async (_event,session)=>{
     currentUser=session?.user||null;
     updateAuthUI();
     if(currentUser) await loadCloudTracks();
+    syncAuthNavLabel();
   });
 }
 
@@ -1740,7 +1805,7 @@ consumeSharedGpx();
       car:'На авто',walk:'Пешком',all:'Общее',auth:'Авторизация',map:'Тип карты',settings:'Настройки',tracks:'Треки',stats:'Статистика',
       carNote:'Здесь хранятся маршруты поездок на автомобиле.',walkNote:'Здесь хранятся пешие прогулки',allNote:'Автоматическое объединение маршрутов из профилей «На авто» и «Пешком». Здесь треки не загружаются отдельно.',
       notSigned:'Не выполнен вход',login:'Войти через Google',logout:'Выйти',cloudSetup:'Для синхронизации треков между устройствами настройте Supabase ниже в коде приложения.',cloudSync:'Треки синхронизируются с аккаунтом Supabase.',cloudLogin:'Войдите через Google, чтобы хранить треки в облаке.',localOnly:'Supabase ещё не настроен: приложение пока работает локально.',
-      fog:'Туман',fogDesc:'Здесь задаются параметры рассеивания и внешний вид тумана.',radius:'Радиус рассеивания тумана',density:'Густота тумана',style:'Стиль тумана',color:'Цвет',edge:'Край рассеивания',
+      fog:'Туман',radius:'Радиус рассеивания тумана',density:'Густота тумана',style:'Стиль тумана',color:'Цвет',edge:'Край рассеивания',
       black:'Чёрный',blue:'Синий',gray:'Серый',white:'Белый',green:'Зелёный',hard:'Чёткий край',soft:'Мягкое рассеивание',scalloped:'Волнистый край (облачка)',organic:'Рваный туман',
       appearance:'Тема оформления',light:'Светлая',dark:'Тёмная',auto:'Авто',language:'Язык',
       showRoutes:'Показывать маршруты',drop1:'Перетащите .gpx файлы сюда',drop2:'или нажмите, чтобы выбрать',share:'На телефоне: GPX Tracker → Поделиться → myxwalk',upload:'Загрузить GPX',
@@ -1755,7 +1820,7 @@ consumeSharedGpx();
       car:'By car',walk:'On foot',all:'All',auth:'Authorization',map:'Map type',settings:'Settings',tracks:'Tracks',stats:'Statistics',
       carNote:'Car trip routes are stored here.',walkNote:'Walking routes are stored here.',allNote:'Routes from the car and walking profiles are combined automatically. Tracks cannot be uploaded separately here.',
       notSigned:'Not signed in',login:'Sign in with Google',logout:'Sign out',cloudSetup:'Configure Supabase below in the application code to sync tracks between devices.',cloudSync:'Tracks are synchronized with your Supabase account.',cloudLogin:'Sign in with Google to store tracks in the cloud.',localOnly:'Supabase is not configured yet: the app currently works locally.',
-      fog:'Fog',fogDesc:'Set fog clearing parameters and its appearance here.',radius:'Fog clearing radius',density:'Fog density',style:'Fog style',color:'Color',edge:'Clearing edge',
+      fog:'Fog',radius:'Fog clearing radius',density:'Fog density',style:'Fog style',color:'Color',edge:'Clearing edge',
       black:'Black',blue:'Blue',gray:'Gray',white:'White',green:'Green',hard:'Sharp edge',soft:'Soft fade',scalloped:'Wavy edge (clouds)',organic:'Ragged fog',
       appearance:'Appearance theme',light:'Light',dark:'Dark',auto:'Auto',language:'Language',
       showRoutes:'Show routes',drop1:'Drag .gpx files here',drop2:'or click to choose',share:'On phone: GPX Tracker → Share → myxwalk',upload:'Upload GPX',
@@ -1766,12 +1831,12 @@ consumeSharedGpx();
       allAlert:'The “All” profile is generated automatically. Choose “By car” or “On foot” to upload tracks.',noTracks:'No tracks to export',cloudError:'Error loading tracks: ',authError:'Sign-in error: ',setupError:'Enter SUPABASE_URL and SUPABASE_ANON_KEY in the application file first.',
       mapYandex:'Yandex Maps (map)',mapYandexSat:'Yandex Maps (satellite)',mapGoogle:'Google Maps (map)',mapGoogleSat:'Google Maps (satellite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'
     },
-    zh:{car:'驾车',walk:'步行',all:'全部',auth:'登录',map:'地图类型',settings:'设置',tracks:'轨迹',stats:'统计',carNote:'这里保存驾车路线。',walkNote:'这里保存步行路线。',allNote:'自动合并驾车和步行资料中的路线。此处不能单独上传轨迹。',notSigned:'未登录',login:'使用 Google 登录',logout:'退出登录',cloudSetup:'请在应用代码中配置 Supabase，以便在设备之间同步轨迹。',cloudSync:'轨迹正在与 Supabase 账户同步。',cloudLogin:'使用 Google 登录，将轨迹保存到云端。',localOnly:'尚未配置 Supabase：应用目前仅在本地运行。',fog:'雾',fogDesc:'在这里设置雾气消散参数和外观。',radius:'雾气消散半径',density:'雾密度',style:'雾样式',color:'颜色',edge:'消散边缘',black:'黑色',blue:'蓝色',gray:'灰色',white:'白色',green:'绿色',hard:'清晰边缘',soft:'柔和渐变',scalloped:'波浪边缘（云朵）',organic:'不规则雾边',appearance:'外观主题',light:'浅色',dark:'深色',auto:'自动',language:'语言',showRoutes:'显示路线',drop1:'将 .gpx 文件拖到这里',drop2:'或点击选择',share:'手机：GPX Tracker → 分享 → myxwalk',upload:'上传 GPX',recorder:'路线记录',ready:'准备记录 GPS 路线',start:'▶ 开始',finish:'■ 完成',time:'时间',empty:'暂无轨迹。上传 .gpx 文件后，路线经过的区域将开始消散雾气。',points:'点',exportAll:'导出所有轨迹',filename:'文件名',export:'导出 .gpx',profileStats:'资料统计',distance:'总行程',area:'总探索面积',cities:'按城市',citiesAuto:'城市将自动识别…',citiesNone:'未确定城市',citiesFirst:'请先加载轨迹',citiesBusy:'正在识别城市，可能需要几分钟…',citiesFail:'无法确定城市',radiusStatus:'半径',fogStatus:'雾',km:'公里',m2:'平方米',speed:'公里/小时',close:'关闭菜单',allAlert:'“全部”资料会自动生成。请选择“驾车”或“步行”来上传轨迹。',noTracks:'没有可导出的轨迹',cloudError:'加载轨迹出错：',authError:'登录出错：',setupError:'请先在应用文件中填写 SUPABASE_URL 和 SUPABASE_ANON_KEY。',mapYandex:'Yandex 地图（地图）',mapYandexSat:'Yandex 地图（卫星）',mapGoogle:'Google 地图（地图）',mapGoogleSat:'Google 地图（卫星）',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
-    hi:{car:'कार से',walk:'पैदल',all:'सभी',auth:'प्राधिकरण',map:'मानचित्र प्रकार',settings:'सेटिंग्स',tracks:'ट्रैक',stats:'आंकड़े',carNote:'यहाँ कार यात्रा के मार्ग संग्रहीत हैं।',walkNote:'यहाँ पैदल मार्ग संग्रहीत हैं।',allNote:'कार और पैदल प्रोफ़ाइल के मार्ग स्वतः संयुक्त होते हैं। यहाँ अलग से ट्रैक अपलोड नहीं किए जा सकते।',notSigned:'साइन इन नहीं है',login:'Google से साइन इन करें',logout:'साइन आउट',cloudSetup:'डिवाइसों के बीच ट्रैक सिंक करने के लिए ऐप कोड में Supabase कॉन्फ़िगर करें।',cloudSync:'ट्रैक आपके Supabase खाते के साथ सिंक हो रहे हैं।',cloudLogin:'ट्रैक क्लाउड में रखने के लिए Google से साइन इन करें।',localOnly:'Supabase अभी कॉन्फ़िगर नहीं है: ऐप फिलहाल स्थानीय रूप से चलता है।',fog:'कोहरा',fogDesc:'यहाँ कोहरा हटाने के पैरामीटर और उसका रूप सेट करें।',radius:'कोहरा हटाने की त्रिज्या',density:'कोहरे की घनता',style:'कोहरे की शैली',color:'रंग',edge:'हटने का किनारा',black:'काला',blue:'नीला',gray:'धूसर',white:'सफेद',green:'हरा',hard:'स्पष्ट किनारा',soft:'मुलायम किनारा',scalloped:'लहरदार किनारा (बादल)',organic:'अनियमित कोहरा',appearance:'दिखावट थीम',light:'हल्का',dark:'गहरा',auto:'ऑटो',language:'भाषा',showRoutes:'मार्ग दिखाएँ',drop1:'यहाँ .gpx फ़ाइलें खींचें',drop2:'या चुनने के लिए क्लिक करें',share:'फ़ोन पर: GPX Tracker → साझा करें → myxwalk',upload:'GPX अपलोड करें',recorder:'मार्ग रिकॉर्डिंग',ready:'GPS मार्ग रिकॉर्ड करने के लिए तैयार',start:'▶ शुरू',finish:'■ समाप्त',time:'समय',empty:'अभी कोई ट्रैक नहीं है। .gpx फ़ाइलें अपलोड करें — जहाँ मार्ग जाता है वहाँ कोहरा हटेगा।',points:'बिंदु',exportAll:'सभी ट्रैक निर्यात करें',filename:'फ़ाइल नाम',export:'.gpx निर्यात करें',profileStats:'प्रोफ़ाइल आंकड़े',distance:'कुल दूरी',area:'कुल खोजा गया क्षेत्र',cities:'शहरों के अनुसार',citiesAuto:'शहर स्वतः पहचाने जाते हैं…',citiesNone:'शहर निर्धारित नहीं',citiesFirst:'पहले ट्रैक लोड करें',citiesBusy:'शहर निर्धारित किए जा रहे हैं, इसमें कुछ मिनट लग सकते हैं…',citiesFail:'शहर निर्धारित नहीं हो सके',radiusStatus:'त्रिज्या',fogStatus:'कोहरा',km:'किमी',m2:'वर्ग मीटर',speed:'किमी/घं',close:'मेनू बंद करें',allAlert:'“सभी” प्रोफ़ाइल स्वतः बनती है। ट्रैक अपलोड करने के लिए “कार से” या “पैदल” चुनें।',noTracks:'निर्यात के लिए कोई ट्रैक नहीं',cloudError:'ट्रैक लोड करने में त्रुटि: ',authError:'साइन इन त्रुटि: ',setupError:'पहले ऐप फ़ाइल में SUPABASE_URL और SUPABASE_ANON_KEY दर्ज करें।',mapYandex:'Yandex Maps (मानचित्र)',mapYandexSat:'Yandex Maps (सैटेलाइट)',mapGoogle:'Google Maps (मानचित्र)',mapGoogleSat:'Google Maps (सैटेलाइट)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
-    es:{car:'En coche',walk:'A pie',all:'Todo',auth:'Autorización',map:'Tipo de mapa',settings:'Ajustes',tracks:'Rutas',stats:'Estadísticas',carNote:'Aquí se guardan las rutas en coche.',walkNote:'Aquí se guardan las rutas a pie.',allNote:'Las rutas de los perfiles coche y a pie se combinan automáticamente. Aquí no se pueden cargar rutas por separado.',notSigned:'No has iniciado sesión',login:'Iniciar sesión con Google',logout:'Cerrar sesión',cloudSetup:'Configura Supabase en el código de la aplicación para sincronizar rutas entre dispositivos.',cloudSync:'Las rutas se sincronizan con tu cuenta de Supabase.',cloudLogin:'Inicia sesión con Google para guardar rutas en la nube.',localOnly:'Supabase aún no está configurado: la aplicación funciona localmente.',fog:'Niebla',fogDesc:'Configura aquí los parámetros y el aspecto de la eliminación de niebla.',radius:'Radio de eliminación de niebla',density:'Densidad de niebla',style:'Estilo de niebla',color:'Color',edge:'Borde de eliminación',black:'Negro',blue:'Azul',gray:'Gris',white:'Blanco',green:'Verde',hard:'Borde definido',soft:'Desvanecido suave',scalloped:'Borde ondulado (nubes)',organic:'Niebla irregular',appearance:'Tema de apariencia',light:'Claro',dark:'Oscuro',auto:'Automático',language:'Idioma',showRoutes:'Mostrar rutas',drop1:'Arrastra archivos .gpx aquí',drop2:'o haz clic para elegir',share:'En el teléfono: GPX Tracker → Compartir → myxwalk',upload:'Subir GPX',recorder:'Grabación de ruta',ready:'Listo para grabar una ruta GPS',start:'▶ Iniciar',finish:'■ Finalizar',time:'tiempo',empty:'Aún no hay rutas. Sube archivos .gpx — la niebla se despejará donde pase la ruta.',points:'puntos',exportAll:'Exportar todas las rutas',filename:'nombre del archivo',export:'Exportar .gpx',profileStats:'Estadísticas del perfil',distance:'Distancia total',area:'Total explorado',cities:'Por ciudades',citiesAuto:'las ciudades se detectan automáticamente…',citiesNone:'ciudades no determinadas',citiesFirst:'carga primero las rutas',citiesBusy:'detectando ciudades, puede tardar un par de minutos…',citiesFail:'no se pudieron determinar las ciudades',radiusStatus:'radio',fogStatus:'niebla',km:'km',m2:'m²',speed:'km/h',close:'Cerrar menú',allAlert:'El perfil “Todo” se genera automáticamente. Elige “En coche” o “A pie” para cargar rutas.',noTracks:'No hay rutas para exportar',cloudError:'Error al cargar las rutas: ',authError:'Error de inicio de sesión: ',setupError:'Introduce SUPABASE_URL y SUPABASE_ANON_KEY en el archivo de la aplicación.',mapYandex:'Yandex Maps (mapa)',mapYandexSat:'Yandex Maps (satélite)',mapGoogle:'Google Maps (mapa)',mapGoogleSat:'Google Maps (satélite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
-    fr:{car:'En voiture',walk:'À pied',all:'Tout',auth:'Connexion',map:'Type de carte',settings:'Paramètres',tracks:'Traces',stats:'Statistiques',carNote:'Les itinéraires en voiture sont stockés ici.',walkNote:'Les itinéraires à pied sont stockés ici.',allNote:'Les itinéraires voiture et à pied sont combinés automatiquement. Les traces ne peuvent pas être importées séparément ici.',notSigned:'Non connecté',login:'Se connecter avec Google',logout:'Se déconnecter',cloudSetup:'Configurez Supabase dans le code de l’application pour synchroniser les traces entre appareils.',cloudSync:'Les traces sont synchronisées avec votre compte Supabase.',cloudLogin:'Connectez-vous avec Google pour enregistrer les traces dans le cloud.',localOnly:'Supabase n’est pas encore configuré : l’application fonctionne localement.',fog:'Brouillard',fogDesc:'Définissez ici les paramètres et l’apparence de la dissipation du brouillard.',radius:'Rayon de dissipation du brouillard',density:'Densité du brouillard',style:'Style du brouillard',color:'Couleur',edge:'Bord de dissipation',black:'Noir',blue:'Bleu',gray:'Gris',white:'Blanc',green:'Vert',hard:'Bord net',soft:'Dégradé doux',scalloped:'Bord ondulé (nuages)',organic:'Brouillard irrégulier',appearance:'Thème',light:'Clair',dark:'Sombre',auto:'Auto',language:'Langue',showRoutes:'Afficher les itinéraires',drop1:'Déposez les fichiers .gpx ici',drop2:'ou cliquez pour choisir',share:'Sur téléphone : GPX Tracker → Partager → myxwalk',upload:'Importer GPX',recorder:'Enregistrement du parcours',ready:'Prêt à enregistrer un parcours GPS',start:'▶ Démarrer',finish:'■ Terminer',time:'temps',empty:'Aucune trace pour le moment. Importez des fichiers .gpx — le brouillard se dissipera sur le parcours.',points:'points',exportAll:'Exporter toutes les traces',filename:'nom du fichier',export:'Exporter .gpx',profileStats:'Statistiques du profil',distance:'Distance totale',area:'Total exploré',cities:'Par villes',citiesAuto:'les villes sont détectées automatiquement…',citiesNone:'villes non déterminées',citiesFirst:'chargez d’abord les traces',citiesBusy:'détection des villes, cela peut prendre quelques minutes…',citiesFail:'impossible de déterminer les villes',radiusStatus:'rayon',fogStatus:'brouillard',km:'km',m2:'m²',speed:'km/h',close:'Fermer le menu',allAlert:'Le profil « Tout » est généré automatiquement. Choisissez « En voiture » ou « À pied » pour importer des traces.',noTracks:'Aucune trace à exporter',cloudError:'Erreur de chargement des traces : ',authError:'Erreur de connexion : ',setupError:'Indiquez d’abord SUPABASE_URL et SUPABASE_ANON_KEY dans le fichier de l’application.',mapYandex:'Yandex Maps (carte)',mapYandexSat:'Yandex Maps (satellite)',mapGoogle:'Google Maps (carte)',mapGoogleSat:'Google Maps (satellite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
-    pt:{car:'De carro',walk:'A pé',all:'Todos',auth:'Autorização',map:'Tipo de mapa',settings:'Configurações',tracks:'Rotas',stats:'Estatísticas',carNote:'Aqui ficam armazenadas as rotas de carro.',walkNote:'Aqui ficam armazenadas as rotas a pé.',allNote:'As rotas dos perfis carro e a pé são combinadas automaticamente. Não é possível carregar rotas separadamente aqui.',notSigned:'Não conectado',login:'Entrar com Google',logout:'Sair',cloudSetup:'Configure o Supabase no código do aplicativo para sincronizar rotas entre dispositivos.',cloudSync:'As rotas estão sincronizadas com sua conta Supabase.',cloudLogin:'Entre com o Google para guardar rotas na nuvem.',localOnly:'O Supabase ainda não está configurado: o aplicativo funciona localmente.',fog:'Névoa',fogDesc:'Defina aqui os parâmetros e a aparência da dissipação da névoa.',radius:'Raio de dissipação da névoa',density:'Densidade da névoa',style:'Estilo da névoa',color:'Cor',edge:'Borda da dissipação',black:'Preto',blue:'Azul',gray:'Cinza',white:'Branco',green:'Verde',hard:'Borda nítida',soft:'Suave',scalloped:'Borda ondulada (nuvens)',organic:'Névoa irregular',appearance:'Tema de aparência',light:'Claro',dark:'Escuro',auto:'Automático',language:'Idioma',showRoutes:'Mostrar rotas',drop1:'Arraste arquivos .gpx aqui',drop2:'ou clique para escolher',share:'No telefone: GPX Tracker → Compartilhar → myxwalk',upload:'Carregar GPX',recorder:'Gravação de rota',ready:'Pronto para gravar uma rota GPS',start:'▶ Iniciar',finish:'■ Finalizar',time:'tempo',empty:'Ainda não há rotas. Carregue arquivos .gpx — a névoa será removida onde a rota passar.',points:'pontos',exportAll:'Exportar todas as rotas',filename:'nome do arquivo',export:'Exportar .gpx',profileStats:'Estatísticas do perfil',distance:'Distância total',area:'Total explorado',cities:'Por cidades',citiesAuto:'as cidades são detectadas automaticamente…',citiesNone:'cidades não determinadas',citiesFirst:'carregue as rotas primeiro',citiesBusy:'determinando cidades, isso pode levar alguns minutos…',citiesFail:'não foi possível determinar as cidades',radiusStatus:'raio',fogStatus:'névoa',km:'km',m2:'m²',speed:'km/h',close:'Fechar menu',allAlert:'O perfil “Todos” é gerado automaticamente. Escolha “De carro” ou “A pé” para carregar rotas.',noTracks:'Não há rotas para exportar',cloudError:'Erro ao carregar rotas: ',authError:'Erro de login: ',setupError:'Informe primeiro SUPABASE_URL e SUPABASE_ANON_KEY no arquivo do aplicativo.',mapYandex:'Yandex Maps (mapa)',mapYandexSat:'Yandex Maps (satélite)',mapGoogle:'Google Maps (mapa)',mapGoogleSat:'Google Maps (satélite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
-    ar:{car:'بالسيارة',walk:'مشياً',all:'الكل',auth:'تسجيل الدخول',map:'نوع الخريطة',settings:'الإعدادات',tracks:'المسارات',stats:'الإحصاءات',carNote:'تُحفظ مسارات الرحلات بالسيارة هنا.',walkNote:'تُحفظ مسارات المشي هنا.',allNote:'يتم دمج مسارات السيارة والمشي تلقائياً. لا يمكن رفع المسارات بشكل منفصل هنا.',notSigned:'لم يتم تسجيل الدخول',login:'تسجيل الدخول باستخدام Google',logout:'تسجيل الخروج',cloudSetup:'قم بإعداد Supabase في كود التطبيق لمزامنة المسارات بين الأجهزة.',cloudSync:'تتم مزامنة المسارات مع حساب Supabase.',cloudLogin:'سجّل الدخول باستخدام Google لحفظ المسارات في السحابة.',localOnly:'لم يتم إعداد Supabase بعد: يعمل التطبيق محلياً حالياً.',fog:'الضباب',fogDesc:'اضبط هنا معلمات إزالة الضباب ومظهره.',radius:'نطاق إزالة الضباب',density:'كثافة الضباب',style:'نمط الضباب',color:'اللون',edge:'حافة الإزالة',black:'أسود',blue:'أزرق',gray:'رمادي',white:'أبيض',green:'أخضر',hard:'حافة واضحة',soft:'تدرج ناعم',scalloped:'حافة متموجة (سحب)',organic:'ضباب غير منتظم',appearance:'المظهر',light:'فاتح',dark:'داكن',auto:'تلقائي',language:'اللغة',showRoutes:'إظهار المسارات',drop1:'اسحب ملفات .gpx إلى هنا',drop2:'أو انقر للاختيار',share:'على الهاتف: GPX Tracker ← مشاركة ← myxwalk',upload:'رفع GPX',recorder:'تسجيل المسار',ready:'جاهز لتسجيل مسار GPS',start:'▶ بدء',finish:'■ إنهاء',time:'الوقت',empty:'لا توجد مسارات بعد. ارفع ملفات .gpx — سيزول الضباب حيث يمر المسار.',points:'نقاط',exportAll:'تصدير جميع المسارات',filename:'اسم الملف',export:'تصدير .gpx',profileStats:'إحصاءات الملف',distance:'إجمالي المسافة',area:'إجمالي المساحة المستكشفة',cities:'حسب المدن',citiesAuto:'يتم تحديد المدن تلقائياً…',citiesNone:'لم يتم تحديد المدن',citiesFirst:'حمّل المسارات أولاً',citiesBusy:'جارٍ تحديد المدن، قد يستغرق ذلك بضع دقائق…',citiesFail:'تعذر تحديد المدن',radiusStatus:'النطاق',fogStatus:'الضباب',km:'كم',m2:'م²',speed:'كم/س',close:'إغلاق القائمة',allAlert:'يتم إنشاء ملف «الكل» تلقائياً. اختر «بالسيارة» أو «مشياً» لرفع المسارات.',noTracks:'لا توجد مسارات للتصدير',cloudError:'خطأ في تحميل المسارات: ',authError:'خطأ في تسجيل الدخول: ',setupError:'أدخل SUPABASE_URL وSUPABASE_ANON_KEY في ملف التطبيق أولاً.',mapYandex:'Yandex Maps (خريطة)',mapYandexSat:'Yandex Maps (قمر صناعي)',mapGoogle:'Google Maps (خريطة)',mapGoogleSat:'Google Maps (قمر صناعي)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'}
+    zh:{car:'驾车',walk:'步行',all:'全部',auth:'登录',map:'地图类型',settings:'设置',tracks:'轨迹',stats:'统计',carNote:'这里保存驾车路线。',walkNote:'这里保存步行路线。',allNote:'自动合并驾车和步行资料中的路线。此处不能单独上传轨迹。',notSigned:'未登录',login:'使用 Google 登录',logout:'退出登录',cloudSetup:'请在应用代码中配置 Supabase，以便在设备之间同步轨迹。',cloudSync:'轨迹正在与 Supabase 账户同步。',cloudLogin:'使用 Google 登录，将轨迹保存到云端。',localOnly:'尚未配置 Supabase：应用目前仅在本地运行。',fog:'雾',radius:'雾气消散半径',density:'雾密度',style:'雾样式',color:'颜色',edge:'消散边缘',black:'黑色',blue:'蓝色',gray:'灰色',white:'白色',green:'绿色',hard:'清晰边缘',soft:'柔和渐变',scalloped:'波浪边缘（云朵）',organic:'不规则雾边',appearance:'外观主题',light:'浅色',dark:'深色',auto:'自动',language:'语言',showRoutes:'显示路线',drop1:'将 .gpx 文件拖到这里',drop2:'或点击选择',share:'手机：GPX Tracker → 分享 → myxwalk',upload:'上传 GPX',recorder:'路线记录',ready:'准备记录 GPS 路线',start:'▶ 开始',finish:'■ 完成',time:'时间',empty:'暂无轨迹。上传 .gpx 文件后，路线经过的区域将开始消散雾气。',points:'点',exportAll:'导出所有轨迹',filename:'文件名',export:'导出 .gpx',profileStats:'资料统计',distance:'总行程',area:'总探索面积',cities:'按城市',citiesAuto:'城市将自动识别…',citiesNone:'未确定城市',citiesFirst:'请先加载轨迹',citiesBusy:'正在识别城市，可能需要几分钟…',citiesFail:'无法确定城市',radiusStatus:'半径',fogStatus:'雾',km:'公里',m2:'平方米',speed:'公里/小时',close:'关闭菜单',allAlert:'“全部”资料会自动生成。请选择“驾车”或“步行”来上传轨迹。',noTracks:'没有可导出的轨迹',cloudError:'加载轨迹出错：',authError:'登录出错：',setupError:'请先在应用文件中填写 SUPABASE_URL 和 SUPABASE_ANON_KEY。',mapYandex:'Yandex 地图（地图）',mapYandexSat:'Yandex 地图（卫星）',mapGoogle:'Google 地图（地图）',mapGoogleSat:'Google 地图（卫星）',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    hi:{car:'कार से',walk:'पैदल',all:'सभी',auth:'प्राधिकरण',map:'मानचित्र प्रकार',settings:'सेटिंग्स',tracks:'ट्रैक',stats:'आंकड़े',carNote:'यहाँ कार यात्रा के मार्ग संग्रहीत हैं।',walkNote:'यहाँ पैदल मार्ग संग्रहीत हैं।',allNote:'कार और पैदल प्रोफ़ाइल के मार्ग स्वतः संयुक्त होते हैं। यहाँ अलग से ट्रैक अपलोड नहीं किए जा सकते।',notSigned:'साइन इन नहीं है',login:'Google से साइन इन करें',logout:'साइन आउट',cloudSetup:'डिवाइसों के बीच ट्रैक सिंक करने के लिए ऐप कोड में Supabase कॉन्फ़िगर करें।',cloudSync:'ट्रैक आपके Supabase खाते के साथ सिंक हो रहे हैं।',cloudLogin:'ट्रैक क्लाउड में रखने के लिए Google से साइन इन करें।',localOnly:'Supabase अभी कॉन्फ़िगर नहीं है: ऐप फिलहाल स्थानीय रूप से चलता है।',fog:'कोहरा',radius:'कोहरा हटाने की त्रिज्या',density:'कोहरे की घनता',style:'कोहरे की शैली',color:'रंग',edge:'हटने का किनारा',black:'काला',blue:'नीला',gray:'धूसर',white:'सफेद',green:'हरा',hard:'स्पष्ट किनारा',soft:'मुलायम किनारा',scalloped:'लहरदार किनारा (बादल)',organic:'अनियमित कोहरा',appearance:'दिखावट थीम',light:'हल्का',dark:'गहरा',auto:'ऑटो',language:'भाषा',showRoutes:'मार्ग दिखाएँ',drop1:'यहाँ .gpx फ़ाइलें खींचें',drop2:'या चुनने के लिए क्लिक करें',share:'फ़ोन पर: GPX Tracker → साझा करें → myxwalk',upload:'GPX अपलोड करें',recorder:'मार्ग रिकॉर्डिंग',ready:'GPS मार्ग रिकॉर्ड करने के लिए तैयार',start:'▶ शुरू',finish:'■ समाप्त',time:'समय',empty:'अभी कोई ट्रैक नहीं है। .gpx फ़ाइलें अपलोड करें — जहाँ मार्ग जाता है वहाँ कोहरा हटेगा।',points:'बिंदु',exportAll:'सभी ट्रैक निर्यात करें',filename:'फ़ाइल नाम',export:'.gpx निर्यात करें',profileStats:'प्रोफ़ाइल आंकड़े',distance:'कुल दूरी',area:'कुल खोजा गया क्षेत्र',cities:'शहरों के अनुसार',citiesAuto:'शहर स्वतः पहचाने जाते हैं…',citiesNone:'शहर निर्धारित नहीं',citiesFirst:'पहले ट्रैक लोड करें',citiesBusy:'शहर निर्धारित किए जा रहे हैं, इसमें कुछ मिनट लग सकते हैं…',citiesFail:'शहर निर्धारित नहीं हो सके',radiusStatus:'त्रिज्या',fogStatus:'कोहरा',km:'किमी',m2:'वर्ग मीटर',speed:'किमी/घं',close:'मेनू बंद करें',allAlert:'“सभी” प्रोफ़ाइल स्वतः बनती है। ट्रैक अपलोड करने के लिए “कार से” या “पैदल” चुनें।',noTracks:'निर्यात के लिए कोई ट्रैक नहीं',cloudError:'ट्रैक लोड करने में त्रुटि: ',authError:'साइन इन त्रुटि: ',setupError:'पहले ऐप फ़ाइल में SUPABASE_URL और SUPABASE_ANON_KEY दर्ज करें।',mapYandex:'Yandex Maps (मानचित्र)',mapYandexSat:'Yandex Maps (सैटेलाइट)',mapGoogle:'Google Maps (मानचित्र)',mapGoogleSat:'Google Maps (सैटेलाइट)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    es:{car:'En coche',walk:'A pie',all:'Todo',auth:'Autorización',map:'Tipo de mapa',settings:'Ajustes',tracks:'Rutas',stats:'Estadísticas',carNote:'Aquí se guardan las rutas en coche.',walkNote:'Aquí se guardan las rutas a pie.',allNote:'Las rutas de los perfiles coche y a pie se combinan automáticamente. Aquí no se pueden cargar rutas por separado.',notSigned:'No has iniciado sesión',login:'Iniciar sesión con Google',logout:'Cerrar sesión',cloudSetup:'Configura Supabase en el código de la aplicación para sincronizar rutas entre dispositivos.',cloudSync:'Las rutas se sincronizan con tu cuenta de Supabase.',cloudLogin:'Inicia sesión con Google para guardar rutas en la nube.',localOnly:'Supabase aún no está configurado: la aplicación funciona localmente.',fog:'Niebla',radius:'Radio de eliminación de niebla',density:'Densidad de niebla',style:'Estilo de niebla',color:'Color',edge:'Borde de eliminación',black:'Negro',blue:'Azul',gray:'Gris',white:'Blanco',green:'Verde',hard:'Borde definido',soft:'Desvanecido suave',scalloped:'Borde ondulado (nubes)',organic:'Niebla irregular',appearance:'Tema de apariencia',light:'Claro',dark:'Oscuro',auto:'Automático',language:'Idioma',showRoutes:'Mostrar rutas',drop1:'Arrastra archivos .gpx aquí',drop2:'o haz clic para elegir',share:'En el teléfono: GPX Tracker → Compartir → myxwalk',upload:'Subir GPX',recorder:'Grabación de ruta',ready:'Listo para grabar una ruta GPS',start:'▶ Iniciar',finish:'■ Finalizar',time:'tiempo',empty:'Aún no hay rutas. Sube archivos .gpx — la niebla se despejará donde pase la ruta.',points:'puntos',exportAll:'Exportar todas las rutas',filename:'nombre del archivo',export:'Exportar .gpx',profileStats:'Estadísticas del perfil',distance:'Distancia total',area:'Total explorado',cities:'Por ciudades',citiesAuto:'las ciudades se detectan automáticamente…',citiesNone:'ciudades no determinadas',citiesFirst:'carga primero las rutas',citiesBusy:'detectando ciudades, puede tardar un par de minutos…',citiesFail:'no se pudieron determinar las ciudades',radiusStatus:'radio',fogStatus:'niebla',km:'km',m2:'m²',speed:'km/h',close:'Cerrar menú',allAlert:'El perfil “Todo” se genera automáticamente. Elige “En coche” o “A pie” para cargar rutas.',noTracks:'No hay rutas para exportar',cloudError:'Error al cargar las rutas: ',authError:'Error de inicio de sesión: ',setupError:'Introduce SUPABASE_URL y SUPABASE_ANON_KEY en el archivo de la aplicación.',mapYandex:'Yandex Maps (mapa)',mapYandexSat:'Yandex Maps (satélite)',mapGoogle:'Google Maps (mapa)',mapGoogleSat:'Google Maps (satélite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    fr:{car:'En voiture',walk:'À pied',all:'Tout',auth:'Connexion',map:'Type de carte',settings:'Paramètres',tracks:'Traces',stats:'Statistiques',carNote:'Les itinéraires en voiture sont stockés ici.',walkNote:'Les itinéraires à pied sont stockés ici.',allNote:'Les itinéraires voiture et à pied sont combinés automatiquement. Les traces ne peuvent pas être importées séparément ici.',notSigned:'Non connecté',login:'Se connecter avec Google',logout:'Se déconnecter',cloudSetup:'Configurez Supabase dans le code de l’application pour synchroniser les traces entre appareils.',cloudSync:'Les traces sont synchronisées avec votre compte Supabase.',cloudLogin:'Connectez-vous avec Google pour enregistrer les traces dans le cloud.',localOnly:'Supabase n’est pas encore configuré : l’application fonctionne localement.',fog:'Brouillard',radius:'Rayon de dissipation du brouillard',density:'Densité du brouillard',style:'Style du brouillard',color:'Couleur',edge:'Bord de dissipation',black:'Noir',blue:'Bleu',gray:'Gris',white:'Blanc',green:'Vert',hard:'Bord net',soft:'Dégradé doux',scalloped:'Bord ondulé (nuages)',organic:'Brouillard irrégulier',appearance:'Thème',light:'Clair',dark:'Sombre',auto:'Auto',language:'Langue',showRoutes:'Afficher les itinéraires',drop1:'Déposez les fichiers .gpx ici',drop2:'ou cliquez pour choisir',share:'Sur téléphone : GPX Tracker → Partager → myxwalk',upload:'Importer GPX',recorder:'Enregistrement du parcours',ready:'Prêt à enregistrer un parcours GPS',start:'▶ Démarrer',finish:'■ Terminer',time:'temps',empty:'Aucune trace pour le moment. Importez des fichiers .gpx — le brouillard se dissipera sur le parcours.',points:'points',exportAll:'Exporter toutes les traces',filename:'nom du fichier',export:'Exporter .gpx',profileStats:'Statistiques du profil',distance:'Distance totale',area:'Total exploré',cities:'Par villes',citiesAuto:'les villes sont détectées automatiquement…',citiesNone:'villes non déterminées',citiesFirst:'chargez d’abord les traces',citiesBusy:'détection des villes, cela peut prendre quelques minutes…',citiesFail:'impossible de déterminer les villes',radiusStatus:'rayon',fogStatus:'brouillard',km:'km',m2:'m²',speed:'km/h',close:'Fermer le menu',allAlert:'Le profil « Tout » est généré automatiquement. Choisissez « En voiture » ou « À pied » pour importer des traces.',noTracks:'Aucune trace à exporter',cloudError:'Erreur de chargement des traces : ',authError:'Erreur de connexion : ',setupError:'Indiquez d’abord SUPABASE_URL et SUPABASE_ANON_KEY dans le fichier de l’application.',mapYandex:'Yandex Maps (carte)',mapYandexSat:'Yandex Maps (satellite)',mapGoogle:'Google Maps (carte)',mapGoogleSat:'Google Maps (satellite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    pt:{car:'De carro',walk:'A pé',all:'Todos',auth:'Autorização',map:'Tipo de mapa',settings:'Configurações',tracks:'Rotas',stats:'Estatísticas',carNote:'Aqui ficam armazenadas as rotas de carro.',walkNote:'Aqui ficam armazenadas as rotas a pé.',allNote:'As rotas dos perfis carro e a pé são combinadas automaticamente. Não é possível carregar rotas separadamente aqui.',notSigned:'Não conectado',login:'Entrar com Google',logout:'Sair',cloudSetup:'Configure o Supabase no código do aplicativo para sincronizar rotas entre dispositivos.',cloudSync:'As rotas estão sincronizadas com sua conta Supabase.',cloudLogin:'Entre com o Google para guardar rotas na nuvem.',localOnly:'O Supabase ainda não está configurado: o aplicativo funciona localmente.',fog:'Névoa',radius:'Raio de dissipação da névoa',density:'Densidade da névoa',style:'Estilo da névoa',color:'Cor',edge:'Borda da dissipação',black:'Preto',blue:'Azul',gray:'Cinza',white:'Branco',green:'Verde',hard:'Borda nítida',soft:'Suave',scalloped:'Borda ondulada (nuvens)',organic:'Névoa irregular',appearance:'Tema de aparência',light:'Claro',dark:'Escuro',auto:'Automático',language:'Idioma',showRoutes:'Mostrar rotas',drop1:'Arraste arquivos .gpx aqui',drop2:'ou clique para escolher',share:'No telefone: GPX Tracker → Compartilhar → myxwalk',upload:'Carregar GPX',recorder:'Gravação de rota',ready:'Pronto para gravar uma rota GPS',start:'▶ Iniciar',finish:'■ Finalizar',time:'tempo',empty:'Ainda não há rotas. Carregue arquivos .gpx — a névoa será removida onde a rota passar.',points:'pontos',exportAll:'Exportar todas as rotas',filename:'nome do arquivo',export:'Exportar .gpx',profileStats:'Estatísticas do perfil',distance:'Distância total',area:'Total explorado',cities:'Por cidades',citiesAuto:'as cidades são detectadas automaticamente…',citiesNone:'cidades não determinadas',citiesFirst:'carregue as rotas primeiro',citiesBusy:'determinando cidades, isso pode levar alguns minutos…',citiesFail:'não foi possível determinar as cidades',radiusStatus:'raio',fogStatus:'névoa',km:'km',m2:'m²',speed:'km/h',close:'Fechar menu',allAlert:'O perfil “Todos” é gerado automaticamente. Escolha “De carro” ou “A pé” para carregar rotas.',noTracks:'Não há rotas para exportar',cloudError:'Erro ao carregar rotas: ',authError:'Erro de login: ',setupError:'Informe primeiro SUPABASE_URL e SUPABASE_ANON_KEY no arquivo do aplicativo.',mapYandex:'Yandex Maps (mapa)',mapYandexSat:'Yandex Maps (satélite)',mapGoogle:'Google Maps (mapa)',mapGoogleSat:'Google Maps (satélite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    ar:{car:'بالسيارة',walk:'مشياً',all:'الكل',auth:'تسجيل الدخول',map:'نوع الخريطة',settings:'الإعدادات',tracks:'المسارات',stats:'الإحصاءات',carNote:'تُحفظ مسارات الرحلات بالسيارة هنا.',walkNote:'تُحفظ مسارات المشي هنا.',allNote:'يتم دمج مسارات السيارة والمشي تلقائياً. لا يمكن رفع المسارات بشكل منفصل هنا.',notSigned:'لم يتم تسجيل الدخول',login:'تسجيل الدخول باستخدام Google',logout:'تسجيل الخروج',cloudSetup:'قم بإعداد Supabase في كود التطبيق لمزامنة المسارات بين الأجهزة.',cloudSync:'تتم مزامنة المسارات مع حساب Supabase.',cloudLogin:'سجّل الدخول باستخدام Google لحفظ المسارات في السحابة.',localOnly:'لم يتم إعداد Supabase بعد: يعمل التطبيق محلياً حالياً.',fog:'الضباب',radius:'نطاق إزالة الضباب',density:'كثافة الضباب',style:'نمط الضباب',color:'اللون',edge:'حافة الإزالة',black:'أسود',blue:'أزرق',gray:'رمادي',white:'أبيض',green:'أخضر',hard:'حافة واضحة',soft:'تدرج ناعم',scalloped:'حافة متموجة (سحب)',organic:'ضباب غير منتظم',appearance:'المظهر',light:'فاتح',dark:'داكن',auto:'تلقائي',language:'اللغة',showRoutes:'إظهار المسارات',drop1:'اسحب ملفات .gpx إلى هنا',drop2:'أو انقر للاختيار',share:'على الهاتف: GPX Tracker ← مشاركة ← myxwalk',upload:'رفع GPX',recorder:'تسجيل المسار',ready:'جاهز لتسجيل مسار GPS',start:'▶ بدء',finish:'■ إنهاء',time:'الوقت',empty:'لا توجد مسارات بعد. ارفع ملفات .gpx — سيزول الضباب حيث يمر المسار.',points:'نقاط',exportAll:'تصدير جميع المسارات',filename:'اسم الملف',export:'تصدير .gpx',profileStats:'إحصاءات الملف',distance:'إجمالي المسافة',area:'إجمالي المساحة المستكشفة',cities:'حسب المدن',citiesAuto:'يتم تحديد المدن تلقائياً…',citiesNone:'لم يتم تحديد المدن',citiesFirst:'حمّل المسارات أولاً',citiesBusy:'جارٍ تحديد المدن، قد يستغرق ذلك بضع دقائق…',citiesFail:'تعذر تحديد المدن',radiusStatus:'النطاق',fogStatus:'الضباب',km:'كم',m2:'م²',speed:'كم/س',close:'إغلاق القائمة',allAlert:'يتم إنشاء ملف «الكل» تلقائياً. اختر «بالسيارة» أو «مشياً» لرفع المسارات.',noTracks:'لا توجد مسارات للتصدير',cloudError:'خطأ في تحميل المسارات: ',authError:'خطأ في تسجيل الدخول: ',setupError:'أدخل SUPABASE_URL وSUPABASE_ANON_KEY في ملف التطبيق أولاً.',mapYandex:'Yandex Maps (خريطة)',mapYandexSat:'Yandex Maps (قمر صناعي)',mapGoogle:'Google Maps (خريطة)',mapGoogleSat:'Google Maps (قمر صناعي)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'}
   };
   const langs={ru:'Русский',en:'English',zh:'中文',hi:'हिन्दी',es:'Español',ar:'العربية',fr:'Français',pt:'Português'};
   let lang=localStorage.getItem('myxwalk_language')||'ru';
@@ -1781,14 +1846,23 @@ consumeSharedGpx();
   function translateUI(){
     const q=(s,k)=>setText(s,k);
     document.documentElement.lang=lang; document.documentElement.dir=lang==='ar'?'rtl':'ltr';
-    q('#authToggle span:nth-of-type(2)','auth'); q('#mapToggle span:nth-of-type(2)','map'); q('#settingsToggle span:nth-of-type(2)','settings'); q('#tracksToggle span:nth-of-type(2)','tracks'); q('#statsToggle span:nth-of-type(2)','stats');
+    if(!currentUser) q('#authToggle span:nth-of-type(2)','auth'); syncAuthNavLabel(); q('#mapToggle span:nth-of-type(2)','map'); q('#settingsToggle span:nth-of-type(2)','settings'); q('#tracksToggle span:nth-of-type(2)','tracks'); q('#statsToggle span:nth-of-type(2)','stats');
     document.querySelectorAll('.profile-btn').forEach(b=>b.textContent=tr(b.dataset.profile));
     const meta={car:'carNote',walk:'walkNote',all:'allNote'}; const note=document.getElementById('profileNote'); if(note)note.textContent=tr(meta[activeProfile]||'carNote');
-    q('#authUser','notSigned');
-    if(typeof currentUser!=='undefined' && currentUser){ const metaData=currentUser.user_metadata||{}; document.getElementById('authUser').textContent=metaData.full_name||metaData.name||currentUser.email||'Google'; }
-    q('#authStatus',currentUser? 'cloudSync' : (cloudReady?'cloudLogin':'localOnly')); q('#authBtn',currentUser?'logout':'login');
-    q('#settingsPanel .section:first-child div:first-child','fog'); q('#settingsPanel .section:first-child div:nth-child(2)','fogDesc');
-    q('#settingsPanel .section:nth-of-type(2) h2','radius'); q('#settingsPanel .section:nth-of-type(3) h2','density'); q('#settingsPanel .section:nth-of-type(4) h2','style');
+    if(currentUser){
+      const m=currentUser.user_metadata||{};
+      const n=m.full_name||m.name||currentUser.email||'Google';
+      const userEl=document.getElementById('authUser'); if(userEl) userEl.textContent=n;
+      syncAuthNavLabel();
+      const btn=document.getElementById('authBtn'); if(btn) btn.textContent=tr('logout');
+      const status=document.getElementById('authStatus'); if(status) status.textContent=tr('cloudSync');
+    } else {
+      q('#authUser','notSigned');
+      q('#authStatus',cloudReady?'cloudLogin':'localOnly');
+      q('#authBtn','login');
+      syncAuthNavLabel();
+    }
+    q('#settingsPanel .section:nth-of-type(1) h2','radius'); q('#settingsPanel .section:nth-of-type(2) h2','density'); q('#settingsPanel .section:nth-of-type(3) h2','style');
     const rows=document.querySelectorAll('#settingsPanel .row span'); if(rows[0])rows[0].textContent=tr('color'); if(rows[1])rows[1].textContent=tr('edge');
     const colorOpts=document.querySelectorAll('#fogColorSelect option'); ['black','blue','gray','white','green'].forEach((k,i)=>{if(colorOpts[i])colorOpts[i].textContent=tr(k)});
     const edgeOpts=document.querySelectorAll('#fogEdgeSelect option'); ['hard','soft','scalloped','organic'].forEach((k,i)=>{if(edgeOpts[i])edgeOpts[i].textContent=tr(k)});
@@ -1824,7 +1898,15 @@ consumeSharedGpx();
   const oldSwitch=window.switchProfile;
   window.switchProfile=function(profile){if(oldSwitch)oldSwitch(profile);translateUI();};
   const oldAuth=window.updateAuthUI;
-  window.updateAuthUI=function(){if(oldAuth)oldAuth();translateUI();};
+  window.updateAuthUI=function(){if(oldAuth)oldAuth();translateUI();syncAuthNavLabel();};
+  // Auth state may be delivered asynchronously by Supabase; always restore the user name after DOM updates.
+  if(window.MutationObserver){
+    const authObserver=new MutationObserver(()=>{
+      if(currentUser) syncAuthNavLabel();
+    });
+    const authToggle=document.getElementById('authToggle');
+    if(authToggle) authObserver.observe(authToggle,{childList:true,subtree:true,characterData:true});
+  }
   const oldCity=window.renderCityList;
   window.renderCityList=function(results){const el=document.getElementById('cityList');if(!el)return;if(!results.length){el.textContent=tr('citiesNone');return;}el.innerHTML=results.map(r=>`<div class="city-row"><span>${r.city}</span><span>${formatArea(r.area)}</span></div>`).join('');};
   const oldCloudLoad=window.updateCityStatsAutomatically;
@@ -1846,6 +1928,85 @@ consumeSharedGpx();
   translateUI();
 })();
 </script>
+
+<style id="remove-fog-description-final">
+/* Remove the obsolete explanatory fog caption if an older/dynamic panel adds it. */
+#settingsPanel .fog-settings-caption,
+#settingsPanel [data-fog-description]{display:none!important;}
+#settingsPanel .settings-theme-divider{display:block!important;height:1px!important;min-height:1px!important;margin:12px 0!important;background:var(--line)!important;opacity:1!important;}
+</style>
+<script id="final-ui-sync-20261001">
+(function(){
+  const BAD_PART='Здесь задаются параметры рассеивания и внешний вид тумана';
+  function removeFogDescription(root){
+    if(!root) return;
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_ELEMENT|NodeFilter.SHOW_TEXT);
+    const elements=[]; const texts=[];
+    while(walker.nextNode()){
+      const n=walker.currentNode;
+      if(n.nodeType===Node.TEXT_NODE) texts.push(n); else if(n.nodeType===Node.ELEMENT_NODE) elements.push(n);
+    }
+    texts.forEach(node=>{
+      const value=(node.nodeValue||'').replace(/\s+/g,' ').trim();
+      if(value.includes(BAD_PART)||value.includes('Туман. Здесь задаются параметры рассеивания')){
+        const parent=node.parentElement;
+        if(parent && parent.id!=='settingsPanel') parent.remove(); else node.remove();
+      }
+    });
+    elements.forEach(el=>{
+      if(el.id==='settingsPanel') return;
+      const value=(el.textContent||'').replace(/\s+/g,' ').trim();
+      if(value.includes(BAD_PART)||value.includes('Туман. Здесь задаются параметры рассеивания')) el.remove();
+    });
+  }
+  function init(){
+    const panel=document.getElementById('settingsPanel');
+    if(!panel) return;
+    removeFogDescription(panel);
+    if(window.MutationObserver){
+      const observer=new MutationObserver(()=>removeFogDescription(panel));
+      observer.observe(panel,{childList:true,subtree:true,characterData:true});
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+})();
+</script>
+
+
+<style id="final-settings-divider-20261008">
+#settingsPanel .settings-theme-divider{
+  display:block!important;
+  width:100%!important;
+  height:1px!important;
+  min-height:1px!important;
+  margin:0!important;
+  padding:0!important;
+  background:var(--line)!important;
+  border:0!important;
+}
+</style>
+
+
+<script id="final-auth-label-fix-20261008">
+(function(){
+  function nameFromUser(user){
+    const m=user?.user_metadata||{};
+    return String(m.full_name||m.name||m.preferred_username||m.user_name||m.display_name||user?.email||'Google аккаунт').trim();
+  }
+  function sync(){
+    try{
+      const label=document.getElementById('authNavLabel');
+      if(!label) return;
+      const user=typeof currentUser!=='undefined'?currentUser:null;
+      label.textContent=user?nameFromUser(user):(window.myxT?window.myxT('auth'):'Авторизация');
+    }catch(e){}
+  }
+  window.addEventListener('load',sync);
+  document.addEventListener('visibilitychange',sync);
+  setInterval(sync,500);
+})();
+</script>
+
 </body>
 
 <style id="user-ui-refinement-20260930-2245">
@@ -2546,4 +2707,10 @@ consumeSharedGpx();
   /* Keep language/theme comfortably touchable. */
   .theme-choice,#languageSelect{min-height:44px!important;font-size:14px!important;}
 }
+</style>
+
+
+<style id="remove-fog-settings-caption">
+/* The settings panel does not need a separate "Туман" caption; its controls are self-explanatory. */
+#settingsPanel .fog-settings-caption{display:none!important;}
 </style>
