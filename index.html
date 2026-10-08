@@ -11,680 +11,331 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-  :root{
-    --green:#22C55E;
-    --green-dark:#15803D;
-    --ink:#122417;
-    --ink-soft:#5C7568;
-    --panel:#FFFFFF;
-    --bg:#EAF9EE;
-    --line:#D7ECDC;
-    --danger:#E15A46;
-    --radius:10px;
-    --surface:#F8FAF8;
-    --hover:#F4F6F4;
-    --dash:#C6D3CC;
-    --toggle-off:#D9E0DB;
-    --del:#B7C0BA;
-    --danger-bg:#FBEBE9;
-    --drop-hover:#F4FBF6;
-  }
-  :root[data-theme="dark"]{
-    color-scheme:dark;
-    --green-dark:#4ADE80;
-    --ink:#E6F2EA;
-    --ink-soft:#8FA79A;
-    --panel:#141C17;
-    --bg:#0C120E;
-    --line:#24322A;
-    --surface:#1B261F;
-    --hover:#1D2A22;
-    --dash:#2E4137;
-    --toggle-off:#3A4C41;
-    --del:#6E8578;
-    --danger-bg:#3A1F1B;
-    --drop-hover:#183024;
-  }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html,body{height:100%;margin:0;font-family:'Manrope',system-ui,sans-serif;color:var(--ink);}
-  body{display:flex;background:var(--bg);overflow:hidden;}
-
-  #sidebar{
-    width:384px;min-width:384px;height:100%;background:var(--panel);
-    border-right:1px solid var(--line);display:flex;flex-direction:column;
-    box-shadow:2px 0 14px rgba(20,40,25,0.05);z-index:1000;
-    padding-top:env(safe-area-inset-top,0px);
-    overflow-y:auto;overflow-x:hidden;
-    -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
-  }
-  #sidebar > *{flex-shrink:0;}
-  #brand{
-    padding:20px 20px 14px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--line);
-  }
-  #drawerClose{
-    display:none;margin-left:auto;background:none;border:none;font-size:26px;line-height:1;
-    color:var(--ink-soft);cursor:pointer;padding:4px 6px;
-  }
-  #brand .logo{width:24px;height:24px;border-radius:7px;flex:none;}
-  #brand h1{font-size:23px;font-weight:800;letter-spacing:-0.02em;margin:0;}
-  #brand span{color:var(--green);}
-
-  .section{padding:16px 20px;border-bottom:1px solid var(--line);}
-  .section h2{font-size:12px;font-weight:700;color:var(--ink-soft);text-transform:none;margin:0 0 10px;}
-
-  #dropzone{
-    border:1.5px dashed var(--dash);border-radius:var(--radius);padding:16px;text-align:center;
-    font-size:13px;color:var(--ink-soft);cursor:pointer;transition:.15s;
-  }
-  #dropzone:hover{border-color:var(--green);color:var(--green-dark);background:var(--drop-hover);}
-  #fileInput{display:none;}
-
-  #trackList{max-height:38vh;overflow-y:auto;padding:6px 12px;}
-  .track-item{
-    display:flex;align-items:center;gap:8px;padding:9px 8px;border-radius:8px;font-size:13px;
-  }
-  .track-item:hover{background:var(--hover);}
-  .track-item .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .track-item .pts{color:var(--ink-soft);font-size:11px;}
-  .toggle{
-    width:30px;height:18px;border-radius:9px;background:var(--toggle-off);position:relative;cursor:pointer;flex:none;transition:.15s;
-  }
-  .toggle.on{background:var(--green);}
-  .toggle::after{
-    content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
-    background:#fff;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.25);
-  }
-  .toggle.on::after{left:14px;}
-  .del{
-    width:22px;height:22px;border:none;background:none;color:var(--del);cursor:pointer;font-size:16px;line-height:1;flex:none;
-    border-radius:6px;
-  }
-  .del:hover{color:var(--danger);background:var(--danger-bg);}
-  #emptyHint{padding:16px 8px;color:var(--ink-soft);font-size:12.5px;line-height:1.5;}
-
-  .row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:13px;color:var(--ink-soft);font-weight:600;}
-  input[type=range]{
-    flex:1;accent-color:var(--green);
-  }
-  .slider-row{display:flex;align-items:center;gap:8px;}
-  .slider-row input[type=range]{min-width:0;}
-  .num-wrap{
-    display:flex;align-items:center;gap:3px;border:1px solid var(--line);border-radius:7px;
-    padding:4px 6px;flex:none;background:var(--surface);
-  }
-  .num-wrap input[type=number]{
-    width:36px;border:none;background:none;font:inherit;font-weight:700;color:var(--green-dark);
-    text-align:right;padding:0;-moz-appearance:textfield;
-  }
-  .num-wrap input[type=number]::-webkit-inner-spin-button,
-  .num-wrap input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
-  .num-wrap span{font-size:12px;color:var(--ink-soft);}
-  .radius-controls{display:flex;align-items:center;gap:3px;flex:none;}
-  .radius-btn{
-    width:26px;height:26px;border:1px solid var(--line);border-radius:8px;background:var(--surface);
-    color:var(--ink);font:700 18px/1 'Manrope',system-ui,sans-serif;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;padding:0;transition:.15s;
-  }
-  .radius-btn:hover{border-color:var(--green);color:var(--green-dark);background:var(--drop-hover);}
-  .radius-btn:active{transform:scale(.94);}
-  .profile-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;}
-  .profile-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:8px 5px;font:600 12px/1.2 inherit;cursor:pointer;}
-  .profile-btn.active{background:var(--green);border-color:var(--green);color:#fff;}
-  .profile-note{margin-top:8px;font-size:11px;color:var(--ink-soft);line-height:1.35;}
-  .auth-box{display:flex;align-items:center;gap:8px;}
-  .auth-user{flex:1;min-width:0;font-size:11px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .auth-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:7px 10px;font:700 12px inherit;cursor:pointer;}
-  .auth-btn:hover{border-color:var(--green);}
-  .auth-status{margin-top:7px;font-size:10.5px;color:var(--ink-soft);line-height:1.35;}
-  .select-input{
-    width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);
-    font:inherit;font-size:13px;color:var(--ink);cursor:pointer;
-  }
-  .select-input:focus{outline:none;border-color:var(--green);}
-
-  .badges{display:flex;flex-wrap:wrap;gap:6px;}
-  .badge{
-    font-size:11.5px;padding:5px 9px;border-radius:999px;border:1px solid var(--line);
-    color:var(--ink-soft);background:var(--surface);white-space:nowrap;
-  }
-  .badge.done{background:var(--green);border-color:var(--green);color:#fff;font-weight:700;}
-  .stat-row{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;}
-  .stat-row + .stat-row{margin-top:8px;}
-  .stat-row b{font-size:14px;color:var(--ink);}
-  .mini-btn{
-    border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:7px;
-    padding:5px 11px;font-size:12px;cursor:pointer;font-family:inherit;flex:none;
-  }
-  .mini-btn:hover{border-color:var(--green);}
-  .mini-btn:disabled{opacity:.6;cursor:default;}
-  #cityList{margin-top:8px;font-size:13px;}
-  #cityList .city-row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--line);}
-  #cityList .city-row:last-child{border-bottom:none;}
-  .export-row{display:flex;gap:8px;}
-  .export-row input[type=text]{
-    flex:1;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:8px;
-    background:var(--surface);color:var(--ink);font:inherit;font-size:13px;
-  }
-
-  .settings-toggle{
-    display:flex;align-items:center;justify-content:space-between;padding:14px 20px;cursor:pointer;
-    border-bottom:1px solid var(--line);user-select:none;background:var(--surface);
-  }
-  .settings-toggle span{font-size:13px;font-weight:700;color:var(--ink);}
-  .settings-toggle svg{width:13px;height:13px;color:var(--ink-soft);transition:transform .2s ease;flex:none;}
-  .settings-toggle.open svg{transform:rotate(180deg);}
-  .settings-panel{max-height:0;overflow:hidden;transition:max-height .3s ease;}
-  .settings-panel.open{max-height:2400px;}
-
-  .maps-grid{display:grid;grid-template-columns:1fr;gap:6px;}
-  .theme-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
-  .map-btn{
-    border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:11px 12px;font-size:13.5px;
-    cursor:pointer;text-align:left;font-family:inherit;color:var(--ink-soft);transition:.15s;font-weight:600;
-  }
-  .map-btn:hover{border-color:var(--green);}
-  .theme-btn{text-align:center !important;}
-  #mapThemeControl{position:absolute;left:14px;top:14px;z-index:700;display:flex;gap:2px;padding:3px;background:rgba(255,255,255,.92);border:1px solid rgba(0,0,0,.12);border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.12);backdrop-filter:blur(8px);}
-  #mapThemeControl .theme-btn{border:0;background:transparent;color:#344238;border-radius:7px;padding:6px 9px;font:700 11px/1.1 'Manrope',system-ui,sans-serif;cursor:pointer;white-space:nowrap;}
-  #mapThemeControl .theme-btn.active{background:#2f8f57;color:#fff;}
-  :root[data-theme="dark"] #mapThemeControl{background:rgba(31,37,33,.94);border-color:#3b443e;}
-  :root[data-theme="dark"] #mapThemeControl .theme-btn{color:#dce5df;}
-  :root[data-theme="dark"] #mapThemeControl .theme-btn.active{background:#45b875;color:#102017;}
-  .map-btn.active{background:var(--green);border-color:var(--green);color:#fff;}
-
-  #mainToggleRow{display:flex;align-items:center;justify-content:space-between;}
-  #footNote{padding:12px 20px;font-size:11px;color:var(--ink-soft);line-height:1.5;border-top:1px solid var(--line);}
-
-  #mapWrap{position:relative;flex:1;height:100%;}
-  #map{position:absolute;inset:0;background:#0d0f0d;}
-  #fogCanvas{position:absolute;inset:0;pointer-events:none;z-index:450;}
-
-  #menuFab{
-    display:none;position:fixed;left:16px;
-    top:calc(16px + env(safe-area-inset-top,0px));
-    width:48px;height:48px;border-radius:50%;background:var(--green);border:none;
-    box-shadow:0 4px 14px rgba(20,60,30,0.35);z-index:1200;align-items:center;justify-content:center;
-    cursor:pointer;
-  }
-  #menuFab svg{width:22px;height:22px;color:#fff;}
-  #overlayBackdrop{
-    display:none;position:fixed;inset:0;background:rgba(10,20,14,0.4);z-index:1500;
-  }
-
-  @media (max-width: 860px){
-    #menuFab{display:flex;}
-    #sidebar{
-      position:fixed;top:0;left:0;width:88vw;max-width:340px;height:100vh;height:100dvh;
-      transform:translateX(-100%);transition:transform .28s ease;z-index:2000;
-      box-shadow:6px 0 24px rgba(10,30,18,0.25);
-      padding-bottom:env(safe-area-inset-bottom,0px);
-    }
-    #sidebar.open{transform:translateX(0);}
-    #overlayBackdrop.show{display:block;}
-    #drawerClose{display:inline-flex;}
-
-    .toggle{width:38px;height:22px;border-radius:11px;}
-    .toggle::after{width:18px;height:18px;}
-    .toggle.on::after{left:18px;}
-    .del{width:32px;height:32px;font-size:19px;}
-    .track-item{padding:7px 8px;}
-    #dropzone{padding:14px 16px;font-size:14px;}
-    .settings-toggle{padding:11px 20px;}
-    .section{padding:12px 20px;}
-    .settings-toggle span{font-size:14px;}
-
-    /* bigger tap targets for the map picker */
-    .maps-grid{gap:6px;}
-    .map-btn{padding:9px 12px;font-size:14px;}
-
-    .select-input{padding:8px 12px;font-size:14px;}
-    input[type=range]{height:24px;}
-    .num-wrap input[type=number]{width:46px;font-size:14.5px;}
-    .radius-btn{width:28px;height:28px;font-size:17px;}
-
-    /* keep Leaflet's zoom control clear of the iPhone status bar */
-    .leaflet-top.leaflet-right{
-      top:calc(10px + env(safe-area-inset-top,0px)) !important;
-    }
-  }
-
-/* ===================== MYXWALK LAYOUT REDESIGN ===================== */
-:root{
-  --sidebar-w:384px;
-  --card:var(--surface);
-  --card-strong:var(--panel);
-  --shadow-soft:0 1px 2px rgba(20,40,25,.04), 0 8px 24px rgba(20,40,25,.05);
-  --shadow-float:0 8px 28px rgba(10,30,18,.14);
-}
-body{background:var(--bg);}
-#sidebar{
-  width:var(--sidebar-w);min-width:var(--sidebar-w);
-  background:var(--panel);
-  border-right:1px solid var(--line);
-  box-shadow:8px 0 30px rgba(15,35,22,.06);
-  padding:0;
-  scrollbar-width:thin;
-}
-#sidebar::-webkit-scrollbar{width:8px}
-#sidebar::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
-#brand{
-  position:sticky;top:0;z-index:20;
-  padding:17px 18px 15px;
-  background:color-mix(in srgb,var(--panel) 94%,transparent);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--line);
-}
-#brand .logo{width:30px;height:30px;border-radius:9px;box-shadow:0 2px 8px rgba(34,197,94,.15)}
-#brand h1{font-size:22px;letter-spacing:-.04em}
-#drawerClose{font-size:25px}
-.section{padding:14px 18px;border-bottom:0}
-.section h2{font-size:11px;letter-spacing:.02em;color:var(--ink-soft);margin:0 0 9px}
-
-/* Profile */
-#profileTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.profile-tabs{padding:0;position:relative}
-.profile-tabs::before{content:none!important;display:none!important}
-.profile-tabs::after{content:'';display:block;position:absolute;left:-8px;right:-8px;top:-8px;bottom:-8px;border:1px solid var(--line);border-radius:13px;pointer-events:none}
-.profile-btn{
-  min-height:40px;border:1px solid var(--line);background:var(--surface);color:var(--ink);
-  border-radius:11px;padding:8px 5px;font:700 12px/1.15 inherit;
-  box-shadow:0 1px 0 rgba(0,0,0,.02);transition:.16s ease;
-}
-.profile-btn:hover{border-color:var(--green);transform:translateY(-1px)}
-.profile-btn.active{background:var(--green);border-color:var(--green);color:#fff;box-shadow:0 5px 14px rgba(34,197,94,.2)}
-.profile-note{margin-top:10px;padding:9px 11px;border-radius:9px;background:var(--surface);font-size:11px;line-height:1.4;color:var(--ink-soft)}
-
-/* Sections become cards */
-#sidebar > .section:not(#brand){margin:0 12px 10px;border:1px solid var(--line);border-radius:14px;background:var(--card-strong);box-shadow:var(--shadow-soft)}
-#sidebar > .section:first-of-type{margin-top:12px}
-
-/* Auth */
-.auth-box{gap:10px}
-.auth-user{font-size:11.5px;font-weight:600}
-.auth-btn{min-height:34px;border-radius:9px;padding:7px 11px;background:var(--surface);font-size:11.5px}
-.auth-status{padding-top:7px;margin-top:9px;border-top:1px dashed var(--line);font-size:10.5px}
-
-/* Accordion bars */
-.settings-toggle{
-  margin:0 12px 8px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;
-  background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.025);border-bottom:1px solid var(--line);
-}
-.settings-toggle:hover{border-color:color-mix(in srgb,var(--green) 45%,var(--line))}
-.settings-toggle span{font-size:12.5px}
-.settings-panel{margin:0 12px 10px;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:var(--shadow-soft)}
-.settings-panel.open{overflow:hidden}
-.settings-panel .section{padding:14px 15px;border-bottom:1px solid var(--line)}
-.settings-panel .section:last-child{border-bottom:0}
-
-/* Map provider picker */
-.maps-grid{grid-template-columns:1fr 1fr;gap:7px}
-.map-btn{
-  min-height:44px;padding:9px 10px;border-radius:10px;font-size:11.5px;line-height:1.25;
-  display:flex;align-items:center;text-align:left;background:var(--surface)
-}
-.map-btn.active{box-shadow:0 4px 12px rgba(34,197,94,.15)}
-
-/* Fog controls */
-.slider-row{gap:10px}
-input[type=range]{height:4px}
-.radius-controls{gap:4px}
-.radius-btn{width:28px;height:28px;border-radius:8px}
-.num-wrap{min-height:28px;border-radius:8px;padding:4px 7px}
-.select-input{min-height:36px;border-radius:9px}
-
-/* Tracks */
-#tracksPanel .section:first-child{padding-bottom:9px}
-#mainToggleRow{min-height:32px}
-#dropzone{padding:18px 12px;border-radius:12px;background:var(--surface);line-height:1.45;pointer-events:auto}
-.upload-gpx-btn{width:100%;margin-top:8px;min-height:38px;border:1px solid var(--line);border-radius:6px;background:var(--green);color:#fff;font:400 14px/1.2 inherit;cursor:pointer}
-.upload-gpx-btn:hover{filter:brightness(1.05)}
-.upload-gpx-btn:active{transform:translateY(1px)}
-#trackList{max-height:34vh;padding:6px 10px}
-.track-item{padding:10px 8px;border-radius:9px}
-.export-row input[type=text]{min-height:36px;border-radius:9px}
-.mini-btn{min-height:34px;border-radius:9px}
-
-/* Stats */
-#statsPanel .section:first-child{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-#statsPanel .section:first-child .stat-row{display:block;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
-#statsPanel .section:first-child .stat-row + .stat-row{margin-top:0}
-#statsPanel .stat-row span{display:block;font-size:10.5px;color:var(--ink-soft);margin-bottom:4px}
-#statsPanel .stat-row b{font-size:17px;line-height:1.1}
-.badges{gap:5px}
-.badge{font-size:10.5px;padding:5px 8px}
-#cityList{font-size:12px}
-
-#footNote{margin:0 12px 12px;padding:11px 5px;border-top:1px solid var(--line);font-size:10px;text-align:center}
-
-/* Map chrome */
-#mapWrap{background:#dfe8e2}
-#mapThemeControl{
-  left:16px;top:16px;padding:4px;border-radius:12px;
-  box-shadow:var(--shadow-float);border:1px solid rgba(20,40,25,.14)
-}
-#mapThemeControl .theme-btn{padding:7px 10px;font-size:10.5px;border-radius:8px}
-#mapStatus{
-  position:absolute;left:16px;bottom:18px;z-index:700;
-  display:flex;align-items:center;gap:7px;padding:8px 11px;
-  border:1px solid rgba(20,40,25,.12);border-radius:11px;
-  background:rgba(255,255,255,.88);color:#24382b;
-  box-shadow:0 7px 22px rgba(10,30,18,.12);backdrop-filter:blur(10px);
-  font:700 10.5px/1.2 'Manrope',system-ui,sans-serif;
-  pointer-events:none;
-}
-#mapStatus .status-dot{width:7px;height:7px;border-radius:50%;background:#22C55E;box-shadow:0 0 0 3px rgba(34,197,94,.13)}
-:root[data-theme="dark"] #mapStatus{background:rgba(25,32,28,.88);border-color:#3b443e;color:#dce5df}
-
-@media (max-width:860px){
-  #sidebar{width:88vw;max-width:390px;min-width:0}
-  #sidebar > .section:not(#brand), .settings-toggle, .settings-panel{margin-left:10px;margin-right:10px}
-  #mapThemeControl{left:68px;top:16px}
-  #mapStatus{left:16px;bottom:16px;max-width:calc(100vw - 32px)}
-}
-@media (max-width:520px){
-  #profileTabs{gap:4px}
-  .profile-btn{font-size:11px}
-  .maps-grid{grid-template-columns:1fr}
-  #mapThemeControl .theme-btn{padding:7px 8px}
-}
-
-
-/* =========================
-   VARIANT 02 — MAP-FIRST UI
-   ========================= */
-@media (min-width:861px){
-  body{background:var(--bg);}
-  #sidebar{
-    width:92px!important;min-width:92px!important;overflow:visible!important;
-    position:relative;padding:0 8px!important;gap:0;
-    background:color-mix(in srgb,var(--panel) 94%,var(--bg));
-    border-right:1px solid var(--line);
-    box-shadow:3px 0 18px rgba(20,40,25,.07);
-  }
-  #brand{
-    height:76px;padding:14px 0!important;justify-content:center;gap:0;
-    border-bottom:1px solid var(--line)!important;
-  }
-  #brand .logo{width:42px!important;height:42px!important;border-radius:12px!important;box-shadow:0 4px 12px rgba(34,197,94,.18)}
-  #brand h1,#drawerClose{display:none!important}
-
-  #sidebar > .section:not(#brand){margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
-  #sidebar > .section:nth-of-type(1){padding:12px 0 8px!important;}
-  #sidebar > .section:nth-of-type(2){padding:6px 0 12px!important;}
-
-  #profileTabs{display:flex!important;flex-direction:column;gap:6px!important;}
-  .profile-btn{
-    width:76px;height:48px!important;padding:5px 3px!important;border-radius:12px!important;
-    font-size:11px!important;font-weight:800!important;letter-spacing:-.01em;
-    background:transparent!important;border:1px solid transparent!important;color:var(--ink-soft)!important;
-    box-shadow:none!important;transition:.16s ease;
-  }
-  .profile-btn:hover{background:var(--surface)!important;border-color:var(--line)!important;transform:none!important;}
-  .profile-btn.active{
-    background:var(--green)!important;color:#fff!important;
-    border-color:var(--green)!important;box-shadow:0 5px 14px rgba(34,197,94,.22)!important;
-  }
-  .profile-note{display:none!important}
-
-  #sidebar > .section:nth-of-type(2) .auth-box{display:block;text-align:center;}
-  #authUser{display:none!important}
-  .auth-btn{
-    width:76px;height:38px;padding:0!important;border-radius:11px!important;
-    font-size:0!important;font-weight:800!important;background:var(--surface)!important;
-    position:relative;
-  }
-  .auth-btn::before{content:'↗';font-size:18px;line-height:1;color:var(--green);}
-  #authStatus{display:none!important}
-
-  .settings-toggle{
-    width:76px;height:56px!important;margin:4px 0!important;padding:7px 3px!important;
-    border:1px solid transparent!important;border-radius:13px!important;
-    display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;
-    gap:4px;background:transparent!important;color:var(--ink-soft);box-shadow:none!important;
-    position:relative;cursor:pointer;
-  }
-  .settings-toggle:hover{background:var(--surface)!important;border-color:var(--line)!important;}
-  .settings-toggle.open{background:var(--surface)!important;border-color:var(--line)!important;color:var(--ink)!important;}
-  .settings-toggle span{font-size:10px!important;font-weight:800!important;line-height:1.05;text-align:center;}
-  .settings-toggle span:first-child{font-size:10px!important;}
-  .settings-toggle svg{display:none!important}
-  #mapToggle::before{content:'▦';font-size:23px;font-weight:400;line-height:20px;}
-  #settingsToggle::before{content:'⚙';font-size:22px;font-weight:400;line-height:20px;}
-  #tracksToggle::before{content:'≋';font-size:28px;font-weight:500;line-height:18px;}
-  #statsToggle::before{content:'◔';font-size:23px;font-weight:400;line-height:20px;}
-
-  .settings-panel{
-    display:none!important;position:absolute!important;left:102px!important;width:390px!important;
-    max-height:calc(100vh - 32px)!important;overflow:auto!important;
-    margin:0!important;padding:0!important;border:1px solid var(--line)!important;
-    border-radius:18px!important;background:var(--panel)!important;
-    box-shadow:0 16px 42px rgba(10,25,15,.20)!important;z-index:2200!important;
-  }
-  .settings-panel.open{display:block!important;}
-  #mapPanel{top:78px!important;}
-  #settingsPanel{top:138px!important;}
-  #tracksPanel{top:198px!important;}
-  #statsPanel{top:258px!important;}
-  .settings-panel .section{padding:16px!important;}
-  .settings-panel .section:first-child{border-radius:18px 18px 0 0;}
-  #trackList{max-height:38vh!important;}
-  #footNote{display:none!important}
-
-  #mapWrap{min-width:0;}
-  #mapThemeControl{left:18px!important;top:18px!important;border-radius:12px!important;}
-  #mapStatus{left:18px!important;bottom:18px!important;}
-
-}
-
-@media (max-width:860px){
-  /* Mobile keeps the drawer model so the radical desktop dock does not hurt usability. */
-  #sidebar{width:88vw!important;max-width:390px!important;min-width:0!important;overflow-y:auto!important;padding:0!important;}
-  #brand h1{display:block!important;}
-  #brand .logo{width:24px!important;height:24px!important;border-radius:7px!important;}
-  #profileTabs{display:grid!important;grid-template-columns:1fr 1fr 1fr!important;}
-  .profile-btn{width:auto!important;height:auto!important;padding:8px 5px!important;font-size:11px!important;}
-  .profile-note{display:block!important;}
-  #authUser{display:block!important;}
-  .auth-btn{width:auto!important;height:auto!important;font-size:12px!important;padding:7px 10px!important;}
-  .auth-btn::before{display:none!important;}
-  #authStatus{display:block!important;}
-  .settings-toggle{width:auto!important;height:auto!important;margin:0!important;padding:12px 16px!important;display:flex!important;flex-direction:row!important;justify-content:space-between!important;align-items:center!important;gap:0;background:var(--surface)!important;border-radius:0!important;border:0!important;border-bottom:1px solid var(--line)!important;}
-  .settings-toggle::before{display:none!important;}
-  .settings-toggle span{font-size:13px!important;}
-  .settings-toggle svg{display:block!important;}
-  .settings-panel{display:block!important;position:static!important;width:auto!important;max-height:0!important;overflow:hidden!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;}
-  .settings-panel.open{max-height:2400px!important;display:block!important;}
-  #mapWrap::after{display:none!important;}
-}
-
-</style>
-
-<style id="variant02-user-adjustments">
-/* User adjustments: wider dock, larger typography, less rounding, one map per row. */
-@media (min-width:861px){
-  #sidebar{width:110px!important;min-width:110px!important;}
-  #brand{height:104px!important;padding:13px 0 10px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:7px!important;}
-  #brand .logo{width:42px!important;height:42px!important;border-radius:6px!important;}
-  #brand h1{display:block!important;font-size:17px!important;font-weight:800!important;letter-spacing:-.03em!important;line-height:1!important;margin:0!important;}
-  #profileTabs{gap:7px!important;}
-  .profile-btn,.auth-btn,.settings-toggle{width:94px!important;}
-  .profile-btn{height:54px!important;border-radius:6px!important;font-size:12.5px!important;}
-  .auth-btn{height:42px!important;border-radius:6px!important;}
-  .settings-toggle{height:62px!important;border-radius:6px!important;}
-  .settings-toggle span{font-size:11.5px!important;}
-  .settings-toggle span:first-child{font-size:11.5px!important;}
-  .settings-panel{left:122px!important;width:468px!important;border-radius:9px!important;}
-  .settings-panel .section:first-child{border-radius:9px 9px 0 0!important;}
-  #mapPanel{top:106px!important;}
-  #settingsPanel{top:174px!important;}
-  #tracksPanel{top:242px!important;}
-  #statsPanel{top:310px!important;}
-  .maps-grid{grid-template-columns:1fr!important;gap:6px!important;}
-  .map-btn{min-height:48px!important;padding:10px 12px!important;border-radius:5px!important;font-size:13px!important;}
-}
-
-/* Readability: slightly larger text throughout the application. */
-body{font-size:15px;}
-#brand h1{font-size:19px;}
-.section h2{font-size:13px;}
-.row{font-size:14px;}
-.profile-note{display:none!important;font-size:12px;}
-.auth-user{font-size:12px;}
-.auth-status{font-size:11.5px;}
-.settings-toggle span{font-size:14px;}
-.map-btn{font-size:13px;}
-.track-item{font-size:13px;}
-#emptyHint{font-size:13.5px;}
-#cityList{font-size:13.5px;}
-.stat-row{font-size:14px;}
-.stat-row b{font-size:16px;}
-
-/* The map status is intentionally more prominent for quick reading. */
-#mapStatus{font-size:13.5px!important;padding:9px 12px!important;border-radius:6px!important;}
-
-/* Halve the rounding of rectangular controls/panels. Circular controls stay circular. */
-.profile-btn,.auth-btn,.settings-toggle,.settings-panel,.map-btn,.radius-btn,.num-wrap,.select-input,#dropzone,.track-item,.export-row input[type=text],.mini-btn,#statsPanel .section:first-child .stat-row,#mapThemeControl,.settings-panel .section{border-radius:6px;}
-#mapThemeControl .theme-btn{border-radius:4px;}
-#mapStatus{border-radius:6px;}
-#brand .logo{border-radius:6px;}
-
-/* Variant 02 refinement: serious, consistent navigation controls. */
+<style id="myxwalk-consolidated">
+:root{--green:#22C55E;--green-dark:#15803D;--ink:#122417;--ink-soft:#5C7568;--panel:#FFFFFF;--bg:#EAF9EE;--line:#D7ECDC;--danger:#E15A46;--radius:10px;--surface:#F8FAF8;--hover:#F4F6F4;--dash:#C6D3CC;--toggle-off:#D9E0DB;--del:#B7C0BA;--danger-bg:#FBEBE9;--drop-hover:#F4FBF6;--sidebar-w:384px;--card:var(--surface);--card-strong:var(--panel);--shadow-soft:0 1px 2px rgba(20,40,25,.04), 0 8px 24px rgba(20,40,25,.05);--shadow-float:0 8px 28px rgba(10,30,18,.14);--myx-green:#22a06b;}
+:root[data-theme="dark"]{color-scheme:dark;--green-dark:#4ADE80;--ink:#E6F2EA;--ink-soft:#8FA79A;--panel:#141C17;--bg:#0C120E;--line:#24322A;--surface:#1B261F;--hover:#1D2A22;--dash:#2E4137;--toggle-off:#3A4C41;--del:#6E8578;--danger-bg:#3A1F1B;--drop-hover:#183024;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html, body{height:100%;margin:0;font-family:"Manrope",system-ui,sans-serif;color:var(--ink);}
+body{display:flex;background:var(--bg);overflow:hidden;font-size:15px;}
+#sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);height:100%;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;box-shadow:8px 0 30px rgba(15,35,22,.06);z-index:1000;padding-top:env(safe-area-inset-top,0px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0;scrollbar-width:thin;}
+#sidebar > *{flex-shrink:0;}
+#brand{padding:17px 18px 15px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--panel) 94%,transparent);backdrop-filter:blur(14px);}
+#drawerClose{display:none;margin-left:auto;background:none;border:none;font-size:25px;line-height:1;color:var(--ink-soft);cursor:pointer;padding:4px 6px;}
+#brand .logo{width:30px;height:30px;border-radius:6px;flex:none;box-shadow:0 2px 8px rgba(34,197,94,.15);}
+#brand h1{font-size:19px;font-weight:800;letter-spacing:-.04em;margin:0;}
+#brand span{color:var(--green);}
+.section{padding:14px 18px;border-bottom:0;}
+.section h2{font-size:13px;font-weight:700;color:var(--ink-soft);text-transform:none;margin:0 0 9px;letter-spacing:.02em;}
+#dropzone{border:1.5px dashed var(--dash);border-radius:12px;padding:18px 12px;text-align:center;font-size:13px;color:var(--ink-soft);cursor:pointer;transition:.15s;background:var(--surface);line-height:1.45;pointer-events:auto;}
+#dropzone:hover{border-color:var(--green);color:var(--green-dark);background:var(--drop-hover);}
+#fileInput{display:none;}
+#trackList{max-height:34vh;overflow-y:auto;padding:6px 10px;}
+.track-item{display:flex;align-items:center;gap:8px;padding:10px 8px;border-radius:9px;font-size:13px;}
+.track-item:hover{background:var(--hover);}
+.track-item .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.track-item .pts{color:var(--ink-soft);font-size:11px;}
+.toggle{width:30px;height:18px;border-radius:9px;background:var(--toggle-off);position:relative;cursor:pointer;flex:none;transition:.15s;}
+.toggle.on{background:var(--green);}
+.toggle::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.25);}
+.toggle.on::after{left:14px;}
+.del{width:22px;height:22px;border:none;background:none;color:var(--del);cursor:pointer;font-size:16px;line-height:1;flex:none;border-radius:6px;}
+.del:hover{color:var(--danger);background:var(--danger-bg);}
+#emptyHint{padding:16px 8px;color:var(--ink-soft);font-size:13.5px;line-height:1.5;}
+.row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:14px;color:var(--ink-soft);font-weight:600;}
+input[type=range]{flex:1;accent-color:var(--green);height:4px;}
+.slider-row{display:flex;align-items:center;gap:10px;}
+.slider-row input[type=range]{min-width:0;}
+.num-wrap{display:flex;align-items:center;gap:3px;border:1px solid var(--line);border-radius:8px;padding:4px 7px;flex:none;background:var(--surface);min-height:28px;}
+.num-wrap input[type=number]{width:36px;border:none;background:none;font:inherit;font-weight:700;color:var(--green-dark);text-align:right;padding:0;-moz-appearance:textfield;}
+.num-wrap input[type=number]::-webkit-inner-spin-button, .num-wrap input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+.num-wrap span{font-size:12px;color:var(--ink-soft);}
+.radius-controls{display:flex;align-items:center;gap:4px;flex:none;}
+.radius-btn{width:28px;height:28px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:700 18px/1 "Manrope",system-ui,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:.15s;}
+.radius-btn:hover{border-color:var(--green);color:var(--green-dark);background:var(--drop-hover);}
+.radius-btn:active{transform:scale(.94);}
+.profile-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;padding:0;position:relative;border-bottom:0 !important;}
+.profile-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:11px;padding:8px 5px;font:700 12px/1.15 inherit;cursor:pointer;min-height:40px;box-shadow:0 1px 0 rgba(0,0,0,.02);transition:.16s ease;}
+.profile-btn.active{background:var(--green);border-color:var(--green);color:#fff !important;box-shadow:0 5px 14px rgba(34,197,94,.2);}
+.profile-note{margin-top:10px;font-size:12px;color:var(--ink-soft);line-height:1.4;padding:9px 11px;border-radius:9px;background:var(--surface);display:none !important;}
+.auth-box{display:flex;align-items:center;gap:10px;}
+.auth-user{flex:1;min-width:0;font-size:14px !important;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:400 !important;}
+.auth-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:9px;padding:7px 11px;font:700 12px inherit;cursor:pointer;min-height:34px;font-size:11.5px;font-weight:400 !important;}
+.auth-btn:hover{border-color:var(--green);}
+.auth-status{margin-top:9px;font-size:12.5px !important;color:var(--ink-soft);line-height:1.35;padding-top:7px;border-top:1px dashed var(--line);}
+.select-input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface);font:inherit;font-size:13px;color:var(--ink);cursor:pointer;min-height:36px;}
+.select-input:focus{outline:none;border-color:var(--green);}
+.stat-row{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;}
+.stat-row + .stat-row{margin-top:8px;}
+.stat-row b{font-size:16px;color:var(--ink);}
+.mini-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:9px;padding:5px 11px;font-size:12px;cursor:pointer;font-family:inherit;flex:none;min-height:34px;}
+.mini-btn:hover{border-color:var(--green);}
+.mini-btn:disabled{opacity:.6;cursor:default;}
+#cityList{margin-top:8px;font-size:13.5px;}
+#cityList .city-row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--line);}
+#cityList .city-row:last-child{border-bottom:none;}
+.export-row{display:flex;gap:8px;}
+.export-row input[type=text]{flex:1;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font:inherit;font-size:13px;min-height:36px;}
+.settings-toggle{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--line);user-select:none;background:var(--surface);margin:0 12px 8px;border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.025);}
+.settings-toggle span{font-size:14px;font-weight:700;color:var(--ink);}
+.settings-toggle svg{width:13px;height:13px;color:var(--ink-soft);transition:transform .2s ease;flex:none;}
+.settings-toggle.open svg{transform:rotate(180deg);}
+.settings-panel{max-height:0;overflow:hidden;transition:max-height .3s ease;margin:0 12px 10px;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:var(--shadow-soft);}
+.settings-panel.open{max-height:2400px;overflow:hidden;}
+.maps-grid{display:grid;grid-template-columns:1fr;gap:7px;}
+.theme-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.map-btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 10px;font-size:13px;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink-soft);transition:.15s;font-weight:600;min-height:44px;line-height:1.25;display:flex;align-items:center;}
+.map-btn:hover{border-color:var(--green);}
+.theme-btn{text-align:center !important;}
+#mapThemeControl{position:absolute;left:16px;top:16px;z-index:700;display:none !important;gap:2px !important;padding:3px !important;background:rgba(255,255,255,.88) !important;border:1px solid rgba(20,40,25,.12) !important;border-radius:10px !important;box-shadow:0 7px 22px rgba(10,30,18,.12) !important;backdrop-filter:blur(10px) !important;width:230px !important;height:34px !important;box-sizing:border-box !important;align-items:stretch !important;}
+#mapThemeControl .theme-btn{border:0;background:transparent;color:#344238;border-radius:6px !important;padding:0 6px !important;font:400 13.5px/1.2 inherit !important;cursor:pointer;white-space:nowrap;font-size:13.5px !important;font-weight:400 !important;line-height:1.2 !important;flex:1 1 0 !important;height:26px !important;box-sizing:border-box !important;min-width:0 !important;display:flex !important;align-items:center !important;justify-content:center !important;}
+#mapThemeControl .theme-btn.active{background:#2f8f57;color:#fff;}
+:root[data-theme="dark"] #mapThemeControl{background:rgba(31,37,33,.94);border-color:#3b443e;}
+:root[data-theme="dark"] #mapThemeControl .theme-btn{color:#dce5df;}
+:root[data-theme="dark"] #mapThemeControl .theme-btn.active{background:#45b875;color:#102017;}
+.map-btn.active{background:var(--green);border-color:var(--green);color:#fff;box-shadow:0 4px 12px rgba(34,197,94,.15);}
+#mainToggleRow{display:flex;align-items:center;justify-content:space-between;min-height:32px;}
+#footNote{padding:11px 5px;font-size:12px !important;color:var(--ink-soft);line-height:1.5;border-top:1px solid var(--line);margin:0 12px 12px;text-align:center;}
+#mapWrap{position:relative;flex:1;height:100%;background:#dfe8e2;}
+#map{position:absolute;inset:0;background:#0d0f0d;}
+#fogCanvas{position:absolute;inset:0;pointer-events:none;z-index:450;}
+#menuFab{display:none;position:fixed;left:16px;top:calc(16px + env(safe-area-inset-top,0px));width:48px;height:48px;border-radius:50%;background:var(--green);border:none;box-shadow:0 4px 14px rgba(20,60,30,0.35);z-index:1200;align-items:center;justify-content:center;cursor:pointer;}
+#menuFab svg{width:22px;height:22px;color:#fff;}
+#overlayBackdrop{display:none;position:fixed;inset:0;background:rgba(10,20,14,0.4);z-index:1500;}
+#sidebar::-webkit-scrollbar{width:8px;}
+#sidebar::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px;}
+#profileTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.profile-tabs::before{content:none !important;display:none !important;}
+.profile-tabs::after{content:"";display:block;position:absolute;left:-8px;right:-8px;top:-8px;bottom:-8px;border:1px solid var(--line);border-radius:13px;pointer-events:none;}
+.profile-btn:hover{border-color:var(--green);transform:translateY(-1px);}
+#sidebar > .section:not(#brand){margin:0 12px 10px;border:1px solid var(--line);border-radius:14px;background:var(--card-strong);box-shadow:var(--shadow-soft);}
+#sidebar > .section:first-of-type{margin-top:12px;}
+.settings-toggle:hover{border-color:color-mix(in srgb,var(--green) 45%,var(--line));}
+.settings-panel .section{padding:14px 15px;border-bottom:1px solid var(--line);}
+.settings-panel .section:last-child{border-bottom:0;}
+#tracksPanel .section:first-child{padding-bottom:9px;}
+.upload-gpx-btn{width:100%;margin-top:8px;min-height:38px;border:1px solid var(--line);border-radius:6px;background:var(--green);color:#fff;font:400 14px/1.2 inherit;cursor:pointer;}
+.upload-gpx-btn:hover{filter:brightness(1.05);}
+.upload-gpx-btn:active{transform:translateY(1px);}
+#statsPanel .section:first-child{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+#statsPanel .section:first-child .stat-row{display:block;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);}
+#statsPanel .section:first-child .stat-row + .stat-row{margin-top:0;}
+#statsPanel .stat-row span{display:block;font-size:10.5px;color:var(--ink-soft);margin-bottom:4px;}
+#statsPanel .stat-row b{font-size:17px;line-height:1.1;}
+#mapStatus{position:absolute;left:16px;bottom:18px;z-index:700;display:flex !important;align-items:center !important;gap:7px !important;padding:0 12px !important;border:1px solid rgba(20,40,25,.12) !important;border-radius:10px !important;background:rgba(255,255,255,.88) !important;color:#24382b !important;box-shadow:0 7px 22px rgba(10,30,18,.12) !important;backdrop-filter:blur(10px) !important;font:400 13.5px/1.2 inherit !important;pointer-events:none;font-size:13.5px !important;width:230px !important;height:34px !important;box-sizing:border-box !important;white-space:nowrap !important;justify-content:center !important;font-weight:400 !important;line-height:1.2 !important;}
+#mapStatus .status-dot{width:7px;height:7px;border-radius:50%;background:#22C55E;box-shadow:0 0 0 3px rgba(34,197,94,.13);}
+:root[data-theme="dark"] #mapStatus{background:rgba(25,32,28,.88);border-color:#3b443e;color:#dce5df;}
+.profile-btn, .auth-btn, .settings-toggle, .settings-panel, .map-btn, .radius-btn, .num-wrap, .select-input, #dropzone, .track-item, .export-row input[type=text], .mini-btn, #statsPanel .section:first-child .stat-row, #mapThemeControl, .settings-panel .section{border-radius:6px;}
 .settings-toggle.nav-toggle{display:grid;grid-template-columns:24px 1fr 16px;align-items:center;gap:10px;}
 .settings-toggle.nav-toggle .nav-icon{width:21px;height:21px;color:var(--ink-soft);display:block;transition:none;}
 .settings-toggle.nav-toggle .chevron{width:14px;height:14px;}
-.settings-toggle.nav-toggle span{font-size:14px!important;font-weight:400!important;line-height:1.2;}
-.profile-btn,.auth-btn,.settings-toggle,.map-btn,.mini-btn{font-family:inherit;font-weight:400!important;font-size:14px!important;}
-.auth-btn{font-weight:400!important;}
-.auth-user{font-size:14px!important;font-weight:400!important;}
-.auth-status{font-size:12.5px!important;}
+.settings-toggle.nav-toggle span{font-size:14px !important;font-weight:400 !important;line-height:1.2;color:var(--ink-soft) !important;}
+.profile-btn, .auth-btn, .settings-toggle, .map-btn, .mini-btn{font-family:inherit;font-weight:400 !important;font-size:14px !important;}
 #authNavLabel{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .fog-edge-divider{height:1px;background:var(--line);margin:16px -2px 12px;}
-#mapThemeControl{padding:3px 4px!important;border-radius:6px!important;}
-#mapThemeControl .theme-btn{font-size:13.5px!important;font-weight:400!important;line-height:1.2;padding:8px 10px!important;border-radius:4px!important;}
-#mapStatus{font-size:13.5px!important;}
-@media (min-width:769px){#sidebar{width:110px!important;min-width:110px!important;} }
+#mapToggle::before, #settingsToggle::before, #tracksToggle::before, #statsToggle::before{content:none !important;}
+#mapThemeControl .theme-btn.active, :root[data-theme="dark"] #mapThemeControl .theme-btn.active{background:var(--green) !important;border-color:var(--green) !important;color:#fff !important;box-shadow:0 5px 14px rgba(34,197,94,.20);}
+#mapStatusText{font:inherit !important;display:flex !important;align-items:center !important;justify-content:center !important;gap:10px !important;width:100% !important;}
+:root[data-theme="dark"] #mapThemeControl, :root[data-theme="dark"] #mapStatus{background:rgba(31,37,33,.94) !important;border-color:#3b443e !important;color:#dce5df !important;}
+.profile-btn, .settings-toggle.nav-toggle, #mapThemeControl .theme-btn, .map-btn{border-radius:6px !important;}
+.profile-btn.active, .settings-toggle.nav-toggle.open, #mapThemeControl .theme-btn.active, .map-btn.active{border-radius:6px !important;background:#22C55E !important;border-color:#22C55E !important;color:#fff !important;box-shadow:0 4px 12px rgba(34,197,94,.20) !important;}
+#mapStatus .status-item{display:inline-flex !important;align-items:center !important;justify-content:center !important;flex:1 1 0 !important;min-width:0 !important;white-space:nowrap !important;}
+#mapStatus .status-divider{width:1px !important;height:18px !important;flex:0 0 1px !important;background:rgba(20,40,25,.18) !important;}
+:root[data-theme="dark"] #mapStatus .status-divider{background:#4a554d !important;}
+.profile-section{position:relative !important;border-bottom:1px solid var(--line) !important;padding-bottom:14px !important;margin-bottom:0 !important;}
+#authToggle{border-top:0 !important;margin-top:0 !important;position:relative;border-bottom:0 !important;}
+#mapThemeControl, #mapStatus{width:287.5px !important;height:34px !important;box-sizing:border-box !important;background:rgba(255,255,255,.88) !important;border:1px solid rgba(20,40,25,.12) !important;border-radius:10px !important;box-shadow:0 7px 22px rgba(10,30,18,.12) !important;backdrop-filter:blur(10px) !important;}
+.settings-panel, .settings-panel *{font-size:13.5px !important;}
+.settings-panel input[type="range"]{font-size:13.5px !important;}
+.settings-toggle.nav-toggle.open, .profile-btn.active, .map-btn.active, #mapThemeControl .theme-btn.active{background:var(--myx-green) !important;border-color:var(--myx-green) !important;color:#fff !important;box-shadow:0 4px 12px rgba(34,160,107,.22) !important;}
+.settings-toggle.nav-toggle.open .nav-icon, .settings-toggle.nav-toggle.open .chevron, .settings-toggle.nav-toggle.open span{color:#fff !important;stroke:#fff !important;}
+#shareHint{font-size:11px;opacity:.72;line-height:1.35;}
+.profile-btn.active, .map-btn.active, #mapThemeControl .theme-btn.active{background:#24a85a !important;border-color:#24a85a !important;color:#fff !important;box-shadow:0 4px 12px rgba(34,168,90,.18) !important;}
+.profile-section::after{content:"" !important;display:block !important;width:100% !important;height:1px !important;background:var(--line) !important;margin-top:18px !important;}
+.settings-toggle.nav-toggle .nav-icon.nav-icon-mask{width:20px !important;height:20px !important;min-width:20px !important;flex:0 0 20px !important;display:block !important;background-color:var(--ink-soft) !important;-webkit-mask-repeat:no-repeat !important;mask-repeat:no-repeat !important;-webkit-mask-position:center !important;mask-position:center !important;-webkit-mask-size:contain !important;mask-size:contain !important;transform:none !important;transition:none !important;border:0 !important;box-shadow:none !important;}
+.icon-auth{-webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/12500/12500101.png");mask-image:url("https://cdn-icons-png.flaticon.com/512/12500/12500101.png");}
+.icon-map{-webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/1535/1535780.png");mask-image:url("https://cdn-icons-png.flaticon.com/512/1535/1535780.png");}
+.icon-settings{-webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/2099/2099058.png");mask-image:url("https://cdn-icons-png.flaticon.com/512/2099/2099058.png");}
+.icon-tracks{-webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/1061/106153.png");mask-image:url("https://cdn-icons-png.flaticon.com/512/1061/106153.png");}
+.icon-stats{-webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/1819/1819876.png");mask-image:url("https://cdn-icons-png.flaticon.com/512/1819/1819876.png");}
+.profile-btn, .settings-toggle.nav-toggle{color:var(--ink-soft) !important;}
+.settings-toggle.nav-toggle.open{color:#fff !important;}
+.settings-toggle.nav-toggle.open span{color:#fff !important;}
+.settings-toggle.nav-toggle.open .nav-icon.nav-icon-mask{background-color:var(--ink-soft) !important;color:var(--ink-soft) !important;transform:none !important;}
+.settings-toggle.nav-toggle.open .nav-icon, .settings-toggle.nav-toggle.open .nav-icon-img{transform:none !important;}
+.theme-settings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;}
+.theme-choice{min-height:38px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);border-radius:6px;padding:7px 8px;font:400 13.5px/1.2 inherit;cursor:pointer;}
+.theme-choice:hover{border-color:var(--green);}
+.theme-choice.active{background:#22C55E !important;border-color:#22C55E !important;color:#fff !important;box-shadow:0 4px 12px rgba(34,197,94,.20);}
+#languageSelect{width:100%;margin-top:8px;min-height:38px;}
 
-/* Separator between profiles and authorization, matching the brand divider. */
-@media (min-width:861px){
-  #authToggle{border-top:1px solid var(--line)!important;margin-top:8px!important;padding-top:12px!important;}
+@media (max-width:860px) {
+  #menuFab{display:flex !important;left:12px !important;right:auto !important;top:auto !important;bottom:calc(12px + env(safe-area-inset-bottom,0px)) !important;width:calc(50% - 18px) !important;height:48px !important;min-height:48px !important;border-radius:8px !important;background:var(--green) !important;box-shadow:0 5px 18px rgba(20,60,30,.28) !important;}
+  #sidebar{position:fixed !important;top:0;left:0;width:100vw !important;max-width:none !important;height:100dvh !important;transform:translateY(100%) !important;transition:transform .28s ease !important;z-index:2000 !important;box-shadow:6px 0 24px rgba(10,30,18,0.25);padding-bottom:calc(18px + env(safe-area-inset-bottom,0px)) !important;min-width:0 !important;overflow-y:auto !important;padding:0 !important;inset:0 !important;overflow-x:hidden !important;}
+  #sidebar.open{transform:translateY(0) !important;}
+  #overlayBackdrop.show{display:none !important;}
+  #drawerClose{display:inline-flex !important;}
+  .toggle{width:38px;height:22px;border-radius:11px;}
+  .toggle::after{width:18px;height:18px;}
+  .toggle.on::after{left:18px;}
+  .del{width:32px;height:32px;font-size:19px;}
+  .track-item{padding:7px 8px;grid-template-columns:28px minmax(0,1fr) auto 30px !important;gap:8px !important;}
+  #dropzone{padding:14px 16px;font-size:14px;min-height:58px;box-sizing:border-box;}
+  .settings-toggle{padding:12px 16px !important;width:auto !important;height:auto !important;margin:0 !important;display:flex !important;flex-direction:row !important;justify-content:space-between !important;align-items:center !important;gap:0;background:var(--surface) !important;border-radius:0 !important;border:0 !important;border-bottom:1px solid var(--line) !important;}
+  .section{padding:12px 20px;}
+  .settings-toggle span{font-size:13px !important;}
+  .maps-grid{gap:6px;}
+  .map-btn{padding:9px 12px;font-size:14px;}
+  .select-input{padding:8px 12px;font-size:14px;}
+  input[type=range]{height:24px;}
+  .num-wrap input[type=number]{width:46px;font-size:14.5px;}
+  .radius-btn{width:28px;height:28px;font-size:17px;}
+  .leaflet-top.leaflet-right{top:calc(10px + env(safe-area-inset-top,0px)) !important;}
+  #sidebar > .section:not(#brand), .settings-toggle, .settings-panel{margin-left:10px;margin-right:10px;}
+  #mapThemeControl{left:12px !important;top:16px;width:230px !important;height:34px !important;}
+  #mapStatus{left:auto !important;bottom:calc(12px + env(safe-area-inset-bottom,0px)) !important;max-width:none !important;width:calc(50% - 18px) !important;height:48px !important;right:12px !important;min-height:48px !important;border-radius:8px !important;padding:0 8px !important;box-sizing:border-box !important;}
+  #brand h1{display:block !important;}
+  #brand .logo{width:24px !important;height:24px !important;border-radius:7px !important;}
+  #profileTabs{display:grid !important;grid-template-columns:1fr 1fr 1fr !important;}
+  .profile-btn{width:min(112px,calc(100vw - 28px)) !important;height:auto !important;padding:8px 5px !important;font-size:11px !important;}
+  .profile-note{display:block !important;}
+  #authUser{display:block !important;}
+  .auth-btn{width:auto !important;height:auto !important;font-size:12px !important;padding:7px 10px !important;}
+  .auth-btn::before{display:none !important;}
+  #authStatus{display:block !important;}
+  .settings-toggle::before{display:none !important;}
+  .settings-toggle svg{display:block !important;}
+  .settings-panel{display:block !important;position:static !important;width:auto !important;max-height:0 !important;overflow:hidden !important;border:0 !important;border-radius:0 !important;box-shadow:none !important;background:transparent !important;max-width:min(86vw,340px) !important;}
+  .settings-panel.open{max-height:2400px !important;display:block !important;}
+  #mapWrap::after{display:none !important;}
+  .profile-btn, .auth-btn, .settings-toggle, .map-btn, .mini-btn{font-size:13.5px !important;font-weight:400 !important;}
+  .settings-toggle.nav-toggle{display:flex !important;flex-direction:row !important;justify-content:flex-start !important;align-items:center !important;gap:10px !important;width:min(112px,calc(100vw - 28px)) !important;}
+  .settings-toggle.nav-toggle .nav-icon{width:20px !important;height:20px !important;display:block !important;flex:none !important;}
+  .settings-toggle.nav-toggle .chevron{display:block !important;margin-left:auto !important;}
+  .settings-toggle.nav-toggle span{font-size:13.5px !important;font-weight:400 !important;text-align:left !important;}
+  #footNote{display:block !important;position:static !important;margin:0 10px !important;padding:11px 5px !important;font-size:11px !important;text-align:center !important;}
+  .upload-gpx-btn{font-size:13.5px !important;}
+  #mapThemeControl, #mapStatus{width:287.5px !important;max-width:calc(100vw - 24px) !important;}
+  .profile-section{padding-top:18px !important;padding-bottom:0 !important;margin-bottom:0 !important;border-bottom:1px solid var(--line) !important;}
+  .profile-tabs{margin-top:6px !important;margin-bottom:0 !important;}
+  #authToggle{margin-top:0 !important;padding-top:18px !important;border-top:0 !important;}
+  html, body{max-width:100%;overflow-x:hidden;width:100%;overflow:hidden;overscroll-behavior:none;}
+  .settings-toggle.nav-toggle, .profile-btn{min-height:42px !important;}
+  #map{width:100vw !important;max-width:100vw !important;}
+  #authPanel, #mapPanel, #settingsPanel, #tracksPanel, #statsPanel{max-width:calc(100vw - 16px) !important;}
+  .upload-gpx-btn, .auth-btn, .profile-btn, .settings-toggle.nav-toggle, .mini-btn{min-height:42px !important;}
+  .track-item .name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #statsPanel .section{max-width:100%;overflow:hidden;}
+  .profile-section::after{margin-top:18px !important;}
+  #authToggle #authNavLabel{display:flex !important;align-items:center !important;line-height:1 !important;}
+  .settings-toggle.nav-toggle .nav-icon, .settings-toggle.nav-toggle .nav-icon-img{transform:none !important;}
+  #menuFab svg{width:21px !important;height:21px !important;}
+  #mapStatusText{gap:6px !important;}
+  #mapStatus .status-divider{height:22px !important;}
+  #sidebar .nav-icon{flex:0 0 auto !important;}
+  #sidebar .settings-toggle.nav-toggle{width:calc(100% - 24px) !important;margin-left:12px !important;margin-right:12px !important;height:48px !important;min-height:48px !important;padding-left:16px !important;padding-right:16px !important;}
+  #sidebar .profile-section{padding-left:12px !important;padding-right:12px !important;}
+  #sidebar .profile-btn{width:100% !important;}
+  #sidebar .settings-panel{width:calc(100% - 24px) !important;margin-left:12px !important;margin-right:12px !important;}
+  #sidebar .settings-panel .section{padding-left:16px !important;padding-right:16px !important;}
+  #sidebar .settings-toggle.nav-toggle span{font-size:14px !important;}
+  #sidebar .settings-toggle.nav-toggle .nav-icon{width:19px !important;height:19px !important;}
+  .theme-choice, #languageSelect{min-height:44px !important;font-size:14px !important;}
 }
 
-/* Final navigation refinements */
-@media (min-width:861px){
-  #sidebar{width:110px!important;min-width:110px!important;}
-  .settings-toggle.nav-toggle{width:94px!important;height:62px!important;margin:4px 0!important;padding:7px 3px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:5px!important;}
-  .settings-toggle.nav-toggle .nav-icon{width:21px!important;height:21px!important;}
-  .settings-toggle.nav-toggle .chevron{display:none!important;}
-  .settings-toggle.nav-toggle span{font-size:13.5px!important;font-weight:400!important;line-height:1.08!important;text-align:center!important;max-width:88px!important;}
-  #authNavLabel{display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;white-space:normal!important;}
-  .profile-btn{font-size:13.5px!important;font-weight:400!important;}
-  .settings-toggle::before{display:none!important;}
-  #footNote{display:block!important;position:absolute!important;left:8px!important;right:8px!important;bottom:7px!important;margin:0!important;padding:8px 2px!important;border-top:1px solid var(--line)!important;font-size:10px!important;text-align:center!important;}
-  #authPanel{top:106px!important;}
-  #mapPanel{top:174px!important;}
-  #settingsPanel{top:242px!important;}
-  #tracksPanel{top:310px!important;}
-  #statsPanel{top:378px!important;}
+@media (max-width:520px) {
+  #profileTabs{gap:4px;}
+  .profile-btn{font-size:11px;}
+  #mapThemeControl .theme-btn{padding:7px 8px;}
 }
-#mapToggle::before,#settingsToggle::before,#tracksToggle::before,#statsToggle::before{content:none!important;}
-@media (max-width:860px){
-  .profile-btn,.auth-btn,.settings-toggle,.map-btn,.mini-btn{font-size:13.5px!important;font-weight:400!important;}
-  .settings-toggle.nav-toggle{display:flex!important;flex-direction:row!important;justify-content:space-between!important;align-items:center!important;gap:10px!important;}
-  .settings-toggle.nav-toggle .nav-icon{width:20px!important;height:20px!important;display:block!important;flex:none!important;}
-  .settings-toggle.nav-toggle .chevron{display:block!important;}
-  .settings-toggle.nav-toggle span{font-size:13.5px!important;font-weight:400!important;}
-  #footNote{display:block!important;position:static!important;margin:0 10px!important;padding:11px 5px!important;font-size:10px!important;text-align:center!important;}
-  .upload-gpx-btn{font-size:13.5px!important;}
+
+@media (min-width:861px) {
+  body{background:var(--bg);}
+  #sidebar{width:172px !important;min-width:172px !important;overflow:visible !important;position:relative;padding:0 8px !important;gap:0;background:color-mix(in srgb,var(--panel) 94%,var(--bg));border-right:1px solid var(--line);box-shadow:3px 0 18px rgba(20,40,25,.07);}
+  #brand{height:104px !important;padding:13px 0 10px !important;justify-content:center !important;gap:7px !important;border-bottom:1px solid var(--line) !important;display:flex !important;flex-direction:column !important;align-items:center !important;}
+  #brand .logo{width:42px !important;height:42px !important;border-radius:6px !important;box-shadow:0 4px 12px rgba(34,197,94,.18);}
+  #brand h1, #drawerClose{display:none !important;}
+  #sidebar > .section:not(#brand){margin:0 !important;border:0 !important;background:transparent !important;box-shadow:none !important;}
+  #sidebar > .section:nth-of-type(1){padding:12px 0 8px !important;}
+  #sidebar > .section:nth-of-type(2){padding:6px 0 12px !important;}
+  #profileTabs{display:flex !important;flex-direction:column;gap:7px !important;}
+  .profile-btn{width:100% !important;height:38px !important;padding:4px 4px !important;border-radius:6px !important;font-size:13.5px !important;font-weight:400 !important;letter-spacing:-.01em;background:transparent !important;border:1px solid transparent !important;color:var(--ink-soft) !important;box-shadow:none !important;transition:.16s ease;position:relative;min-height:28px !important;margin:0 !important;display:flex !important;align-items:center !important;justify-content:center !important;text-align:center !important;box-sizing:border-box !important;min-width:0 !important;}
+  .profile-btn:hover{background:var(--surface) !important;border-color:var(--line) !important;transform:none !important;}
+  .profile-btn.active{background:var(--green) !important;color:#fff !important;border-color:var(--green) !important;box-shadow:0 5px 14px rgba(34,197,94,.22) !important;}
+  .profile-note{display:none !important;}
+  #sidebar > .section:nth-of-type(2) .auth-box{display:block;text-align:center;}
+  #authUser{display:none !important;}
+  .auth-btn{width:76px;height:42px !important;padding:0 !important;border-radius:6px !important;font-size:0 !important;font-weight:800 !important;background:var(--surface) !important;position:relative;}
+  .auth-btn::before{content:"↗";font-size:18px;line-height:1;color:var(--green);}
+  #authStatus{display:none !important;}
+  .settings-toggle{width:76px;height:62px !important;margin:4px 0 !important;padding:7px 3px !important;border:1px solid transparent !important;border-radius:6px !important;display:flex !important;flex-direction:column !important;justify-content:center !important;align-items:center !important;gap:4px;background:transparent !important;color:var(--ink-soft);box-shadow:none !important;position:relative;cursor:pointer;}
+  .settings-toggle:hover{background:var(--surface) !important;border-color:var(--line) !important;}
+  .settings-toggle.open{background:var(--surface) !important;border-color:var(--line) !important;color:var(--ink) !important;}
+  .settings-toggle span{font-size:11.5px !important;font-weight:800 !important;line-height:1.05;text-align:center;}
+  .settings-toggle span:first-child{font-size:11.5px !important;}
+  .settings-toggle svg{display:none !important;}
+  #mapToggle::before{content:"▦";font-size:23px;font-weight:400;line-height:20px;}
+  #settingsToggle::before{content:"⚙";font-size:22px;font-weight:400;line-height:20px;}
+  #tracksToggle::before{content:"≋";font-size:28px;font-weight:500;line-height:18px;}
+  #statsToggle::before{content:"◔";font-size:23px;font-weight:400;line-height:20px;}
+  .settings-panel{display:none !important;position:absolute !important;left:190px !important;width:468px !important;max-height:calc(100vh - 32px) !important;overflow:auto !important;margin:0 !important;padding:0 !important;border:1px solid var(--line) !important;border-radius:9px !important;background:var(--panel) !important;box-shadow:0 16px 42px rgba(10,25,15,.20) !important;z-index:2200 !important;}
+  .settings-panel.open{display:block !important;}
+  #mapPanel{top:174px !important;}
+  #settingsPanel{top:242px !important;}
+  #tracksPanel{top:310px !important;}
+  #statsPanel{top:378px !important;}
+  .settings-panel .section{padding:16px !important;}
+  .settings-panel .section:first-child{border-radius:9px 9px 0 0 !important;}
+  #trackList{max-height:38vh !important;}
+  #footNote{display:block !important;position:absolute !important;left:8px !important;right:8px !important;bottom:7px !important;margin:0 !important;padding:8px 2px !important;border-top:1px solid var(--line) !important;font-size:10px !important;text-align:center !important;}
+  #mapWrap{min-width:0;}
+  #mapThemeControl{left:18px !important;top:18px !important;border-radius:12px !important;}
+  #mapStatus{left:18px !important;bottom:18px !important;}
+  #brand h1{display:block !important;font-size:17px !important;font-weight:800 !important;letter-spacing:-.03em !important;line-height:1 !important;margin:0 !important;}
+  .profile-btn, .auth-btn, .settings-toggle{width:112px !important;}
+  .map-btn{min-height:34px !important;padding:6px 8px !important;border-radius:5px !important;font-size:13.5px !important;}
+  #authToggle{border-top:0 !important;margin-top:0 !important;padding-top:4px !important;border-bottom:0 !important;align-items:center !important;padding-bottom:4px !important;}
+  .settings-toggle.nav-toggle{width:140px !important;height:43px !important;margin:4px auto !important;padding:5px 10px !important;display:flex !important;flex-direction:row !important;justify-content:flex-start !important;align-items:center !important;gap:9px !important;min-height:43px !important;border:0 !important;border-bottom:0 !important;border-radius:10px !important;box-shadow:none !important;grid-template-columns:20px minmax(0,1fr) 14px !important;box-sizing:border-box !important;text-align:left !important;min-width:140px !important;column-gap:12px !important;}
+  .settings-toggle.nav-toggle .nav-icon{width:20px !important;height:20px !important;display:block !important;justify-self:start !important;color:var(--ink-soft) !important;flex:0 0 20px !important;min-width:20px !important;transform:none !important;}
+  .settings-toggle.nav-toggle .chevron{display:none !important;width:12px !important;height:12px !important;justify-self:end !important;margin-left:auto !important;flex:0 0 12px !important;}
+  .settings-toggle.nav-toggle span{font-size:13.5px !important;font-weight:400 !important;line-height:1.2 !important;text-align:left !important;max-width:88px !important;min-width:0 !important;display:block !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;align-items:center !important;height:auto !important;flex:1 1 auto !important;}
+  #authNavLabel{display:-webkit-box !important;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;white-space:normal !important;align-self:center !important;line-height:1 !important;}
+  .settings-toggle::before{display:none !important;}
+  #authPanel{top:106px !important;}
+  .profile-btn[data-tooltip]::after{content:attr(data-tooltip);position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%) translateX(-4px);width:235px;padding:9px 11px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);box-shadow:0 7px 20px rgba(10,30,18,.14);font:400 12px/1.35 inherit;text-align:left;white-space:normal;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .14s ease,transform .14s ease;z-index:1000;}
+  .profile-btn[data-tooltip]:hover::after{opacity:1;visibility:visible;transform:translateY(-50%) translateX(0);}
+  .profile-section{border-bottom:1px solid var(--line) !important;padding-bottom:0 !important;padding-top:22px !important;margin-bottom:0 !important;padding-left:10px !important;padding-right:10px !important;}
+  .profile-tabs::after{display:none !important;content:none !important;}
+  .settings-toggle.nav-toggle.open{background:#24a85a !important;color:#fff !important;border-color:#24a85a !important;box-shadow:0 4px 12px rgba(34,168,90,.20) !important;}
+  .settings-toggle.nav-toggle.open .nav-icon, .settings-toggle.nav-toggle.open .chevron, .settings-toggle.nav-toggle.open span{color:#fff !important;stroke:#fff !important;}
+  .profile-tabs{gap:4px !important;margin-top:7px !important;margin-bottom:0 !important;width:100% !important;margin-left:0 !important;margin-right:0 !important;display:flex !important;flex-direction:column !important;align-items:stretch !important;}
+  .settings-toggle.nav-toggle + .settings-panel{border-top:0 !important;}
+  #sidebar > .section[style*="border-bottom"], #authToggle{border-top:0 !important;border-bottom:0 !important;}
+  :root[data-theme="dark"] .settings-toggle.nav-toggle.open{background:color-mix(in srgb,var(--surface) 88%,#000 12%) !important;border-color:color-mix(in srgb,var(--line) 72%,#000 28%) !important;}
+  #mapToggle span, #authToggle span, #settingsToggle span, #tracksToggle span, #statsToggle span{font-size:13.5px !important;font-weight:400 !important;line-height:1.1 !important;}
+  #authToggle #authNavLabel{display:flex !important;align-items:center !important;height:100% !important;line-height:1 !important;}
+  #profileTabs.profile-tabs, .profile-tabs{width:140px !important;margin-left:auto !important;margin-right:auto !important;box-sizing:border-box !important;grid-template-columns:repeat(3,minmax(0,1fr)) !important;gap:5px !important;}
+  .settings-toggle.nav-toggle .nav-icon-img{object-fit:contain !important;border-radius:0 !important;}
+  .settings-toggle.nav-toggle.open .nav-icon, .settings-toggle.nav-toggle.open .nav-icon-img{transform:none !important;}
+  .settings-toggle.nav-toggle .icon-tracks{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M6 3.5a3 3 0 0 1 3 3c0 1.07-.56 2.01-1.4 2.54l4.1 5.1c.4-.09.83-.14 1.3-.14 1.06 0 2.03.33 2.82.88l2.2-2.2A2.99 2.99 0 0 1 20 7.5a3 3 0 1 1-1.42 5.64l-2.2 2.2c.39.58.62 1.28.62 2.03a3 3 0 1 1-5.64-1.42l-4.1-5.1A3 3 0 1 1 6 3.5Zm0 1.7A1.3 1.3 0 1 0 6 7.8a1.3 1.3 0 0 0 0-2.6Zm7 10.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Zm7-9.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Z'/%3E%3C/svg%3E") !important;mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M6 3.5a3 3 0 0 1 3 3c0 1.07-.56 2.01-1.4 2.54l4.1 5.1c.4-.09.83-.14 1.3-.14 1.06 0 2.03.33 2.82.88l2.2-2.2A2.99 2.99 0 0 1 20 7.5a3 3 0 1 1-1.42 5.64l-2.2 2.2c.39.58.62 1.28.62 2.03a3 3 0 1 1-5.64-1.42l-4.1-5.1A3 3 0 1 1 6 3.5Zm0 1.7A1.3 1.3 0 1 0 6 7.8a1.3 1.3 0 0 0 0-2.6Zm7 10.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Zm7-9.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Z'/%3E%3C/svg%3E") !important;}
+}
+
+@media (max-width:430px) {
+  .settings-toggle.nav-toggle{height:42px !important;padding-left:6px !important;padding-right:6px !important;}
+  .settings-toggle.nav-toggle .nav-icon{width:18px !important;height:18px !important;}
+  .settings-toggle.nav-toggle span{font-size:13px !important;}
+  .profile-btn{height:38px !important;font-size:13px !important;}
+  #mapThemeControl, #mapStatus{width:calc(100vw - 24px) !important;}
+  #mapThemeControl .theme-btn{font-size:13px !important;padding-left:4px !important;padding-right:4px !important;}
+  .settings-toggle.nav-toggle, .profile-btn{width:min(112px,calc(100vw - 28px)) !important;}
+  #shareHint{font-size:10.5px;}
 }
 </style>
 
-<style id="user-profile-sidebar-final">
-/* Final user refinements */
-@media (min-width:861px){
-  /* Current desktop sidebar: +20% from 110px to 132px. */
-  #sidebar{width:132px!important;min-width:132px!important;}
-  .profile-btn,.auth-btn,.settings-toggle{width:112px!important;}
-  .settings-panel{left:144px!important;}
-  #authPanel{top:106px!important;}
-  #mapPanel{top:174px!important;}
-  #settingsPanel{top:242px!important;}
-  #tracksPanel{top:310px!important;}
-  #statsPanel{top:378px!important;}
 
-  /* Small mouse-over hint for route profiles. */
-  .profile-btn{position:relative;}
-  .profile-btn[data-tooltip]::after{
-    content:attr(data-tooltip);
-    position:absolute;
-    left:calc(100% + 10px);
-    top:50%;
-    transform:translateY(-50%) translateX(-4px);
-    width:235px;
-    padding:9px 11px;
-    border:1px solid var(--line);
-    border-radius:7px;
-    background:var(--panel);
-    color:var(--ink);
-    box-shadow:0 7px 20px rgba(10,30,18,.14);
-    font:400 12px/1.35 inherit;
-    text-align:left;
-    white-space:normal;
-    opacity:0;
-    visibility:hidden;
-    pointer-events:none;
-    transition:opacity .14s ease,transform .14s ease;
-    z-index:1000;
-  }
-  .profile-btn[data-tooltip]:hover::after{
-    opacity:1;
-    visibility:visible;
-    transform:translateY(-50%) translateX(0);
-  }
-}
 
-/* Active theme button uses exactly the same green as the active profile. */
-#mapThemeControl .theme-btn.active,
-:root[data-theme="dark"] #mapThemeControl .theme-btn.active{
-  background:var(--green)!important;
-  border-color:var(--green)!important;
-  color:#fff!important;
-  box-shadow:0 5px 14px rgba(34,197,94,.20);
-}
-</style>
 
-<style id="user-profile-sidebar-final2">
-/* Final sidebar cleanup and visual alignment */
-@media (min-width:861px){
-  /* Clean separators: only the two requested dividers remain. */
-  #brand{border-bottom:1px solid var(--line)!important;}
-  .profile-section{border-bottom:1px solid var(--line)!important;}
-  .profile-tabs::after{display:none!important;content:none!important;}
 
-  /* Sidebar controls use the full available width and are 30% shorter. */
-  .settings-toggle.nav-toggle{width:calc(100% - 16px)!important;height:43px!important;min-height:43px!important;margin:4px 8px!important;padding:5px 8px!important;border:0!important;border-bottom:0!important;border-radius:10px!important;box-shadow:none!important;}
-  .settings-toggle.nav-toggle.open{background:#3a9f62!important;color:#fff!important;}
-  .settings-toggle.nav-toggle.open .nav-icon,.settings-toggle.nav-toggle.open .chevron,.settings-toggle.nav-toggle.open span{color:#fff!important;}
-  .profile-btn{min-height:28px!important;height:28px!important;padding:4px 4px!important;}
-  .profile-tabs{gap:5px!important;}
 
-  /* No incidental separators between navigation buttons. */
-  .settings-toggle.nav-toggle + .settings-panel{border-top:0!important;}
-}
-
-/* The map status and theme controls are matching pills. */
-#mapThemeControl{width:230px!important;height:34px!important;box-sizing:border-box!important;padding:3px!important;gap:2px!important;background:rgba(255,255,255,.88)!important;border:1px solid rgba(20,40,25,.12)!important;border-radius:10px!important;box-shadow:0 7px 22px rgba(10,30,18,.12)!important;backdrop-filter:blur(10px)!important;}
-#mapThemeControl .theme-btn{flex:1 1 0!important;height:26px!important;box-sizing:border-box!important;padding:0 6px!important;border-radius:7px!important;font:700 11px/1.1 'Manrope',system-ui,sans-serif!important;}
-#mapStatus{width:230px!important;height:34px!important;box-sizing:border-box!important;padding:0 9px!important;gap:7px!important;border:1px solid rgba(20,40,25,.12)!important;border-radius:10px!important;background:rgba(255,255,255,.88)!important;color:#24382b!important;box-shadow:0 7px 22px rgba(10,30,18,.12)!important;backdrop-filter:blur(10px)!important;font:700 11px/1.1 'Manrope',system-ui,sans-serif!important;white-space:nowrap!important;}
-#mapStatusText{font:inherit!important;}
-:root[data-theme="dark"] #mapThemeControl,
-:root[data-theme="dark"] #mapStatus{background:rgba(31,37,33,.94)!important;border-color:#3b443e!important;color:#dce5df!important;}
-
-@media (max-width:860px){
-  #mapThemeControl{width:230px!important;height:34px!important;}
-  #mapStatus{width:230px!important;height:34px!important;}
-}
-</style>
 </head>
 <body>
 
@@ -768,6 +419,7 @@ body{font-size:15px;}
     </div>
 
     <div class="section" style="border-bottom:none;">
+      <h2>Стиль тумана</h2>
       <div class="row"><span>Цвет</span></div>
       <select id="fogColorSelect" class="select-input">
         <option value="#121814" selected>Чёрный</option>
@@ -785,7 +437,6 @@ body{font-size:15px;}
         <option value="organic">Рваный туман</option>
       </select>
     </div>
-  <div class="fog-edge-divider settings-theme-divider" aria-hidden="true"></div>
   <div class="settings-section-extra section" id="appearanceSettingsSection">
     <h2>Тема оформления</h2>
     <div class="theme-settings-grid" id="themeSettingsGrid">
@@ -1083,18 +734,13 @@ function makeTrackLayer(points){
   return L.polyline(points.map(p=>[p.lat,p.lon]), { color:'#22C55E', weight:3, opacity:0.85 });
 }
 function normalizeTrackFilename(value){
-  // Do not rename imported files. File.name is the exact filename supplied by the device/browser.
-  const raw=String(value ?? '');
-  return raw || 'track.gpx';
-}
-function trackSignature(points){
-  if(!Array.isArray(points)||!points.length) return '';
-  const a=points[0], b=points[points.length-1], n=points.length;
-  return `${n}|${Number(a.lat).toFixed(6)},${Number(a.lon).toFixed(6)}|${Number(b.lat).toFixed(6)},${Number(b.lon).toFixed(6)}`;
+  const raw=String(value||'').trim();
+  if(!raw) return 'track.gpx';
+  return /\.gpx$/i.test(raw) ? raw : raw+'.gpx';
 }
 function serializeTrack(t){
   const filename=normalizeTrackFilename(t.filename||t.name);
-  return { id:t.id, name:filename, filename, originalFilename:filename, points:t.points, visible:!!t.visible };
+  return { id:t.id, name:filename, filename, points:t.points, visible:!!t.visible };
 }
 function saveLocalProfiles(){
   try{ localStorage.setItem(PROFILE_KEY, JSON.stringify({car:profileTracks.car.map(serializeTrack), walk:profileTracks.walk.map(serializeTrack)})); }catch(err){ console.warn('не удалось сохранить профили',err); }
@@ -1111,7 +757,7 @@ function readLocalProfiles(){
 function hydrateProfiles(saved){
   ['car','walk'].forEach(profile=>{
     profileTracks[profile]=(saved[profile]||[]).filter(t=>t.points&&t.points.length).map(st=>({
-      id:Number(st.id)||nextId++, name:normalizeTrackFilename(st.originalFilename||st.filename||st.name||'Без названия'), filename:normalizeTrackFilename(st.originalFilename||st.filename||st.name||'Без названия'), originalFilename:normalizeTrackFilename(st.originalFilename||st.filename||st.name||'Без названия'), points:st.points, visible:!!st.visible, layer:makeTrackLayer(st.points)
+      id:Number(st.id)||nextId++, name:normalizeTrackFilename(st.filename||st.name||'Без названия'), filename:normalizeTrackFilename(st.filename||st.name||'Без названия'), points:st.points, visible:!!st.visible, layer:makeTrackLayer(st.points)
     }));
     profileTracks[profile].forEach(t=>{nextId=Math.max(nextId,t.id+1);});
   });
@@ -1166,7 +812,7 @@ document.querySelectorAll('.profile-btn').forEach(b=>b.addEventListener('click',
 function parseGPX(text, fallbackName){
   const xml=new DOMParser().parseFromString(text,'application/xml');
   const nameEl=xml.querySelector('trk > name');
-  const name=(nameEl&&nameEl.textContent.trim())||fallbackName;
+  const name=fallbackName||(nameEl&&nameEl.textContent.trim())||'track';
   const pts=[];
   xml.querySelectorAll('trkpt').forEach(pt=>{ const lat=parseFloat(pt.getAttribute('lat')),lon=parseFloat(pt.getAttribute('lon')); if(!isNaN(lat)&&!isNaN(lon)) pts.push({lat,lon}); });
   return {name,points:pts};
@@ -1175,13 +821,10 @@ function addTrackFromFile(file){
   if(activeProfile==='all'){ alert(window.myxT('allAlert')); return; }
   const reader=new FileReader();
   reader.onload=e=>{
-    // File.name is the browser's original filename from the user's device.
-    // Do not normalize, rename, or rebuild it: the displayed name must stay 1:1.
-    const originalFilename=String(file && file.name ? file.name : 'track.gpx').trim() || 'track.gpx';
-    const fallbackName=originalFilename.replace(/\.gpx$/i,'');
-    const parsed=parseGPX(e.target.result,fallbackName);
+    const sourceName=String(file.name||'track.gpx').trim() || 'track.gpx';
+    const parsed=parseGPX(e.target.result,sourceName.replace(/\.gpx$/i,''));
     if(!parsed.points.length) return;
-    const track={id:nextId++,name:originalFilename,filename:originalFilename,originalFilename,points:parsed.points,visible:true,layer:makeTrackLayer(parsed.points)};
+    const track={id:nextId++,name:sourceName,filename:sourceName,points:parsed.points,visible:true,layer:makeTrackLayer(parsed.points)};
     profileTracks[activeProfile].push(track);
     refreshActiveTracks(); saveTracks();
     if(tracks.length===1) map.fitBounds(track.layer.getBounds(),{padding:[40,40]});
@@ -1434,16 +1077,6 @@ function formatArea(m2){
   const km2 = m2/1e6;
   const code=localStorage.getItem('myxwalk_language')||'ru'; const locale=({ru:'ru-RU',en:'en-US',zh:'zh-CN',hi:'hi-IN',es:'es-ES',ar:'ar-SA',fr:'fr-FR',pt:'pt-PT'}[code]||'ru-RU'); const units={ru:['м²','км²'],en:['m²','km²'],zh:['平方米','平方公里'],hi:['वर्ग मीटर','वर्ग किमी'],es:['m²','km²'],ar:['م²','كم²'],fr:['m²','km²'],pt:['m²','km²']}; const u=units[code]||units.ru; return `${Math.round(m2).toLocaleString(locale)} ${u[0]} / ${km2.toLocaleString(locale,{minimumFractionDigits:2,maximumFractionDigits:2})} ${u[1]}`;
 }
-const DIST_ACHIEVEMENTS = [10,50,100,200,300,500,1000,3000,5000,10000,15000,20000,30000,40075,50000];
-const AREA_ACHIEVEMENTS = [1,3,5,10,30,50,100,300,500,1000];
-function renderBadges(containerId, value, thresholds, formatFn){
-  const el = document.getElementById(containerId);
-  el.innerHTML = thresholds.map(v=>{
-    const done = value >= v;
-    const label = (v === 40075) ? 'вокруг света!' : formatFn(v);
-    return `<span class="badge ${done?'done':''}">${label}</span>`;
-  }).join('');
-}
 function recomputeLocalStats(){
   const distM = totalDistanceMeters(tracks);
   const areaM2 = computeExploredAreaM2(tracks, radiusMeters);
@@ -1538,38 +1171,31 @@ const authBtn=document.getElementById('authBtn');
 const authUser=document.getElementById('authUser');
 const authNavLabel=document.getElementById('authNavLabel');
 const authStatus=document.getElementById('authStatus');
-function getAuthDisplayName(){
-  const meta=currentUser?.user_metadata||{};
-  return String(meta.full_name||meta.name||meta.preferred_username||meta.user_name||meta.display_name||currentUser?.email||'Google аккаунт').trim();
-}
-function syncAuthNavLabel(){
-  if(!authNavLabel) return;
-  authNavLabel.textContent=currentUser?getAuthDisplayName():(window.myxT?window.myxT('auth'):'Авторизация');
-}
 function updateAuthUI(){
-  const displayName=getAuthDisplayName();
   if(currentUser){
+    const meta=currentUser.user_metadata||{};
+    const displayName=meta.full_name||meta.name||currentUser.email||'Google аккаунт';
     authUser.textContent=displayName;
+    authNavLabel.textContent=displayName;
     authBtn.textContent=window.myxT?window.myxT('logout'):'Выйти';
     authStatus.textContent=window.myxT?window.myxT('cloudSync'):'Треки синхронизируются с аккаунтом Supabase.';
   } else {
     authUser.textContent=window.myxT?window.myxT('notSigned'):'Не выполнен вход';
+    authNavLabel.textContent=window.myxT?window.myxT('auth'):'Авторизация';
     authBtn.textContent=window.myxT?window.myxT('login'):'Войти через Google';
     authStatus.textContent=window.myxT?(cloudReady?window.myxT('cloudLogin'):window.myxT('localOnly')):(cloudReady?'Войдите через Google, чтобы хранить треки в облаке.':'Supabase ещё не настроен: приложение пока работает локально.');
   }
-  syncAuthNavLabel();
 }
 function cloudPayload(track,profile){
-  const filename=normalizeTrackFilename(track.originalFilename||track.filename||track.name);
+  const filename=normalizeTrackFilename(track.filename||track.name);
   track.name=filename;
   track.filename=filename;
-  track.originalFilename=filename;
   return {
     user_id:currentUser.id,
     name:filename,
     filename:filename,
     // Храним точки + профиль + видимость в одном JSON-поле, т.к. текущая таблица tracks имеет фиксированную схему.
-    gpx_data:JSON.stringify({version:2,profile,visible:!!track.visible,filename,originalFilename:filename,points:track.points})
+    gpx_data:JSON.stringify({version:1,profile,visible:!!track.visible,points:track.points})
   };
 }
 async function loadCloudTracks(){
@@ -1581,24 +1207,14 @@ async function loadCloudTracks(){
     return;
   }
   const cloud={car:[],walk:[]};
-  const localBySignature=new Map();
-  for(const profile of ['car','walk']){
-    for(const localTrack of profileTracks[profile]){
-      const sig=trackSignature(localTrack.points);
-      const localName=normalizeTrackFilename(localTrack.originalFilename||localTrack.filename||localTrack.name);
-      if(sig && localName && localName!=='new file' && localName!=='new file.gpx') localBySignature.set(`${profile}|${sig}`,localName);
-    }
-  }
   (data||[]).forEach(row=>{
     try{
       const payload=JSON.parse(row.gpx_data||'{}');
       const profile=payload.profile;
       const points=Array.isArray(payload.points)?payload.points:[];
       if(!cloud[profile]||!points.length) return;
-      const sig=trackSignature(points);
-      const localFilename=localBySignature.get(`${profile}|${sig}`);
-      const filename=normalizeTrackFilename(localFilename||payload.originalFilename||payload.filename||row.filename||row.name||'Трек');
-      cloud[profile].push({id:nextId++,name:filename,filename,originalFilename:filename,points,visible:payload.visible!==false,layer:makeTrackLayer(points),cloudId:row.id});
+      const filename=normalizeTrackFilename(row.filename||row.name||'Трек');
+      cloud[profile].push({id:nextId++,name:filename,filename,points,visible:payload.visible!==false,layer:makeTrackLayer(points),cloudId:row.id});
     }catch(err){ console.warn('Пропущен повреждённый облачный трек',row,err); }
   });
   const hadCloudTracks = cloud.car.length + cloud.walk.length > 0;
@@ -1630,39 +1246,9 @@ async function deleteTrackFromCloud(track,profile){
   if(error) console.warn('Ошибка удаления трека из облака',error);
 }
 async function signInGoogle(){
-  if(!supabaseClient){
-    const msg=window.myxT?window.myxT('setupError'):'Supabase не настроен.';
-    if(authStatus) authStatus.textContent=msg;
-    alert(msg);
-    return;
-  }
-  // Google OAuth needs an HTTP(S) callback page. A standalone file:// page has no
-  // valid web origin for the OAuth return. Do not send a file:// redirect to Supabase.
-  if(window.location.protocol==='file:'){
-    const msg='Авторизация Google не может завершиться при запуске HTML-файла напрямую (file://). Откройте myxwalk через http://localhost или разместите файл на сайте.';
-    if(authStatus) authStatus.textContent=msg;
-    alert(msg);
-    return;
-  }
-  try{
-    const redirectTo=window.location.href.split('#')[0];
-    const {data,error}=await supabaseClient.auth.signInWithOAuth({
-      provider:'google',
-      options:{redirectTo}
-    });
-    if(error) throw error;
-    if(data?.url){
-      // Explicit redirect is more reliable than relying on an implicit SDK redirect.
-      window.location.assign(data.url);
-    }else{
-      throw new Error('Supabase не вернул URL авторизации Google. Проверьте настройки Google Provider и Redirect URLs в Supabase.');
-    }
-  }catch(err){
-    console.error('Google OAuth error:',err);
-    const msg=(window.myxT?window.myxT('authError'):'Ошибка авторизации: ')+(err?.message||err);
-    if(authStatus) authStatus.textContent=msg;
-    alert(msg);
-  }
+  if(!supabaseClient){ alert(window.myxT('setupError')); return; }
+  const {error}=await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+window.location.pathname}});
+  if(error) alert(window.myxT('authError')+error.message);
 }
 async function signOutGoogle(){
   if(supabaseClient){
@@ -1684,12 +1270,10 @@ async function initAuth(){
   currentUser=data?.session?.user||null;
   updateAuthUI();
   if(currentUser) await loadCloudTracks();
-  syncAuthNavLabel();
   supabaseClient.auth.onAuthStateChange(async (_event,session)=>{
     currentUser=session?.user||null;
     updateAuthUI();
     if(currentUser) await loadCloudTracks();
-    syncAuthNavLabel();
   });
 }
 
@@ -1735,69 +1319,9 @@ initAuth();
 consumeSharedGpx();
 </script>
 
-<style id="user-ui-refinement-20260930-2255">
-/* Latest requested refinements */
-@media (min-width:861px){
-  /* The divider between Общее and Авторизация is identical to the brand divider. */
-  .profile-section{border-bottom:1px solid var(--line)!important;}
-  #authToggle{border-top:0!important;border-bottom:0!important;}
-}
 
-/* Every selected navigation/theme/map control uses the exact same corner radius as the profile buttons. */
-.profile-btn,
-.settings-toggle.nav-toggle,
-#mapThemeControl .theme-btn,
-.map-btn{border-radius:6px!important;}
-.profile-btn.active,
-.settings-toggle.nav-toggle.open,
-#mapThemeControl .theme-btn.active,
-.map-btn.active{border-radius:6px!important;}
 
-/* Separate radius/fog values visually; the profile name is intentionally omitted. */
-#mapStatus{
-  justify-content:flex-start!important;
-  padding:0 12px!important;
-  gap:9px!important;
-}
-#mapStatusText{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:10px!important;
-  width:100%!important;
-  font:inherit!important;
-}
-#mapStatus .status-item{
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  flex:1 1 0!important;
-  min-width:0!important;
-  white-space:nowrap!important;
-}
-#mapStatus .status-divider{
-  width:1px!important;
-  height:18px!important;
-  flex:0 0 1px!important;
-  background:rgba(20,40,25,.18)!important;
-}
-:root[data-theme="dark"] #mapStatus .status-divider{background:#4a554d!important;}
-</style>
 
-<style>
-/* Divider between the profile buttons and Авторизация — exactly like the brand divider */
-.profile-section{
-  position:relative;
-  border-bottom:1px solid var(--line)!important;
-  padding-bottom:14px!important;
-  margin-bottom:0!important;
-}
-#authToggle{
-  border-top:0!important;
-  margin-top:0!important;
-  position:relative;
-}
-</style>
 <script id="myxwalk-i18n-and-popup-fix-20261001">
 (function(){
   const T={
@@ -1846,21 +1370,21 @@ consumeSharedGpx();
   function translateUI(){
     const q=(s,k)=>setText(s,k);
     document.documentElement.lang=lang; document.documentElement.dir=lang==='ar'?'rtl':'ltr';
-    if(!currentUser) q('#authToggle span:nth-of-type(2)','auth'); syncAuthNavLabel(); q('#mapToggle span:nth-of-type(2)','map'); q('#settingsToggle span:nth-of-type(2)','settings'); q('#tracksToggle span:nth-of-type(2)','tracks'); q('#statsToggle span:nth-of-type(2)','stats');
+    if(!currentUser) q('#authToggle span:nth-of-type(2)','auth'); q('#mapToggle span:nth-of-type(2)','map'); q('#settingsToggle span:nth-of-type(2)','settings'); q('#tracksToggle span:nth-of-type(2)','tracks'); q('#statsToggle span:nth-of-type(2)','stats');
     document.querySelectorAll('.profile-btn').forEach(b=>b.textContent=tr(b.dataset.profile));
     const meta={car:'carNote',walk:'walkNote',all:'allNote'}; const note=document.getElementById('profileNote'); if(note)note.textContent=tr(meta[activeProfile]||'carNote');
     if(currentUser){
       const m=currentUser.user_metadata||{};
       const n=m.full_name||m.name||currentUser.email||'Google';
       const userEl=document.getElementById('authUser'); if(userEl) userEl.textContent=n;
-      syncAuthNavLabel();
+      const nav=document.getElementById('authNavLabel'); if(nav) nav.textContent=n;
       const btn=document.getElementById('authBtn'); if(btn) btn.textContent=tr('logout');
       const status=document.getElementById('authStatus'); if(status) status.textContent=tr('cloudSync');
     } else {
       q('#authUser','notSigned');
       q('#authStatus',cloudReady?'cloudLogin':'localOnly');
       q('#authBtn','login');
-      syncAuthNavLabel();
+      const nav=document.getElementById('authNavLabel'); if(nav) nav.textContent=tr('auth');
     }
     q('#settingsPanel .section:nth-of-type(1) h2','radius'); q('#settingsPanel .section:nth-of-type(2) h2','density'); q('#settingsPanel .section:nth-of-type(3) h2','style');
     const rows=document.querySelectorAll('#settingsPanel .row span'); if(rows[0])rows[0].textContent=tr('color'); if(rows[1])rows[1].textContent=tr('edge');
@@ -1898,15 +1422,7 @@ consumeSharedGpx();
   const oldSwitch=window.switchProfile;
   window.switchProfile=function(profile){if(oldSwitch)oldSwitch(profile);translateUI();};
   const oldAuth=window.updateAuthUI;
-  window.updateAuthUI=function(){if(oldAuth)oldAuth();translateUI();syncAuthNavLabel();};
-  // Auth state may be delivered asynchronously by Supabase; always restore the user name after DOM updates.
-  if(window.MutationObserver){
-    const authObserver=new MutationObserver(()=>{
-      if(currentUser) syncAuthNavLabel();
-    });
-    const authToggle=document.getElementById('authToggle');
-    if(authToggle) authObserver.observe(authToggle,{childList:true,subtree:true,characterData:true});
-  }
+  window.updateAuthUI=function(){if(oldAuth)oldAuth();translateUI();};
   const oldCity=window.renderCityList;
   window.renderCityList=function(results){const el=document.getElementById('cityList');if(!el)return;if(!results.length){el.textContent=tr('citiesNone');return;}el.innerHTML=results.map(r=>`<div class="city-row"><span>${r.city}</span><span>${formatArea(r.area)}</span></div>`).join('');};
   const oldCloudLoad=window.updateCityStatsAutomatically;
@@ -1928,789 +1444,31 @@ consumeSharedGpx();
   translateUI();
 })();
 </script>
-
-<style id="remove-fog-description-final">
-/* Remove the obsolete explanatory fog caption if an older/dynamic panel adds it. */
-#settingsPanel .fog-settings-caption,
-#settingsPanel [data-fog-description]{display:none!important;}
-#settingsPanel .settings-theme-divider{display:block!important;height:1px!important;min-height:1px!important;margin:12px 0!important;background:var(--line)!important;opacity:1!important;}
-</style>
-<script id="final-ui-sync-20261001">
-(function(){
-  const BAD_PART='Здесь задаются параметры рассеивания и внешний вид тумана';
-  function removeFogDescription(root){
-    if(!root) return;
-    const walker=document.createTreeWalker(root,NodeFilter.SHOW_ELEMENT|NodeFilter.SHOW_TEXT);
-    const elements=[]; const texts=[];
-    while(walker.nextNode()){
-      const n=walker.currentNode;
-      if(n.nodeType===Node.TEXT_NODE) texts.push(n); else if(n.nodeType===Node.ELEMENT_NODE) elements.push(n);
-    }
-    texts.forEach(node=>{
-      const value=(node.nodeValue||'').replace(/\s+/g,' ').trim();
-      if(value.includes(BAD_PART)||value.includes('Туман. Здесь задаются параметры рассеивания')){
-        const parent=node.parentElement;
-        if(parent && parent.id!=='settingsPanel') parent.remove(); else node.remove();
-      }
-    });
-    elements.forEach(el=>{
-      if(el.id==='settingsPanel') return;
-      const value=(el.textContent||'').replace(/\s+/g,' ').trim();
-      if(value.includes(BAD_PART)||value.includes('Туман. Здесь задаются параметры рассеивания')) el.remove();
-    });
-  }
-  function init(){
-    const panel=document.getElementById('settingsPanel');
-    if(!panel) return;
-    removeFogDescription(panel);
-    if(window.MutationObserver){
-      const observer=new MutationObserver(()=>removeFogDescription(panel));
-      observer.observe(panel,{childList:true,subtree:true,characterData:true});
-    }
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
-})();
-</script>
-
-
-<style id="final-settings-divider-20261008">
-#settingsPanel .settings-theme-divider{
-  display:block!important;
-  width:100%!important;
-  height:1px!important;
-  min-height:1px!important;
-  margin:0!important;
-  padding:0!important;
-  background:var(--line)!important;
-  border:0!important;
-}
-</style>
-
-
-<script id="final-auth-label-fix-20261008">
-(function(){
-  function nameFromUser(user){
-    const m=user?.user_metadata||{};
-    return String(m.full_name||m.name||m.preferred_username||m.user_name||m.display_name||user?.email||'Google аккаунт').trim();
-  }
-  function sync(){
-    try{
-      const label=document.getElementById('authNavLabel');
-      if(!label) return;
-      const user=typeof currentUser!=='undefined'?currentUser:null;
-      label.textContent=user?nameFromUser(user):(window.myxT?window.myxT('auth'):'Авторизация');
-    }catch(e){}
-  }
-  window.addEventListener('load',sync);
-  document.addEventListener('visibilitychange',sync);
-  setInterval(sync,500);
-})();
-</script>
-
 </body>
 
-<style id="user-ui-refinement-20260930-2245">
-/* Latest UI refinement: matching map control panels */
-#mapThemeControl,
-#mapStatus{
-  width:287.5px!important;
-  height:34px!important;
-  box-sizing:border-box!important;
-  background:rgba(255,255,255,.88)!important;
-  border:1px solid rgba(20,40,25,.12)!important;
-  border-radius:10px!important;
-  box-shadow:0 7px 22px rgba(10,30,18,.12)!important;
-  backdrop-filter:blur(10px)!important;
-}
-#mapThemeControl{
-  padding:3px!important;
-  gap:2px!important;
-  display:flex!important;
-  align-items:stretch!important;
-}
-#mapThemeControl .theme-btn{
-  flex:1 1 0!important;
-  min-width:0!important;
-  height:26px!important;
-  box-sizing:border-box!important;
-  padding:0 6px!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  font:400 13.5px/1.2 inherit!important;
-  border-radius:6px!important;
-}
-#mapStatus{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  padding:0 12px!important;
-  gap:7px!important;
-  font:400 13.5px/1.2 inherit!important;
-  white-space:nowrap!important;
-}
-#mapStatusText{font:inherit!important;}
 
-:root[data-theme="dark"] #mapThemeControl,
-:root[data-theme="dark"] #mapStatus{
-  background:rgba(31,37,33,.94)!important;
-  border-color:#3b443e!important;
-}
 
-/* The only divider here is the requested one between the profile block and Authorization. */
-@media (min-width:861px){
-  .profile-section{
-    border-bottom:1px solid var(--line)!important;
-    padding-bottom:12px!important;
-  }
-  #authToggle{
-    border-top:0!important;
-    margin-top:0!important;
-    padding-top:6px!important;
-  }
-}
 
-/* All text inside Statistics / Settings / Tracks uses the same base size as the map list. */
-.settings-panel,
-.settings-panel *{
-  font-size:13.5px!important;
-}
-.settings-panel input[type="range"]{font-size:13.5px!important;}
 
-@media (max-width:860px){
-  #mapThemeControl,
-  #mapStatus{width:287.5px!important;max-width:calc(100vw - 32px)!important;}
-  #mapThemeControl{left:68px!important;}
-  #mapStatus{left:16px!important;}
-}
-</style>
 
-<style id="user-ui-refinement-20261001-02">
-/* Final green active state + sidebar spacing + iPhone 15/mobile optimization */
-:root{--myx-green:#22a06b;}
 
-/* Use the logo/app green for every selected control. */
-.settings-toggle.nav-toggle.open,
-.profile-btn.active,
-.map-btn.active,
-#mapThemeControl .theme-btn.active{
-  background:var(--myx-green)!important;
-  border-color:var(--myx-green)!important;
-  color:#fff!important;
-  box-shadow:0 4px 12px rgba(34,160,107,.22)!important;
-}
-.settings-toggle.nav-toggle.open .nav-icon,
-.settings-toggle.nav-toggle.open .chevron,
-.settings-toggle.nav-toggle.open span{color:#fff!important;stroke:#fff!important;}
 
-/* Desktop: +80% spacing above На авто and between Общее / Авторизация. */
-@media (min-width:861px){
-  .profile-section{
-    padding-top:22px!important;
-    padding-bottom:22px!important;
-    margin-bottom:0!important;
-    border-bottom:1px solid var(--line)!important;
-  }
-  .profile-tabs{margin-top:7px!important;margin-bottom:7px!important;}
-  #authToggle{
-    margin-top:0!important;
-    padding-top:22px!important;
-    border-top:0!important;
-  }
-}
-
-/* Mobile: keep the compact layout while preserving the requested breathing room. */
-@media (max-width:860px){
-  .profile-section{
-    padding-top:18px!important;
-    padding-bottom:18px!important;
-    margin-bottom:0!important;
-    border-bottom:1px solid var(--line)!important;
-  }
-  .profile-tabs{margin-top:6px!important;margin-bottom:6px!important;}
-  #authToggle{
-    margin-top:0!important;
-    padding-top:18px!important;
-    border-top:0!important;
-  }
-
-  /* iPhone 15 / narrow screens: prevent horizontal overflow and keep controls touch-friendly. */
-  html,body{max-width:100%;overflow-x:hidden;}
-  #sidebar{max-width:100vw!important;}
-  .settings-toggle.nav-toggle,.profile-btn{
-    min-height:42px!important;
-  }
-  .settings-toggle.nav-toggle{
-    width:min(112px,calc(100vw - 28px))!important;
-  }
-  .profile-btn{
-    width:min(112px,calc(100vw - 28px))!important;
-  }
-  #mapThemeControl,#mapStatus{
-    max-width:calc(100vw - 24px)!important;
-  }
-  #mapThemeControl{left:12px!important;}
-  #mapStatus{left:12px!important;}
-}
-
-/* iPhone 15 viewport is 393px CSS wide; this keeps the sidebar usable without sideways scrolling. */
-@media (max-width:430px){
-  .settings-toggle.nav-toggle{height:42px!important;padding-left:6px!important;padding-right:6px!important;}
-  .settings-toggle.nav-toggle .nav-icon{width:18px!important;height:18px!important;}
-  .settings-toggle.nav-toggle span{font-size:13px!important;}
-  .profile-btn{height:38px!important;font-size:13px!important;}
-  #mapThemeControl,#mapStatus{width:calc(100vw - 24px)!important;}
-  #mapThemeControl .theme-btn{font-size:13px!important;padding-left:4px!important;padding-right:4px!important;}
-}
-</style>
-
-<style id="user-sidebar-final-alignment">
-/* Final sidebar alignment: profiles 1-3 centered, navigation 4-8 left-aligned with minimal icons. */
-@media (min-width:861px){
-  /* Keep the sidebar compact while making every button span the same usable width. */
-  #sidebar{width:132px!important;min-width:132px!important;}
-  .profile-section{padding-left:10px!important;padding-right:10px!important;}
-  .profile-tabs{width:100%!important;margin-left:0!important;margin-right:0!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:6px!important;}
-  .profile-btn{width:100%!important;height:38px!important;margin:0!important;padding:7px 8px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;box-sizing:border-box!important;}
-
-  /* Navigation buttons 4-8: same width, icon + text on the left, chevron on the right. */
-  .settings-toggle.nav-toggle{
-    width:calc(100% - 20px)!important;
-    height:43px!important;
-    margin:4px 10px!important;
-    padding:7px 9px!important;
-    display:grid!important;
-    grid-template-columns:20px minmax(0,1fr) 14px!important;
-    align-items:center!important;
-    justify-content:initial!important;
-    gap:8px!important;
-    box-sizing:border-box!important;
-    text-align:left!important;
-  }
-  .settings-toggle.nav-toggle .nav-icon{
-    width:19px!important;height:19px!important;display:block!important;
-    justify-self:start!important;
-    color:var(--ink-soft)!important;
-  }
-  .settings-toggle.nav-toggle span{
-    min-width:0!important;
-    display:block!important;
-    text-align:left!important;
-    white-space:nowrap!important;
-    overflow:hidden!important;
-    text-overflow:ellipsis!important;
-    font-size:13.5px!important;
-    font-weight:400!important;
-    line-height:1!important;
-  }
-  .settings-toggle.nav-toggle .chevron{
-    width:14px!important;height:14px!important;
-    display:block!important;
-    justify-self:end!important;
-  }
-
-  /* Authorization text is vertically centered with its icon. */
-  #authToggle{align-items:center!important;}
-  #authNavLabel{align-self:center!important;line-height:1!important;}
-}
-</style>
-
-<style>
-/* myxwalk mobile/PWA pass */
-#shareHint{font-size:11px;opacity:.72;line-height:1.35}
-@media (max-width:860px){
-  html,body{width:100%;max-width:100%;overflow:hidden;overscroll-behavior:none}
-  #map{width:100vw!important;max-width:100vw!important}
-  #sidebar{max-width:86vw!important}
-  .settings-panel{max-width:min(86vw,340px)!important}
-  #authPanel,#mapPanel,#settingsPanel,#tracksPanel,#statsPanel{max-width:calc(100vw - 16px)!important}
-  #mapThemeControl,#mapStatus{max-width:calc(100vw - 24px)!important}
-  #dropzone{min-height:58px;box-sizing:border-box}
-  .upload-gpx-btn,.auth-btn,.profile-btn,.settings-toggle.nav-toggle,.mini-btn{min-height:42px!important}
-  .track-item{grid-template-columns:28px minmax(0,1fr) auto 30px!important;gap:8px!important}
-  .track-item .name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  #statsPanel .section{max-width:100%;overflow:hidden}
-}
-@media (max-width:430px){
-  .settings-toggle.nav-toggle,.profile-btn{width:min(112px,calc(100vw - 28px))!important}
-  .settings-toggle.nav-toggle{height:42px!important;padding-left:6px!important;padding-right:6px!important}
-  .settings-toggle.nav-toggle .nav-icon{width:18px!important;height:18px!important}
-  .settings-toggle.nav-toggle span{font-size:13px!important}
-  .profile-btn{height:38px!important;font-size:13px!important}
-  #mapThemeControl,#mapStatus{width:calc(100vw - 24px)!important}
-  #mapThemeControl .theme-btn{font-size:13px!important;padding-left:4px!important;padding-right:4px!important}
-  #shareHint{font-size:10.5px}
-}
-</style>
 </html>
 
-<style id="user-sidebar-final-refinement">
-/* Final sidebar refinement */
-@media (min-width:861px){
-  /* Keep all main sidebar controls fitted inside the 132px sidebar. */
-  #sidebar{width:132px!important;min-width:132px!important;}
-  .profile-tabs{gap:4px!important;}
-  .profile-btn{width:112px!important;height:38px!important;padding:4px 4px!important;font-size:13.5px!important;font-weight:400!important;}
-
-  /* Navigation buttons: 30% lower than the previous 62px height. */
-  .settings-toggle.nav-toggle{width:112px!important;height:43px!important;margin:2px 0!important;padding:4px 5px!important;gap:7px!important;}
-  .settings-toggle.nav-toggle .nav-icon{width:19px!important;height:19px!important;}
-  .settings-toggle.nav-toggle span{font-size:13.5px!important;font-weight:400!important;line-height:1.1!important;}
-  .settings-toggle.nav-toggle .chevron{width:12px!important;height:12px!important;}
-
-  /* Remove all divider strips between the main sidebar controls. */
-  #sidebar > .section[style*="border-bottom"],
-  #authToggle{border-top:0!important;border-bottom:0!important;}
-  #authToggle{margin-top:2px!important;padding-top:4px!important;}
-
-  /* Active navigation item: slightly darker than the normal surface. */
-  .settings-toggle.nav-toggle.open{
-    background:color-mix(in srgb,var(--surface) 84%,#000 16%)!important;
-    border-color:color-mix(in srgb,var(--line) 75%,#000 25%)!important;
-  }
-  :root[data-theme="dark"] .settings-toggle.nav-toggle.open{
-    background:color-mix(in srgb,var(--surface) 88%,#000 12%)!important;
-    border-color:color-mix(in srgb,var(--line) 72%,#000 28%)!important;
-  }
-
-  /* Match the typography of all sidebar section labels to "Тип карты". */
-  #mapToggle span,
-  #authToggle span,
-  #settingsToggle span,
-  #tracksToggle span,
-  #statsToggle span{
-    font-size:13.5px!important;
-    font-weight:400!important;
-    line-height:1.1!important;
-  }
-
-  /* Keep inner map buttons compact too. */
-  .map-btn{min-height:34px!important;padding:6px 8px!important;font-size:13.5px!important;}
-}
-
-/* "На авто · радиус · туман" uses the same text size/style as the theme buttons. */
-#mapStatus{
-  font-size:13.5px!important;
-  font-weight:400!important;
-  line-height:1.2!important;
-}
-#mapThemeControl .theme-btn{
-  font-size:13.5px!important;
-  font-weight:400!important;
-  line-height:1.2!important;
-}
-
-/* Remove the last visible separator around the profile block. */
-.profile-tabs{border-bottom:0!important;}
-</style>
-
-<style id="user-ui-refinement-20261001-01">
-/* Active sidebar navigation: greener app accent with clear white text. */
-@media (min-width:861px){
-  .settings-toggle.nav-toggle.open{
-    background:#24a85a!important;
-    border-color:#24a85a!important;
-    color:#fff!important;
-    box-shadow:0 4px 12px rgba(34,168,90,.20)!important;
-  }
-  .settings-toggle.nav-toggle.open .nav-icon,
-  .settings-toggle.nav-toggle.open .chevron,
-  .settings-toggle.nav-toggle.open span{color:#fff!important;stroke:#fff!important;}
-
-  /* More breathing room around the profile buttons and a matching divider below Общее. */
-  .profile-section{
-    padding-top:12px!important;
-    padding-bottom:12px!important;
-    border-bottom:1px solid var(--line)!important;
-  }
-  .profile-tabs{margin-top:4px!important;}
-}
-
-/* Keep active profile/map buttons in the same greener accent. */
-.profile-btn.active,
-.map-btn.active,
-#mapThemeControl .theme-btn.active{
-  background:#24a85a!important;
-  border-color:#24a85a!important;
-  color:#fff!important;
-  box-shadow:0 4px 12px rgba(34,168,90,.18)!important;
-}
-</style>
-
-<style id="user-ui-refinement-20261001-02">
-/* Unified active green: exactly the same green used by the "Загрузить GPX" button / app accent. */
-.profile-btn.active,
-.settings-toggle.nav-toggle.open,
-#mapThemeControl .theme-btn.active,
-.map-btn.active{
-  background:#22C55E!important;
-  border-color:#22C55E!important;
-  color:#fff!important;
-  box-shadow:0 4px 12px rgba(34,197,94,.20)!important;
-}
-.settings-toggle.nav-toggle.open .nav-icon,
-.settings-toggle.nav-toggle.open .chevron,
-.settings-toggle.nav-toggle.open span{
-  color:#fff!important;
-  stroke:#fff!important;
-}
-
-/* The divider must sit visibly BETWEEN "Общее" and "Авторизация", matching the brand divider. */
-.profile-section{
-  position:relative!important;
-  border-bottom:1px solid var(--line)!important;
-}
-#authToggle{
-  border-top:0!important;
-  border-bottom:0!important;
-}
-/* Explicit divider layer: immune to later button/section border overrides. */
-.profile-section::after{
-  content:""!important;
-  display:block!important;
-  width:100%!important;
-  height:1px!important;
-  background:var(--line)!important;
-  margin-top:18px!important;
-}
-
-/* +80% breathing room requested around the profile block. */
-@media (min-width:861px){
-  .profile-section{
-    padding-top:22px!important;
-    padding-bottom:0!important;
-  }
-  .profile-tabs{
-    margin-top:7px!important;
-    margin-bottom:0!important;
-  }
-  #authToggle{
-    margin-top:0!important;
-    padding-top:22px!important;
-  }
-}
-
-/* Mobile / iPhone 15: preserve the divider and spacing without horizontal overflow. */
-@media (max-width:860px){
-  .profile-section{
-    padding-top:18px!important;
-    padding-bottom:0!important;
-  }
-  .profile-tabs{
-    margin-top:6px!important;
-    margin-bottom:0!important;
-  }
-  .profile-section::after{
-    margin-top:18px!important;
-  }
-  #authToggle{
-    margin-top:0!important;
-    padding-top:18px!important;
-  }
-}
-</style>
-
-<style id="user-ui-refinement-20261001-03">
-/* Desktop sidebar: 30% wider than 132px */
-@media (min-width:861px){
-  #sidebar{width:172px!important;min-width:172px!important;}
-
-  /* Navigation: mobile-style icons + left aligned icon/text group */
-  .settings-toggle.nav-toggle{
-    width:156px!important;
-    height:43px!important;
-    min-height:43px!important;
-    margin:2px 8px!important;
-    padding:4px 8px!important;
-    display:flex!important;
-    flex-direction:row!important;
-    justify-content:flex-start!important;
-    align-items:center!important;
-    gap:8px!important;
-    box-sizing:border-box!important;
-  }
-  .settings-toggle.nav-toggle .nav-icon{
-    width:19px!important;height:19px!important;
-    flex:0 0 19px!important;
-  }
-  .settings-toggle.nav-toggle span{
-    display:flex!important;
-    align-items:center!important;
-    height:100%!important;
-    line-height:1!important;
-    text-align:left!important;
-    white-space:nowrap!important;
-  }
-  .settings-toggle.nav-toggle .chevron{
-    width:12px!important;height:12px!important;
-    margin-left:auto!important;
-    flex:0 0 12px!important;
-  }
-
-  /* Fix vertical centering of Authorization text */
-  #authToggle{
-    align-items:center!important;
-    padding-top:4px!important;
-    padding-bottom:4px!important;
-  }
-  #authToggle #authNavLabel{
-    display:flex!important;
-    align-items:center!important;
-    height:100%!important;
-    line-height:1!important;
-  }
-}
-
-/* On mobile keep the existing compact layout; icons remain the same as the mobile version. */
-@media (max-width:860px){
-  .settings-toggle.nav-toggle{
-    justify-content:flex-start!important;
-    align-items:center!important;
-  }
-  .settings-toggle.nav-toggle span{
-    text-align:left!important;
-  }
-  .settings-toggle.nav-toggle .chevron{
-    margin-left:auto!important;
-  }
-  #authToggle #authNavLabel{
-    display:flex!important;
-    align-items:center!important;
-    line-height:1!important;
-  }
-}
-</style>
 
 
-<style id="user-ui-refinement-20261001-04">
-/* Final desktop navigation geometry: all 8 main buttons have one clean width and are centered. */
-@media (min-width:861px){
-  #sidebar{width:172px!important;min-width:172px!important;}
-
-  /* Profile buttons 1–3 */
-  #profileTabs.profile-tabs,
-  .profile-tabs{
-    width:140px!important;
-    margin-left:auto!important;
-    margin-right:auto!important;
-    box-sizing:border-box!important;
-    grid-template-columns:repeat(3,minmax(0,1fr))!important;
-    gap:5px!important;
-  }
-  .profile-btn{
-    width:100%!important;
-    min-width:0!important;
-    box-sizing:border-box!important;
-    text-align:center!important;
-    display:flex!important;
-    align-items:center!important;
-    justify-content:center!important;
-  }
-
-  /* Navigation buttons 4–8: same width, centered in the sidebar. */
-  .settings-toggle.nav-toggle{
-    width:140px!important;
-    min-width:140px!important;
-    box-sizing:border-box!important;
-    margin:4px auto!important;
-    padding:5px 10px!important;
-    display:flex!important;
-    flex-direction:row!important;
-    justify-content:flex-start!important;
-    align-items:center!important;
-    gap:9px!important;
-  }
-  .settings-toggle.nav-toggle .nav-icon{
-    width:20px!important;
-    height:20px!important;
-    min-width:20px!important;
-    flex:0 0 20px!important;
-    display:block!important;
-    transform:none!important;
-  }
-  .settings-toggle.nav-toggle .nav-icon-img{
-    object-fit:contain!important;
-    border-radius:0!important;
-  }
-  .settings-toggle.nav-toggle span{
-    flex:1 1 auto!important;
-    min-width:0!important;
-    height:auto!important;
-    text-align:left!important;
-    white-space:nowrap!important;
-    line-height:1.2!important;
-    display:block!important;
-  }
-
-  /* No arrows at the right of the five navigation buttons. */
-  .settings-toggle.nav-toggle .chevron{
-    display:none!important;
-  }
-
-  /* Never rotate the navigation icons when a section is opened. */
-  .settings-toggle.nav-toggle.open .nav-icon,
-  .settings-toggle.nav-toggle.open .nav-icon-img{
-    transform:none!important;
-  }
-
-  /* Floating panels start just to the right of the 172px sidebar. */
-  .settings-panel{
-    left:190px!important;
-  }
-}
-
-/* Keep the mobile version unchanged, including its existing arrows. */
-@media (max-width:860px){
-  .settings-toggle.nav-toggle .nav-icon,
-  .settings-toggle.nav-toggle .nav-icon-img{
-    transform:none!important;
-  }
-}
-</style>
-
-<style id="icon-style-final-20261001">
-/* Final sidebar icons: transparent background, exact requested icon sources, text-colored and never inverted. */
-.settings-toggle.nav-toggle .nav-icon.nav-icon-mask{
-  width:20px!important;height:20px!important;min-width:20px!important;flex:0 0 20px!important;
-  display:block!important;background-color:var(--ink-soft)!important;
-  -webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important;
-  -webkit-mask-position:center!important;mask-position:center!important;
-  -webkit-mask-size:contain!important;mask-size:contain!important;
-  transform:none!important;
-  transition:none!important;
-  border:0!important;box-shadow:none!important;
-}
-.icon-auth{
-  -webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/12500/12500101.png");
-  mask-image:url("https://cdn-icons-png.flaticon.com/512/12500/12500101.png");
-}
-.icon-map{
-  -webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/1535/1535780.png");
-  mask-image:url("https://cdn-icons-png.flaticon.com/512/1535/1535780.png");
-}
-.icon-settings{
-  -webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/2099/2099058.png");
-  mask-image:url("https://cdn-icons-png.flaticon.com/512/2099/2099058.png");
-}
-.icon-tracks{
-  -webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/1061/106153.png");
-  mask-image:url("https://cdn-icons-png.flaticon.com/512/1061/106153.png");
-}
-.icon-stats{
-  -webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/1819/1819876.png");
-  mask-image:url("https://cdn-icons-png.flaticon.com/512/1819/1819876.png");
-}
-/* All eight button labels use one text color in the normal state. */
-.profile-btn,.settings-toggle.nav-toggle{color:var(--ink-soft)!important;}
-.settings-toggle.nav-toggle span{color:var(--ink-soft)!important;}
-/* Selected button: text becomes white, icon intentionally stays the same color. */
-.settings-toggle.nav-toggle.open{color:#fff!important;}
-.settings-toggle.nav-toggle.open span{color:#fff!important;}
-.settings-toggle.nav-toggle.open .nav-icon.nav-icon-mask{background-color:var(--ink-soft)!important;color:var(--ink-soft)!important;transform:none!important;}
-.profile-btn.active{color:#fff!important;}
-/* Never rotate or recolor the icon on open/active state. */
-.settings-toggle.nav-toggle.open .nav-icon,
-.settings-toggle.nav-toggle.open .nav-icon-img{transform:none!important;}
-</style>
 
 
-<style id="final-icons-spacing-footer-20261001">
-/* Final small refinements */
-@media (min-width:861px){
-  /* 50% more space between icon and label: 8px -> 12px */
-  .settings-toggle.nav-toggle{
-    column-gap:12px!important;
-  }
-  /* Reliable inline route icon fallback: transparent background, inherits text color through mask. */
-  .settings-toggle.nav-toggle .icon-tracks{
-    -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M6 3.5a3 3 0 0 1 3 3c0 1.07-.56 2.01-1.4 2.54l4.1 5.1c.4-.09.83-.14 1.3-.14 1.06 0 2.03.33 2.82.88l2.2-2.2A2.99 2.99 0 0 1 20 7.5a3 3 0 1 1-1.42 5.64l-2.2 2.2c.39.58.62 1.28.62 2.03a3 3 0 1 1-5.64-1.42l-4.1-5.1A3 3 0 1 1 6 3.5Zm0 1.7A1.3 1.3 0 1 0 6 7.8a1.3 1.3 0 0 0 0-2.6Zm7 10.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Zm7-9.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Z'/%3E%3C/svg%3E")!important;
-    mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M6 3.5a3 3 0 0 1 3 3c0 1.07-.56 2.01-1.4 2.54l4.1 5.1c.4-.09.83-.14 1.3-.14 1.06 0 2.03.33 2.82.88l2.2-2.2A2.99 2.99 0 0 1 20 7.5a3 3 0 1 1-1.42 5.64l-2.2 2.2c.39.58.62 1.28.62 2.03a3 3 0 1 1-5.64-1.42l-4.1-5.1A3 3 0 1 1 6 3.5Zm0 1.7A1.3 1.3 0 1 0 6 7.8a1.3 1.3 0 0 0 0-2.6Zm7 10.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Zm7-9.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Z'/%3E%3C/svg%3E")!important;
-  }
-}
-/* Copyright text +1px from the current 11px desktop size. */
-#footNote{font-size:12px!important;}
-@media (max-width:860px){
-  #footNote{font-size:11px!important;}
-}
-</style>
-
-<style id="mobile-menu-theme-language-20261001">
-/* Theme is now controlled only from Settings. */
-#mapThemeControl{display:none!important;}
-.theme-settings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;}
-.theme-choice{min-height:38px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);border-radius:6px;padding:7px 8px;font:400 13.5px/1.2 inherit;cursor:pointer;}
-.theme-choice:hover{border-color:var(--green);}
-.theme-choice.active{background:#22C55E!important;border-color:#22C55E!important;color:#fff!important;box-shadow:0 4px 12px rgba(34,197,94,.20);}
-#languageSelect{width:100%;margin-top:8px;min-height:38px;}
-
-@media (max-width:860px){
-  /* Bottom mobile controls: menu left, status right, equal height and full-width distribution. */
-  #menuFab{
-    display:flex!important;
-    left:12px!important;
-    right:auto!important;
-    top:auto!important;
-    bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
-    width:calc(50% - 18px)!important;
-    height:48px!important;
-    min-height:48px!important;
-    border-radius:8px!important;
-    background:var(--green)!important;
-    box-shadow:0 5px 18px rgba(20,60,30,.28)!important;
-  }
-  #menuFab svg{width:21px!important;height:21px!important;}
-  #mapStatus{
-    left:auto!important;
-    right:12px!important;
-    bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
-    width:calc(50% - 18px)!important;
-    max-width:none!important;
-    height:48px!important;
-    min-height:48px!important;
-    border-radius:8px!important;
-    padding:0 8px!important;
-    box-sizing:border-box!important;
-  }
-  #mapStatusText{gap:6px!important;}
-  #mapStatus .status-divider{height:22px!important;}
-
-  /* Full-screen mobile menu. */
-  #sidebar{
-    position:fixed!important;
-    inset:0!important;
-    width:100vw!important;
-    max-width:none!important;
-    min-width:0!important;
-    height:100dvh!important;
-    transform:translateY(100%)!important;
-    transition:transform .28s ease!important;
-    z-index:2000!important;
-    overflow-y:auto!important;
-    overflow-x:hidden!important;
-    padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))!important;
-  }
-  #sidebar.open{transform:translateY(0)!important;}
-  #overlayBackdrop.show{display:none!important;}
-  #drawerClose{display:inline-flex!important;}
-
-  /* Preserve the desktop menu structure and its exact PC icons. */
-  #sidebar .nav-icon{flex:0 0 auto!important;}
-  #sidebar .settings-toggle.nav-toggle{width:calc(100% - 24px)!important;margin-left:12px!important;margin-right:12px!important;}
-  #sidebar .profile-section{padding-left:12px!important;padding-right:12px!important;}
-  #sidebar .profile-btn{width:100%!important;}
-  #sidebar .settings-panel{width:calc(100% - 24px)!important;margin-left:12px!important;margin-right:12px!important;}
-  #sidebar .settings-panel .section{padding-left:16px!important;padding-right:16px!important;}
-  #sidebar .settings-toggle.nav-toggle{height:48px!important;min-height:48px!important;padding-left:16px!important;padding-right:16px!important;}
-  #sidebar .settings-toggle.nav-toggle span{font-size:14px!important;}
-  #sidebar .settings-toggle.nav-toggle .nav-icon{width:19px!important;height:19px!important;}
-
-  /* Keep language/theme comfortably touchable. */
-  .theme-choice,#languageSelect{min-height:44px!important;font-size:14px!important;}
-}
-</style>
 
 
-<style id="remove-fog-settings-caption">
-/* The settings panel does not need a separate "Туман" caption; its controls are self-explanatory. */
-#settingsPanel .fog-settings-caption{display:none!important;}
-</style>
+
+
+
+
+
+
+
+
+
+
+
