@@ -2756,3 +2756,49 @@ button:active,
   color:#fff !important;
 }
 </style>
+
+<style id="myxwalk-auth-and-city-progress-fix">
+/* Keep the authorization label vertically centered before and after sign-in. */
+#sidebar > #authToggle {
+  display:flex !important;
+  align-items:center !important;
+  min-height:44px !important;
+  height:44px !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  box-sizing:border-box !important;
+}
+#sidebar > #authToggle > #authNavLabel {
+  display:flex !important;
+  align-items:center !important;
+  align-self:stretch !important;
+  min-height:0 !important;
+  height:auto !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  line-height:1.2 !important;
+  box-sizing:border-box !important;
+}
+/* Quiet, light-green progress indicator to match the myxwalk palette. */
+#statsPanel #cityProgressTrack {
+  background:#edf8f0 !important;
+  border-color:#d8eddf !important;
+}
+#statsPanel #cityProgressFill {
+  background:#b7e4c7 !important;
+}
+</style>
+<script id="myxwalk-city-calc-placeholder-fix">
+(function(){
+  document.addEventListener('click',function(event){
+    const button=event.target && event.target.closest ? event.target.closest('#cityCalcBtn') : null;
+    if(!button) return;
+    const list=document.getElementById('cityList');
+    if(list && list.textContent.includes('Нажмите «Рассчитать», чтобы определить площадь по городам')) {
+      list.textContent='';
+    }
+  },true);
+})();
+</script>
