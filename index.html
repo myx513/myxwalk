@@ -26,7 +26,7 @@ body{display:flex;background:var(--bg);overflow:hidden;font-size:15px;}
 #brand span{color:var(--green);}
 .section{padding:14px 18px;border-bottom:0;}
 .section h2{font-size:13px;font-weight:700;color:var(--ink-soft);text-transform:none;margin:0 0 9px;letter-spacing:.02em;}
-#dropzone{border:1.5px dashed var(--dash);border-radius:12px;padding:18px 12px;text-align:center;font-size:13px;color:var(--ink-soft);cursor:pointer;transition:.15s;background:var(--surface);line-height:1.45;pointer-events:auto;}
+#dropzone{border:1.5px dashed var(--dash);border-radius:12px;padding:18px 12px;text-align:center;font-size:13px;color:var(--ink-soft);cursor:pointer;transition:.15s;background:var(--surface);line-height:1.45;pointer-events:auto;min-height:138px;display:flex;align-items:center;justify-content:center;flex-direction:column;}
 #dropzone:hover{border-color:var(--green);color:var(--green-dark);background:var(--drop-hover);}
 #fileInput{display:none;}
 #trackList{max-height:34vh;overflow-y:auto;padding:6px 10px;}
@@ -88,13 +88,13 @@ input[type=range]{flex:1;accent-color:var(--green);height:4px;}
 .theme-btn{text-align:center !important;}
 #mapThemeControl{position:absolute;left:16px;top:16px;z-index:700;display:none !important;gap:2px !important;padding:3px !important;background:rgba(255,255,255,.88) !important;border:1px solid rgba(20,40,25,.12) !important;border-radius:10px !important;box-shadow:0 7px 22px rgba(10,30,18,.12) !important;backdrop-filter:blur(10px) !important;width:230px !important;height:34px !important;box-sizing:border-box !important;align-items:stretch !important;}
 #mapThemeControl .theme-btn{border:0;background:transparent;color:#344238;border-radius:6px !important;padding:0 6px !important;font:400 13.5px/1.2 inherit !important;cursor:pointer;white-space:nowrap;font-size:13.5px !important;font-weight:400 !important;line-height:1.2 !important;flex:1 1 0 !important;height:26px !important;box-sizing:border-box !important;min-width:0 !important;display:flex !important;align-items:center !important;justify-content:center !important;}
-#mapThemeControl .theme-btn.active{background:#2f8f57;color:#fff;}
+#mapThemeControl .theme-btn.active{background:#22c55e;color:#fff;}
 :root[data-theme="dark"] #mapThemeControl{background:rgba(31,37,33,.94);border-color:#3b443e;}
 :root[data-theme="dark"] #mapThemeControl .theme-btn{color:#dce5df;}
-:root[data-theme="dark"] #mapThemeControl .theme-btn.active{background:#45b875;color:#102017;}
+:root[data-theme="dark"] #mapThemeControl .theme-btn.active{background:#22c55e;color:#102017;}
 .map-btn.active{background:var(--green);border-color:var(--green);color:#fff;box-shadow:0 4px 12px rgba(34,197,94,.15);}
 #mainToggleRow{display:flex;align-items:center;justify-content:space-between;min-height:32px;}
-#footNote{padding:11px 5px;font-size:12px !important;color:var(--ink-soft);line-height:1.5;border-top:1px solid var(--line);margin:0 12px 12px;text-align:center;}
+#footNote{padding:11px 5px;font-size:14px !important;color:var(--ink-soft);line-height:1.5;border-top:1px solid var(--line);margin:0 12px 12px;text-align:center;}
 #mapWrap{position:relative;flex:1;height:100%;background:#dfe8e2;}
 #map{position:absolute;inset:0;background:#0d0f0d;}
 #fogCanvas{position:absolute;inset:0;pointer-events:none;z-index:450;}
@@ -146,13 +146,14 @@ input[type=range]{flex:1;accent-color:var(--green);height:4px;}
 #mapThemeControl, #mapStatus{width:287.5px !important;height:34px !important;box-sizing:border-box !important;background:rgba(255,255,255,.88) !important;border:1px solid rgba(20,40,25,.12) !important;border-radius:10px !important;box-shadow:0 7px 22px rgba(10,30,18,.12) !important;backdrop-filter:blur(10px) !important;}
 .settings-panel, .settings-panel *{font-size:13.5px !important;}
 .settings-panel input[type="range"]{font-size:13.5px !important;}
-.settings-toggle.nav-toggle.open, .profile-btn.active, .map-btn.active, #mapThemeControl .theme-btn.active{background:var(--myx-green) !important;border-color:var(--myx-green) !important;color:#fff !important;box-shadow:0 4px 12px rgba(34,160,107,.22) !important;}
+.settings-toggle.nav-toggle.open, .profile-btn.active, .map-btn.active, #mapThemeControl .theme-btn.active{background:#22c55e !important;border-color:#22c55e !important;color:#fff !important;box-shadow:0 4px 12px rgba(34,160,107,.22) !important;}
 .settings-toggle.nav-toggle.open .nav-icon, .settings-toggle.nav-toggle.open .chevron, .settings-toggle.nav-toggle.open span{color:#fff !important;stroke:#fff !important;}
 #shareHint{font-size:11px;opacity:.72;line-height:1.35;}
-.profile-btn.active, .map-btn.active, #mapThemeControl .theme-btn.active{background:#24a85a !important;border-color:#24a85a !important;color:#fff !important;box-shadow:0 4px 12px rgba(34,168,90,.18) !important;}
+.profile-btn.active, .map-btn.active, #mapThemeControl .theme-btn.active{background:#22c55e !important;border-color:#22c55e !important;color:#fff !important;box-shadow:0 4px 12px rgba(34,168,90,.18) !important;}
 .profile-section::after{content:"" !important;display:block !important;width:100% !important;height:1px !important;background:var(--line) !important;margin-top:18px !important;}
 .settings-toggle.nav-toggle .nav-icon.nav-icon-mask{width:20px !important;height:20px !important;min-width:20px !important;flex:0 0 20px !important;display:block !important;background-color:var(--ink-soft) !important;-webkit-mask-repeat:no-repeat !important;mask-repeat:no-repeat !important;-webkit-mask-position:center !important;mask-position:center !important;-webkit-mask-size:contain !important;mask-size:contain !important;transform:none !important;transition:none !important;border:0 !important;box-shadow:none !important;}
 .icon-auth{-webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/12500/12500101.png");mask-image:url("https://cdn-icons-png.flaticon.com/512/12500/12500101.png");}
+.icon-info{mask-image:linear-gradient(#000,#000);-webkit-mask-image:linear-gradient(#000,#000);}
 .icon-map{-webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/1535/1535780.png");mask-image:url("https://cdn-icons-png.flaticon.com/512/1535/1535780.png");}
 .icon-settings{-webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/2099/2099058.png");mask-image:url("https://cdn-icons-png.flaticon.com/512/2099/2099058.png");}
 .icon-tracks{-webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/1061/106153.png");mask-image:url("https://cdn-icons-png.flaticon.com/512/1061/106153.png");}
@@ -305,7 +306,7 @@ input[type=range]{flex:1;accent-color:var(--green);height:4px;}
   .profile-btn[data-tooltip]:hover::after{opacity:1;visibility:visible;transform:translateY(-50%) translateX(0);}
   .profile-section{border-bottom:1px solid var(--line) !important;padding-bottom:0 !important;padding-top:22px !important;margin-bottom:0 !important;padding-left:10px !important;padding-right:10px !important;}
   .profile-tabs::after{display:none !important;content:none !important;}
-  .settings-toggle.nav-toggle.open{background:#24a85a !important;color:#fff !important;border-color:#24a85a !important;box-shadow:0 4px 12px rgba(34,168,90,.20) !important;}
+  .settings-toggle.nav-toggle.open{background:#22c55e !important;color:#fff !important;border-color:#22c55e !important;box-shadow:0 4px 12px rgba(34,168,90,.20) !important;}
   .settings-toggle.nav-toggle.open .nav-icon, .settings-toggle.nav-toggle.open .chevron, .settings-toggle.nav-toggle.open span{color:#fff !important;stroke:#fff !important;}
   .profile-tabs{gap:4px !important;margin-top:7px !important;margin-bottom:0 !important;width:100% !important;margin-left:0 !important;margin-right:0 !important;display:flex !important;flex-direction:column !important;align-items:stretch !important;}
   .settings-toggle.nav-toggle + .settings-panel{border-top:0 !important;}
@@ -314,6 +315,7 @@ input[type=range]{flex:1;accent-color:var(--green);height:4px;}
   #mapToggle span, #authToggle span, #settingsToggle span, #tracksToggle span, #statsToggle span{font-size:13.5px !important;font-weight:400 !important;line-height:1.1 !important;}
   #authToggle #authNavLabel{display:flex !important;align-items:center !important;height:100% !important;line-height:1 !important;}
   #profileTabs.profile-tabs, .profile-tabs{width:140px !important;margin-left:auto !important;margin-right:auto !important;box-sizing:border-box !important;grid-template-columns:repeat(3,minmax(0,1fr)) !important;gap:5px !important;}
+  #profileTabs.profile-tabs, .profile-tabs{align-items:center !important;}
   .settings-toggle.nav-toggle .nav-icon-img{object-fit:contain !important;border-radius:0 !important;}
   .settings-toggle.nav-toggle.open .nav-icon, .settings-toggle.nav-toggle.open .nav-icon-img{transform:none !important;}
   .settings-toggle.nav-toggle .icon-tracks{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M6 3.5a3 3 0 0 1 3 3c0 1.07-.56 2.01-1.4 2.54l4.1 5.1c.4-.09.83-.14 1.3-.14 1.06 0 2.03.33 2.82.88l2.2-2.2A2.99 2.99 0 0 1 20 7.5a3 3 0 1 1-1.42 5.64l-2.2 2.2c.39.58.62 1.28.62 2.03a3 3 0 1 1-5.64-1.42l-4.1-5.1A3 3 0 1 1 6 3.5Zm0 1.7A1.3 1.3 0 1 0 6 7.8a1.3 1.3 0 0 0 0-2.6Zm7 10.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Zm7-9.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Z'/%3E%3C/svg%3E") !important;mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M6 3.5a3 3 0 0 1 3 3c0 1.07-.56 2.01-1.4 2.54l4.1 5.1c.4-.09.83-.14 1.3-.14 1.06 0 2.03.33 2.82.88l2.2-2.2A2.99 2.99 0 0 1 20 7.5a3 3 0 1 1-1.42 5.64l-2.2 2.2c.39.58.62 1.28.62 2.03a3 3 0 1 1-5.64-1.42l-4.1-5.1A3 3 0 1 1 6 3.5Zm0 1.7A1.3 1.3 0 1 0 6 7.8a1.3 1.3 0 0 0 0-2.6Zm7 10.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Zm7-9.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Z'/%3E%3C/svg%3E") !important;}
@@ -335,6 +337,60 @@ input[type=range]{flex:1;accent-color:var(--green);height:4px;}
 
 
 
+
+
+<style id="myxwalk-v20261008-final-rules">
+/* Unified interaction color: every pressed/selected control uses exactly #22c55e. */
+:root{--myxwalk-active:#22c55e;}
+button:active,
+.radius-btn:active,
+.mini-btn:active,
+.auth-btn:active,
+.del:active,
+.profile-btn.active,
+.settings-toggle.nav-toggle.open,
+#mapThemeControl .theme-btn.active,
+.map-btn.active,
+.theme-choice.active,
+.upload-gpx-btn,
+#menuFab,
+.toggle.on{
+  background:#22c55e !important;
+  border-color:#22c55e !important;
+}
+button:active,.radius-btn:active,.mini-btn:active,.auth-btn:active,.del:active{color:#fff !important;}
+.settings-toggle.nav-toggle.open{color:#fff !important;}
+.settings-toggle.nav-toggle.open .nav-icon.nav-icon-mask{background-color:#fff !important;}
+#mapThemeControl .theme-btn.active,.map-btn.active,.profile-btn.active,.theme-choice.active{color:#fff !important;}
+#footNote{font-size:13px !important;}
+@media(max-width:860px){#footNote{font-size:10px !important;}}
+
+/* Information panel */
+#infoPanel .info-hero{padding:16px 2px 8px;}
+#infoPanel .info-title{font-size:20px;font-weight:800;line-height:1.15;margin:0 0 8px;color:var(--ink);text-align:center;}
+#infoPanel .info-lead{font-size:13.5px;line-height:1.55;color:var(--ink-soft);margin:0 0 14px;text-align:justify;text-justify:inter-word;}
+#infoPanel .info-steps{display:grid;gap:8px;margin:0 0 14px;}
+#infoPanel .info-step{display:grid;grid-template-columns:30px 1fr;gap:9px;align-items:start;padding:9px;border:1px solid var(--line);border-radius:9px;background:var(--surface);}
+#infoPanel .info-step b{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#22c55e;color:#fff;font-size:13px;}
+#infoPanel .info-step strong{display:block;font-size:13px;color:var(--ink);margin-bottom:2px;}
+#infoPanel .info-step span{font-size:12px;line-height:1.4;color:var(--ink-soft);}
+#infoPanel .info-tip{border-radius:9px;padding:10px 11px;background:rgba(34,197,94,.10);border:1px solid rgba(34,197,94,.25);font-size:12px;line-height:1.45;color:var(--ink);}
+#infoAnimation{width:100%;height:118px;display:block;margin:2px 0 14px;border-radius:12px;background:#edf7ef;overflow:hidden;}
+#infoAnimation .ia-green-field{animation:iaClearField 8.5s ease-in-out infinite;}
+#infoAnimation .ia-reveal{animation:iaReveal 8.5s ease-in-out infinite;}
+#infoAnimation .ia-reveal-edge{animation:iaRevealEdge 8.5s ease-in-out infinite;}
+#infoAnimation .ia-dot,.ia-dot-halo,.ia-dot-ring{animation:iaDotMove 8.5s cubic-bezier(.42,0,.58,1) infinite;}
+#infoAnimation .ia-dot-halo{transform-origin:18px 78px;animation-duration:8.5s;}
+#infoAnimation .ia-dot-ring{transform-origin:18px 78px;animation:iaDotMove 8.5s cubic-bezier(.42,0,.58,1) infinite,iaPulse 2.8s ease-in-out infinite;}
+@keyframes iaClearField{0%,8%{opacity:1}72%,100%{opacity:.96}}
+@keyframes iaReveal{0%{stroke-dasharray:0 1000;stroke-dashoffset:0}78%{stroke-dasharray:900 100;stroke-dashoffset:0}100%{stroke-dasharray:900 100;stroke-dashoffset:0}}
+@keyframes iaRevealEdge{0%,10%{opacity:0;stroke-dasharray:0 1000}75%{opacity:.3;stroke-dasharray:900 100}100%{opacity:.12;stroke-dasharray:900 100}}
+@keyframes iaDotMove{0%{transform:translate(0,0)}78%{transform:translate(244px,-36px)}100%{transform:translate(244px,-36px)}}
+@keyframes iaPulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:.85;transform:scale(1.12)}}
+@media(prefers-reduced-motion:reduce){#infoAnimation *{animation:none !important;}}
+
+/* Map animation candidate: disabled for now; reserved for the chosen concept. */
+</style>
 
 </head>
 <body>
@@ -474,25 +530,10 @@ input[type=range]{flex:1;accent-color:var(--green);height:4px;}
       </div>
     </div>
     <div class="section" style="border-bottom:none;">
-      <div id="dropzone">Перетащите .gpx файлы сюда<br>или нажмите, чтобы выбрать<br><small id="shareHint">На телефоне: GPX Tracker → Поделиться → myxwalk</small></div>
+      <div id="dropzone">Перетащите .gpx файлы сюда<br>или нажмите, чтобы выбрать</div>
       <button type="button" class="upload-gpx-btn" id="uploadGpxBtn">Загрузить GPX</button>
       <input id="fileInput" type="file" accept=".gpx" multiple>
 
-      <div class="myxwalk-recorder" id="routeRecorder">
-        <div class="recorder-head">
-          <div><div class="recorder-title">Запись маршрута</div><div class="recorder-sub" id="recorderStatus">Готов к записи GPS-маршрута</div></div>
-          <span class="recorder-dot" id="recorderDot"></span>
-        </div>
-        <div class="recorder-stats">
-          <div><b id="recDistance">0,00</b><span>км</span></div>
-          <div><b id="recDuration">00:00</b><span>время</span></div>
-          <div><b id="recSpeed">0,0</b><span>км/ч</span></div>
-        </div>
-        <div class="recorder-actions">
-          <button type="button" class="mini-btn recorder-start" id="startRecordingBtn">▶ Начать</button>
-          <button type="button" class="mini-btn recorder-stop" id="stopRecordingBtn" disabled>■ Завершить</button>
-        </div>
-      </div>
     </div>
 
     <div id="trackList"><div id="emptyHint">Пока нет ни одного трека. Загрузите .gpx-файлы из приложения GPX Tracker — туман начнёт рассеиваться там, где вы прошли.</div></div>
@@ -524,11 +565,32 @@ input[type=range]{flex:1;accent-color:var(--green);height:4px;}
 
 
     <div class="section" style="border-bottom:none;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
         <h2 style="margin:0;">По городам</h2>
-        
+        <button type="button" class="city-calc-btn" id="cityCalcBtn">Рассчитать</button>
       </div>
-      <div id="cityList">города определяются автоматически…</div>
+      <div id="cityList">Нажмите «Рассчитать», чтобы определить площадь по городам.</div>
+    </div>
+  </div>
+
+  <div class="settings-toggle nav-toggle" id="infoToggle">
+    <span class="nav-icon nav-icon-mask icon-info" aria-hidden="true"></span>
+    <span id="infoNavLabel">Информация</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+  <div class="settings-panel" id="infoPanel">
+    <div class="section" style="border-bottom:none;">
+      <div class="info-hero">
+        <div class="info-title" id="infoTitle">Myxwalk - твоя история путешествий на одной карте</div>
+        <p class="info-lead" id="infoLead">Загрузи свои маршруты из GPX Tracker — и myxwalk уберёт туман именно там, где ты уже побывал. Несколько маршрутов можно объединять, хранить по профилям и продолжать исследование на другом устройстве.</p>
+        
+        <div class="info-steps">
+          <div class="info-step"><b>1</b><div><strong id="infoStep1Title">Загрузи GPX</strong><span id="infoStep1Text">Выбери «На авто» или «Пешком» и добавь файл .gpx.</span></div></div>
+          <div class="info-step"><b>2</b><div><strong id="infoStep2Title">Настрой туман</strong><span id="infoStep2Text">Задай радиус рассеивания и густоту тумана в «Настройках».</span></div></div>
+          <div class="info-step"><b>3</b><div><strong id="infoStep3Title">Исследуй карту</strong><span id="infoStep3Text">Переключай карты, объединяй маршруты и смотри статистику открытой территории.</span></div></div>
+        </div>
+        <div class="info-tip" id="infoTip">Совет: после входа в аккаунт твои треки и настройки сохраняются в облаке — можно продолжить с другого устройства.</div>
+      </div>
     </div>
   </div>
 
@@ -554,7 +616,49 @@ try{
   const savedSettings = JSON.parse(localStorage.getItem(SETTINGS_KEY)||'null');
   if(savedSettings && typeof savedSettings === 'object') appSettings = {...appSettings, ...savedSettings};
 }catch(err){}
-function saveAppSettings(){ try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify(appSettings)); }catch(err){} }
+let cloudStateSaveTimer=null;
+function saveAppSettings(){
+  try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify(appSettings)); }catch(err){}
+  scheduleCloudStateSave();
+}
+function getCloudUiState(){ return {version:1,settings:{...appSettings},activeProfile}; }
+function scheduleCloudStateSave(){
+  if(!currentUser || !supabaseClient) return;
+  clearTimeout(cloudStateSaveTimer);
+  cloudStateSaveTimer=setTimeout(async()=>{
+    try{ await supabaseClient.auth.updateUser({data:{myxwalk_state:getCloudUiState()}}); }catch(err){ console.warn('Не удалось сохранить настройки в облако',err); }
+  },350);
+}
+async function loadCloudUiState(){
+  if(!currentUser || !supabaseClient) return;
+  try{
+    const {data,error}=await supabaseClient.auth.getUser();
+    if(error) throw error;
+    const state=data?.user?.user_metadata?.myxwalk_state;
+    if(state?.settings && typeof state.settings==='object'){
+      appSettings={...appSettings,...state.settings};
+      try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(appSettings));}catch(e){}
+      radiusMeters=Math.max(0,Math.min(300,Number(appSettings.radius)||60));
+      fogOpacity=Math.max(0,Math.min(100,Number(appSettings.opacity)||88))/100;
+      fogColor=appSettings.fogColor||'#121814';
+      fogEdge=appSettings.fogEdge||'hard';
+      themeMode=appSettings.theme||'auto';
+      const rs=document.getElementById('radiusSlider'),rn=document.getElementById('radiusNumber'),os=document.getElementById('opacitySlider'),on=document.getElementById('opacityNumber');
+      if(rs)rs.value=radiusMeters;if(rn)rn.value=radiusMeters;if(os)os.value=Math.round(fogOpacity*100);if(on)on.value=Math.round(fogOpacity*100);
+      if(typeof fogColorSelect!=='undefined'&&fogColorSelect)fogColorSelect.value=fogColor;
+      if(typeof fogEdgeSelect!=='undefined'&&fogEdgeSelect)fogEdgeSelect.value=fogEdge;
+      if(typeof mapThemeControl!=='undefined'){}
+      applyTheme(); updateMapStatus(); drawFog();
+    }
+    if(state?.activeProfile && ['car','walk','all'].includes(state.activeProfile)){
+      activeProfile=state.activeProfile;
+      document.querySelectorAll('.profile-btn').forEach(b=>b.classList.toggle('active',b.dataset.profile===activeProfile));
+      const pn=document.getElementById('profileNote'); if(pn&&typeof PROFILE_META!=='undefined') pn.textContent=PROFILE_META[activeProfile].note;
+      refreshActiveTracks();
+    }
+  }catch(err){ console.warn('Не удалось загрузить настройки из облака',err); }
+}
+
 
 // ---------- Map providers ----------
 const providers = {
@@ -595,7 +699,7 @@ Object.entries(providers).forEach(([key,p])=>{
   b.onclick=()=>setProvider(key);
   mapsGrid.appendChild(b);
 });
-setProvider(appSettings.provider || 'osm');
+// Provider initialization is deferred until track/fog state exists.
 
 // ---------- Fog canvas ----------
 const canvas = document.getElementById('fogCanvas');
@@ -781,6 +885,7 @@ function saveTracks(){ saveLocalProfiles(); }
 function loadTracks(){
   hydrateProfiles(readLocalProfiles());
   refreshActiveTracks();
+  recomputeLocalStats();
   if(tracks.length){ const group=L.featureGroup(tracks.map(t=>t.layer)); if(group.getLayers().length) map.fitBounds(group.getBounds(),{padding:[40,40]}); }
 }
 function updateMapStatus(){
@@ -806,6 +911,7 @@ function switchProfile(profile){
   refreshActiveTracks();
   if(tracks.length){ const group=L.featureGroup(tracks.map(t=>t.layer)); if(group.getLayers().length) map.fitBounds(group.getBounds(),{padding:[40,40]}); }
   updateMapStatus();
+  scheduleCloudStateSave();
 }
 document.querySelectorAll('.profile-btn').forEach(b=>b.addEventListener('click',()=>switchProfile(b.dataset.profile)));
 
@@ -830,6 +936,7 @@ function addTrackFromFile(file){
     if(tracks.length===1) map.fitBounds(track.layer.getBounds(),{padding:[40,40]});
     if(statsPanel.classList.contains('open')) recomputeLocalStats();
     syncTrackToCloud(track,activeProfile);
+    scheduleCloudStateSave();
   };
   reader.readAsText(file);
 }
@@ -847,8 +954,8 @@ document.getElementById('trackList').addEventListener('click',e=>{
   if(activeProfile==='all') return;
   const el=e.target.closest('[data-action]'); if(!el) return;
   const id=Number(el.dataset.id); const track=profileTracks[activeProfile].find(t=>t.id===id); if(!track) return;
-  if(el.dataset.action==='vis'){ track.visible=!track.visible; refreshActiveTracks(); saveTracks(); syncTrackToCloud(track,activeProfile); }
-  if(el.dataset.action==='del'){ map.removeLayer(track.layer); profileTracks[activeProfile]=profileTracks[activeProfile].filter(t=>t.id!==id); refreshActiveTracks(); saveTracks(); deleteTrackFromCloud(track,activeProfile); }
+  if(el.dataset.action==='vis'){ track.visible=!track.visible; refreshActiveTracks(); saveTracks(); syncTrackToCloud(track,activeProfile); scheduleCloudStateSave(); }
+  if(el.dataset.action==='del'){ map.removeLayer(track.layer); profileTracks[activeProfile]=profileTracks[activeProfile].filter(t=>t.id!==id); refreshActiveTracks(); saveTracks(); deleteTrackFromCloud(track,activeProfile); scheduleCloudStateSave(); }
 });
 const routesToggle=document.getElementById('routesToggle');
 routesToggle.addEventListener('click',()=>{
@@ -969,7 +1076,8 @@ const panelPairs = {
   map: [document.getElementById('mapToggle'), document.getElementById('mapPanel')],
   settings: [document.getElementById('settingsToggle'), document.getElementById('settingsPanel')],
   tracks: [document.getElementById('tracksToggle'), document.getElementById('tracksPanel')],
-  stats: [document.getElementById('statsToggle'), document.getElementById('statsPanel')]
+  stats: [document.getElementById('statsToggle'), document.getElementById('statsPanel')],
+  info: [document.getElementById('infoToggle'), document.getElementById('infoPanel')]
 };
 function closeSidebarPanels(except){
   Object.entries(panelPairs).forEach(([key,[toggle,panel]])=>{
@@ -984,7 +1092,6 @@ function toggleSidebarPanel(key){
   panel.classList.toggle('open',willOpen);
   if(key==='stats' && willOpen){
     recomputeLocalStats();
-    updateCityStatsAutomatically();
   }
 }
 Object.entries(panelPairs).forEach(([key,[toggle]])=>toggle.addEventListener('click',()=>toggleSidebarPanel(key)));
@@ -1085,31 +1192,90 @@ function recomputeLocalStats(){
 }
 
 // ---------- City breakdown (reverse geocoding via Nominatim, throttled) ----------
-async function geocodeCity(lat, lon){
+async function geocodeLocality(lat, lon){
   try{
-    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`);
+    window.__myxwalkGeoCache = window.__myxwalkGeoCache || new Map();
+    const key = `${lat.toFixed(3)},${lon.toFixed(3)}`;
+    if(window.__myxwalkGeoCache.has(key)) return window.__myxwalkGeoCache.get(key);
+
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
     const data = await res.json();
     const a = data.address || {};
-    return a.city || a.town || a.village || a.municipality || a.county || 'не определено';
-  }catch(err){ return 'не определено'; }
+
+    // Count ONLY populated places. Administrative units such as
+    // municipality, district, county, council/selsoviet are deliberately ignored.
+    const placeType = String(data.addresstype || '').toLowerCase();
+    const placeAllowed = ['city','town','village','hamlet','isolated_dwelling'].includes(placeType);
+    const name = placeAllowed ? (a.city || a.town || a.village || a.hamlet || a.locality || null) : null;
+    const type = a.city ? 'city' : a.town ? 'town' : a.village ? 'village' : a.hamlet ? 'hamlet' : a.locality ? 'locality' : null;
+    const result = name && type ? {name, type} : null;
+    window.__myxwalkGeoCache.set(key, result);
+    return result;
+  }catch(err){
+    return null;
+  }
 }
+
+function resampleForCity(points, stepMeters=500){
+  const out=[];
+  if(!points.length) return out;
+  out.push(points[0]);
+  let carry=0;
+  for(let i=1;i<points.length;i++){
+    const a=points[i-1], b=points[i];
+    const segLen=haversine(a.lat,a.lon,b.lat,b.lon);
+    if(segLen<1e-6) continue;
+    let d=0;
+    while(carry + (segLen-d) >= stepMeters){
+      const need=stepMeters-carry;
+      d+=need;
+      const tt=d/segLen;
+      out.push({lat:a.lat+(b.lat-a.lat)*tt,lon:a.lon+(b.lon-a.lon)*tt});
+      carry=0;
+    }
+    carry += segLen-d;
+  }
+  return out;
+}
+
 async function computeCityBreakdown(){
   const groups = {};
+  const samples = [];
+
+  // Split each route into sampled points. Points outside settlements are ignored,
+  // so the road between two populated places contributes no city area.
   for(const t of tracks){
     if(!t.points.length) continue;
-    if(!t._cityCache){
-      const mid = t.points[Math.floor(t.points.length/2)];
-      t._cityCache = await geocodeCity(mid.lat, mid.lon);
-      await new Promise(r=>setTimeout(r, 1100)); // Nominatim: max ~1 запрос/сек
-    }
-    (groups[t._cityCache] = groups[t._cityCache] || []).push(t);
+    const pts = resampleForCity(t.points, 150);
+    for(const p of pts) samples.push(p);
   }
-  const results = Object.entries(groups).map(([city, list])=>(
-    { city, area: computeExploredAreaM2(list, radiusMeters) }
-  ));
+
+  for(let i=0;i<samples.length;i++){
+    const p=samples[i];
+    window.__myxwalkGeoCache = window.__myxwalkGeoCache || new Map();
+    const cacheKey=`${p.lat.toFixed(3)},${p.lon.toFixed(3)}`;
+    const wasCached=window.__myxwalkGeoCache.has(cacheKey);
+    const locality=await geocodeLocality(p.lat,p.lon);
+    if(locality){
+      const key=`${locality.type}:${locality.name}`;
+      if(!groups[key]) groups[key]={city:locality.name,points:[]};
+      groups[key].points.push(p);
+    }
+
+    // Respect Nominatim's public-service request rate for uncached samples.
+    if(i < samples.length-1 && !wasCached){
+      await new Promise(r=>setTimeout(r,1100));
+    }
+  }
+
+  const results=Object.values(groups).map(g=>({
+    city:g.city,
+    area:computeExploredAreaM2([{points:g.points}],radiusMeters)
+  }));
   results.sort((a,b)=>b.area-a.area);
   return results;
 }
+
 function renderCityList(results){
   const el = document.getElementById('cityList');
   if(!results.length){ el.textContent = 'города не определены'; return; }
@@ -1174,9 +1340,10 @@ const authStatus=document.getElementById('authStatus');
 function updateAuthUI(){
   if(currentUser){
     const meta=currentUser.user_metadata||{};
-    const displayName=meta.full_name||meta.name||currentUser.email||'Google аккаунт';
+    const rawName=meta.full_name||meta.name||currentUser.email||'Google аккаунт';
+    const displayName=String(rawName).trim().split(/\s+/)[0] || 'Google аккаунт';
     authUser.textContent=displayName;
-    authNavLabel.textContent=displayName;
+    authNavLabel.textContent=window.myxT?window.myxT('auth'):'Авторизация';
     authBtn.textContent=window.myxT?window.myxT('logout'):'Выйти';
     authStatus.textContent=window.myxT?window.myxT('cloudSync'):'Треки синхронизируются с аккаунтом Supabase.';
   } else {
@@ -1221,6 +1388,7 @@ async function loadCloudTracks(){
   if(hadCloudTracks){
     profileTracks=cloud;
     refreshActiveTracks();
+    recomputeLocalStats();
     saveLocalProfiles();
   } else {
     // Первый вход: если на устройстве уже были локальные треки, переносим их в облако.
@@ -1269,11 +1437,11 @@ async function initAuth(){
   const {data}=await supabaseClient.auth.getSession();
   currentUser=data?.session?.user||null;
   updateAuthUI();
-  if(currentUser) await loadCloudTracks();
+  if(currentUser){ await loadCloudTracks(); }
   supabaseClient.auth.onAuthStateChange(async (_event,session)=>{
     currentUser=session?.user||null;
     updateAuthUI();
-    if(currentUser) await loadCloudTracks();
+    if(currentUser){ await loadCloudTracks(); }
   });
 }
 
@@ -1312,7 +1480,8 @@ if('serviceWorker' in navigator){
 }
 
 
-loadTracks();
+setProvider(appSettings.provider || 'osm');
+  loadTracks();
 recomputeLocalStats();
 resizeCanvas();
 initAuth();
@@ -1328,12 +1497,11 @@ consumeSharedGpx();
     ru:{
       car:'На авто',walk:'Пешком',all:'Общее',auth:'Авторизация',map:'Тип карты',settings:'Настройки',tracks:'Треки',stats:'Статистика',
       carNote:'Здесь хранятся маршруты поездок на автомобиле.',walkNote:'Здесь хранятся пешие прогулки',allNote:'Автоматическое объединение маршрутов из профилей «На авто» и «Пешком». Здесь треки не загружаются отдельно.',
-      notSigned:'Не выполнен вход',login:'Войти через Google',logout:'Выйти',cloudSetup:'Для синхронизации треков между устройствами настройте Supabase ниже в коде приложения.',cloudSync:'Треки синхронизируются с аккаунтом Supabase.',cloudLogin:'Войдите через Google, чтобы хранить треки в облаке.',localOnly:'Supabase ещё не настроен: приложение пока работает локально.',
+      notSigned:'Не выполнен вход',login:'Вход с аккаунтом Google',logout:'выход из аккаунта',cloudSetup:'Для синхронизации треков между устройствами настройте Supabase ниже в коде приложения.',cloudSync:'Треки синхронизируются с аккаунтом Supabase.',cloudLogin:'Войдите через Google, чтобы хранить треки в облаке.',localOnly:'Supabase ещё не настроен: приложение пока работает локально.',
       fog:'Туман',radius:'Радиус рассеивания тумана',density:'Густота тумана',style:'Стиль тумана',color:'Цвет',edge:'Край рассеивания',
       black:'Чёрный',blue:'Синий',gray:'Серый',white:'Белый',green:'Зелёный',hard:'Чёткий край',soft:'Мягкое рассеивание',scalloped:'Волнистый край (облачка)',organic:'Рваный туман',
       appearance:'Тема оформления',light:'Светлая',dark:'Тёмная',auto:'Авто',language:'Язык',
       showRoutes:'Показывать маршруты',drop1:'Перетащите .gpx файлы сюда',drop2:'или нажмите, чтобы выбрать',share:'На телефоне: GPX Tracker → Поделиться → myxwalk',upload:'Загрузить GPX',
-      recorder:'Запись маршрута',ready:'Готов к записи GPS-маршрута',start:'▶ Начать',finish:'■ Завершить',time:'время',
       empty:'Пока нет ни одного трека. Загрузите .gpx-файлы — туман начнёт рассеиваться там, где проходит маршрут.',points:'точек',
       exportAll:'Экспорт всех треков',filename:'имя файла',export:'Экспорт .gpx',profileStats:'Статистика профиля',distance:'Всего пройдено',area:'Всего исследовано',cities:'По городам',citiesAuto:'города определяются автоматически…',citiesNone:'города не определены',citiesFirst:'сначала загрузите треки',citiesBusy:'определяем города, это может занять до пары минут…',citiesFail:'не удалось определить города',
       radiusStatus:'радиус',fogStatus:'туман',km:'км',m2:'м²',speed:'км/ч',close:'Закрыть меню',
@@ -1348,25 +1516,47 @@ consumeSharedGpx();
       black:'Black',blue:'Blue',gray:'Gray',white:'White',green:'Green',hard:'Sharp edge',soft:'Soft fade',scalloped:'Wavy edge (clouds)',organic:'Ragged fog',
       appearance:'Appearance theme',light:'Light',dark:'Dark',auto:'Auto',language:'Language',
       showRoutes:'Show routes',drop1:'Drag .gpx files here',drop2:'or click to choose',share:'On phone: GPX Tracker → Share → myxwalk',upload:'Upload GPX',
-      recorder:'Route recording',ready:'Ready to record a GPS route',start:'▶ Start',finish:'■ Finish',time:'time',
       empty:'There are no tracks yet. Upload .gpx files — the fog will clear where the route passes.',points:'points',
       exportAll:'Export all tracks',filename:'file name',export:'Export .gpx',profileStats:'Profile statistics',distance:'Total distance',area:'Total explored',cities:'By cities',citiesAuto:'cities are detected automatically…',citiesNone:'cities not determined',citiesFirst:'load tracks first',citiesBusy:'detecting cities, this may take a couple of minutes…',citiesFail:'failed to determine cities',
       radiusStatus:'radius',fogStatus:'fog',km:'km',m2:'m²',speed:'km/h',close:'Close menu',
       allAlert:'The “All” profile is generated automatically. Choose “By car” or “On foot” to upload tracks.',noTracks:'No tracks to export',cloudError:'Error loading tracks: ',authError:'Sign-in error: ',setupError:'Enter SUPABASE_URL and SUPABASE_ANON_KEY in the application file first.',
       mapYandex:'Yandex Maps (map)',mapYandexSat:'Yandex Maps (satellite)',mapGoogle:'Google Maps (map)',mapGoogleSat:'Google Maps (satellite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'
     },
-    zh:{car:'驾车',walk:'步行',all:'全部',auth:'登录',map:'地图类型',settings:'设置',tracks:'轨迹',stats:'统计',carNote:'这里保存驾车路线。',walkNote:'这里保存步行路线。',allNote:'自动合并驾车和步行资料中的路线。此处不能单独上传轨迹。',notSigned:'未登录',login:'使用 Google 登录',logout:'退出登录',cloudSetup:'请在应用代码中配置 Supabase，以便在设备之间同步轨迹。',cloudSync:'轨迹正在与 Supabase 账户同步。',cloudLogin:'使用 Google 登录，将轨迹保存到云端。',localOnly:'尚未配置 Supabase：应用目前仅在本地运行。',fog:'雾',radius:'雾气消散半径',density:'雾密度',style:'雾样式',color:'颜色',edge:'消散边缘',black:'黑色',blue:'蓝色',gray:'灰色',white:'白色',green:'绿色',hard:'清晰边缘',soft:'柔和渐变',scalloped:'波浪边缘（云朵）',organic:'不规则雾边',appearance:'外观主题',light:'浅色',dark:'深色',auto:'自动',language:'语言',showRoutes:'显示路线',drop1:'将 .gpx 文件拖到这里',drop2:'或点击选择',share:'手机：GPX Tracker → 分享 → myxwalk',upload:'上传 GPX',recorder:'路线记录',ready:'准备记录 GPS 路线',start:'▶ 开始',finish:'■ 完成',time:'时间',empty:'暂无轨迹。上传 .gpx 文件后，路线经过的区域将开始消散雾气。',points:'点',exportAll:'导出所有轨迹',filename:'文件名',export:'导出 .gpx',profileStats:'资料统计',distance:'总行程',area:'总探索面积',cities:'按城市',citiesAuto:'城市将自动识别…',citiesNone:'未确定城市',citiesFirst:'请先加载轨迹',citiesBusy:'正在识别城市，可能需要几分钟…',citiesFail:'无法确定城市',radiusStatus:'半径',fogStatus:'雾',km:'公里',m2:'平方米',speed:'公里/小时',close:'关闭菜单',allAlert:'“全部”资料会自动生成。请选择“驾车”或“步行”来上传轨迹。',noTracks:'没有可导出的轨迹',cloudError:'加载轨迹出错：',authError:'登录出错：',setupError:'请先在应用文件中填写 SUPABASE_URL 和 SUPABASE_ANON_KEY。',mapYandex:'Yandex 地图（地图）',mapYandexSat:'Yandex 地图（卫星）',mapGoogle:'Google 地图（地图）',mapGoogleSat:'Google 地图（卫星）',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
-    hi:{car:'कार से',walk:'पैदल',all:'सभी',auth:'प्राधिकरण',map:'मानचित्र प्रकार',settings:'सेटिंग्स',tracks:'ट्रैक',stats:'आंकड़े',carNote:'यहाँ कार यात्रा के मार्ग संग्रहीत हैं।',walkNote:'यहाँ पैदल मार्ग संग्रहीत हैं।',allNote:'कार और पैदल प्रोफ़ाइल के मार्ग स्वतः संयुक्त होते हैं। यहाँ अलग से ट्रैक अपलोड नहीं किए जा सकते।',notSigned:'साइन इन नहीं है',login:'Google से साइन इन करें',logout:'साइन आउट',cloudSetup:'डिवाइसों के बीच ट्रैक सिंक करने के लिए ऐप कोड में Supabase कॉन्फ़िगर करें।',cloudSync:'ट्रैक आपके Supabase खाते के साथ सिंक हो रहे हैं।',cloudLogin:'ट्रैक क्लाउड में रखने के लिए Google से साइन इन करें।',localOnly:'Supabase अभी कॉन्फ़िगर नहीं है: ऐप फिलहाल स्थानीय रूप से चलता है।',fog:'कोहरा',radius:'कोहरा हटाने की त्रिज्या',density:'कोहरे की घनता',style:'कोहरे की शैली',color:'रंग',edge:'हटने का किनारा',black:'काला',blue:'नीला',gray:'धूसर',white:'सफेद',green:'हरा',hard:'स्पष्ट किनारा',soft:'मुलायम किनारा',scalloped:'लहरदार किनारा (बादल)',organic:'अनियमित कोहरा',appearance:'दिखावट थीम',light:'हल्का',dark:'गहरा',auto:'ऑटो',language:'भाषा',showRoutes:'मार्ग दिखाएँ',drop1:'यहाँ .gpx फ़ाइलें खींचें',drop2:'या चुनने के लिए क्लिक करें',share:'फ़ोन पर: GPX Tracker → साझा करें → myxwalk',upload:'GPX अपलोड करें',recorder:'मार्ग रिकॉर्डिंग',ready:'GPS मार्ग रिकॉर्ड करने के लिए तैयार',start:'▶ शुरू',finish:'■ समाप्त',time:'समय',empty:'अभी कोई ट्रैक नहीं है। .gpx फ़ाइलें अपलोड करें — जहाँ मार्ग जाता है वहाँ कोहरा हटेगा।',points:'बिंदु',exportAll:'सभी ट्रैक निर्यात करें',filename:'फ़ाइल नाम',export:'.gpx निर्यात करें',profileStats:'प्रोफ़ाइल आंकड़े',distance:'कुल दूरी',area:'कुल खोजा गया क्षेत्र',cities:'शहरों के अनुसार',citiesAuto:'शहर स्वतः पहचाने जाते हैं…',citiesNone:'शहर निर्धारित नहीं',citiesFirst:'पहले ट्रैक लोड करें',citiesBusy:'शहर निर्धारित किए जा रहे हैं, इसमें कुछ मिनट लग सकते हैं…',citiesFail:'शहर निर्धारित नहीं हो सके',radiusStatus:'त्रिज्या',fogStatus:'कोहरा',km:'किमी',m2:'वर्ग मीटर',speed:'किमी/घं',close:'मेनू बंद करें',allAlert:'“सभी” प्रोफ़ाइल स्वतः बनती है। ट्रैक अपलोड करने के लिए “कार से” या “पैदल” चुनें।',noTracks:'निर्यात के लिए कोई ट्रैक नहीं',cloudError:'ट्रैक लोड करने में त्रुटि: ',authError:'साइन इन त्रुटि: ',setupError:'पहले ऐप फ़ाइल में SUPABASE_URL और SUPABASE_ANON_KEY दर्ज करें।',mapYandex:'Yandex Maps (मानचित्र)',mapYandexSat:'Yandex Maps (सैटेलाइट)',mapGoogle:'Google Maps (मानचित्र)',mapGoogleSat:'Google Maps (सैटेलाइट)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
-    es:{car:'En coche',walk:'A pie',all:'Todo',auth:'Autorización',map:'Tipo de mapa',settings:'Ajustes',tracks:'Rutas',stats:'Estadísticas',carNote:'Aquí se guardan las rutas en coche.',walkNote:'Aquí se guardan las rutas a pie.',allNote:'Las rutas de los perfiles coche y a pie se combinan automáticamente. Aquí no se pueden cargar rutas por separado.',notSigned:'No has iniciado sesión',login:'Iniciar sesión con Google',logout:'Cerrar sesión',cloudSetup:'Configura Supabase en el código de la aplicación para sincronizar rutas entre dispositivos.',cloudSync:'Las rutas se sincronizan con tu cuenta de Supabase.',cloudLogin:'Inicia sesión con Google para guardar rutas en la nube.',localOnly:'Supabase aún no está configurado: la aplicación funciona localmente.',fog:'Niebla',radius:'Radio de eliminación de niebla',density:'Densidad de niebla',style:'Estilo de niebla',color:'Color',edge:'Borde de eliminación',black:'Negro',blue:'Azul',gray:'Gris',white:'Blanco',green:'Verde',hard:'Borde definido',soft:'Desvanecido suave',scalloped:'Borde ondulado (nubes)',organic:'Niebla irregular',appearance:'Tema de apariencia',light:'Claro',dark:'Oscuro',auto:'Automático',language:'Idioma',showRoutes:'Mostrar rutas',drop1:'Arrastra archivos .gpx aquí',drop2:'o haz clic para elegir',share:'En el teléfono: GPX Tracker → Compartir → myxwalk',upload:'Subir GPX',recorder:'Grabación de ruta',ready:'Listo para grabar una ruta GPS',start:'▶ Iniciar',finish:'■ Finalizar',time:'tiempo',empty:'Aún no hay rutas. Sube archivos .gpx — la niebla se despejará donde pase la ruta.',points:'puntos',exportAll:'Exportar todas las rutas',filename:'nombre del archivo',export:'Exportar .gpx',profileStats:'Estadísticas del perfil',distance:'Distancia total',area:'Total explorado',cities:'Por ciudades',citiesAuto:'las ciudades se detectan automáticamente…',citiesNone:'ciudades no determinadas',citiesFirst:'carga primero las rutas',citiesBusy:'detectando ciudades, puede tardar un par de minutos…',citiesFail:'no se pudieron determinar las ciudades',radiusStatus:'radio',fogStatus:'niebla',km:'km',m2:'m²',speed:'km/h',close:'Cerrar menú',allAlert:'El perfil “Todo” se genera automáticamente. Elige “En coche” o “A pie” para cargar rutas.',noTracks:'No hay rutas para exportar',cloudError:'Error al cargar las rutas: ',authError:'Error de inicio de sesión: ',setupError:'Introduce SUPABASE_URL y SUPABASE_ANON_KEY en el archivo de la aplicación.',mapYandex:'Yandex Maps (mapa)',mapYandexSat:'Yandex Maps (satélite)',mapGoogle:'Google Maps (mapa)',mapGoogleSat:'Google Maps (satélite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
-    fr:{car:'En voiture',walk:'À pied',all:'Tout',auth:'Connexion',map:'Type de carte',settings:'Paramètres',tracks:'Traces',stats:'Statistiques',carNote:'Les itinéraires en voiture sont stockés ici.',walkNote:'Les itinéraires à pied sont stockés ici.',allNote:'Les itinéraires voiture et à pied sont combinés automatiquement. Les traces ne peuvent pas être importées séparément ici.',notSigned:'Non connecté',login:'Se connecter avec Google',logout:'Se déconnecter',cloudSetup:'Configurez Supabase dans le code de l’application pour synchroniser les traces entre appareils.',cloudSync:'Les traces sont synchronisées avec votre compte Supabase.',cloudLogin:'Connectez-vous avec Google pour enregistrer les traces dans le cloud.',localOnly:'Supabase n’est pas encore configuré : l’application fonctionne localement.',fog:'Brouillard',radius:'Rayon de dissipation du brouillard',density:'Densité du brouillard',style:'Style du brouillard',color:'Couleur',edge:'Bord de dissipation',black:'Noir',blue:'Bleu',gray:'Gris',white:'Blanc',green:'Vert',hard:'Bord net',soft:'Dégradé doux',scalloped:'Bord ondulé (nuages)',organic:'Brouillard irrégulier',appearance:'Thème',light:'Clair',dark:'Sombre',auto:'Auto',language:'Langue',showRoutes:'Afficher les itinéraires',drop1:'Déposez les fichiers .gpx ici',drop2:'ou cliquez pour choisir',share:'Sur téléphone : GPX Tracker → Partager → myxwalk',upload:'Importer GPX',recorder:'Enregistrement du parcours',ready:'Prêt à enregistrer un parcours GPS',start:'▶ Démarrer',finish:'■ Terminer',time:'temps',empty:'Aucune trace pour le moment. Importez des fichiers .gpx — le brouillard se dissipera sur le parcours.',points:'points',exportAll:'Exporter toutes les traces',filename:'nom du fichier',export:'Exporter .gpx',profileStats:'Statistiques du profil',distance:'Distance totale',area:'Total exploré',cities:'Par villes',citiesAuto:'les villes sont détectées automatiquement…',citiesNone:'villes non déterminées',citiesFirst:'chargez d’abord les traces',citiesBusy:'détection des villes, cela peut prendre quelques minutes…',citiesFail:'impossible de déterminer les villes',radiusStatus:'rayon',fogStatus:'brouillard',km:'km',m2:'m²',speed:'km/h',close:'Fermer le menu',allAlert:'Le profil « Tout » est généré automatiquement. Choisissez « En voiture » ou « À pied » pour importer des traces.',noTracks:'Aucune trace à exporter',cloudError:'Erreur de chargement des traces : ',authError:'Erreur de connexion : ',setupError:'Indiquez d’abord SUPABASE_URL et SUPABASE_ANON_KEY dans le fichier de l’application.',mapYandex:'Yandex Maps (carte)',mapYandexSat:'Yandex Maps (satellite)',mapGoogle:'Google Maps (carte)',mapGoogleSat:'Google Maps (satellite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
-    pt:{car:'De carro',walk:'A pé',all:'Todos',auth:'Autorização',map:'Tipo de mapa',settings:'Configurações',tracks:'Rotas',stats:'Estatísticas',carNote:'Aqui ficam armazenadas as rotas de carro.',walkNote:'Aqui ficam armazenadas as rotas a pé.',allNote:'As rotas dos perfis carro e a pé são combinadas automaticamente. Não é possível carregar rotas separadamente aqui.',notSigned:'Não conectado',login:'Entrar com Google',logout:'Sair',cloudSetup:'Configure o Supabase no código do aplicativo para sincronizar rotas entre dispositivos.',cloudSync:'As rotas estão sincronizadas com sua conta Supabase.',cloudLogin:'Entre com o Google para guardar rotas na nuvem.',localOnly:'O Supabase ainda não está configurado: o aplicativo funciona localmente.',fog:'Névoa',radius:'Raio de dissipação da névoa',density:'Densidade da névoa',style:'Estilo da névoa',color:'Cor',edge:'Borda da dissipação',black:'Preto',blue:'Azul',gray:'Cinza',white:'Branco',green:'Verde',hard:'Borda nítida',soft:'Suave',scalloped:'Borda ondulada (nuvens)',organic:'Névoa irregular',appearance:'Tema de aparência',light:'Claro',dark:'Escuro',auto:'Automático',language:'Idioma',showRoutes:'Mostrar rotas',drop1:'Arraste arquivos .gpx aqui',drop2:'ou clique para escolher',share:'No telefone: GPX Tracker → Compartilhar → myxwalk',upload:'Carregar GPX',recorder:'Gravação de rota',ready:'Pronto para gravar uma rota GPS',start:'▶ Iniciar',finish:'■ Finalizar',time:'tempo',empty:'Ainda não há rotas. Carregue arquivos .gpx — a névoa será removida onde a rota passar.',points:'pontos',exportAll:'Exportar todas as rotas',filename:'nome do arquivo',export:'Exportar .gpx',profileStats:'Estatísticas do perfil',distance:'Distância total',area:'Total explorado',cities:'Por cidades',citiesAuto:'as cidades são detectadas automaticamente…',citiesNone:'cidades não determinadas',citiesFirst:'carregue as rotas primeiro',citiesBusy:'determinando cidades, isso pode levar alguns minutos…',citiesFail:'não foi possível determinar as cidades',radiusStatus:'raio',fogStatus:'névoa',km:'km',m2:'m²',speed:'km/h',close:'Fechar menu',allAlert:'O perfil “Todos” é gerado automaticamente. Escolha “De carro” ou “A pé” para carregar rotas.',noTracks:'Não há rotas para exportar',cloudError:'Erro ao carregar rotas: ',authError:'Erro de login: ',setupError:'Informe primeiro SUPABASE_URL e SUPABASE_ANON_KEY no arquivo do aplicativo.',mapYandex:'Yandex Maps (mapa)',mapYandexSat:'Yandex Maps (satélite)',mapGoogle:'Google Maps (mapa)',mapGoogleSat:'Google Maps (satélite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
-    ar:{car:'بالسيارة',walk:'مشياً',all:'الكل',auth:'تسجيل الدخول',map:'نوع الخريطة',settings:'الإعدادات',tracks:'المسارات',stats:'الإحصاءات',carNote:'تُحفظ مسارات الرحلات بالسيارة هنا.',walkNote:'تُحفظ مسارات المشي هنا.',allNote:'يتم دمج مسارات السيارة والمشي تلقائياً. لا يمكن رفع المسارات بشكل منفصل هنا.',notSigned:'لم يتم تسجيل الدخول',login:'تسجيل الدخول باستخدام Google',logout:'تسجيل الخروج',cloudSetup:'قم بإعداد Supabase في كود التطبيق لمزامنة المسارات بين الأجهزة.',cloudSync:'تتم مزامنة المسارات مع حساب Supabase.',cloudLogin:'سجّل الدخول باستخدام Google لحفظ المسارات في السحابة.',localOnly:'لم يتم إعداد Supabase بعد: يعمل التطبيق محلياً حالياً.',fog:'الضباب',radius:'نطاق إزالة الضباب',density:'كثافة الضباب',style:'نمط الضباب',color:'اللون',edge:'حافة الإزالة',black:'أسود',blue:'أزرق',gray:'رمادي',white:'أبيض',green:'أخضر',hard:'حافة واضحة',soft:'تدرج ناعم',scalloped:'حافة متموجة (سحب)',organic:'ضباب غير منتظم',appearance:'المظهر',light:'فاتح',dark:'داكن',auto:'تلقائي',language:'اللغة',showRoutes:'إظهار المسارات',drop1:'اسحب ملفات .gpx إلى هنا',drop2:'أو انقر للاختيار',share:'على الهاتف: GPX Tracker ← مشاركة ← myxwalk',upload:'رفع GPX',recorder:'تسجيل المسار',ready:'جاهز لتسجيل مسار GPS',start:'▶ بدء',finish:'■ إنهاء',time:'الوقت',empty:'لا توجد مسارات بعد. ارفع ملفات .gpx — سيزول الضباب حيث يمر المسار.',points:'نقاط',exportAll:'تصدير جميع المسارات',filename:'اسم الملف',export:'تصدير .gpx',profileStats:'إحصاءات الملف',distance:'إجمالي المسافة',area:'إجمالي المساحة المستكشفة',cities:'حسب المدن',citiesAuto:'يتم تحديد المدن تلقائياً…',citiesNone:'لم يتم تحديد المدن',citiesFirst:'حمّل المسارات أولاً',citiesBusy:'جارٍ تحديد المدن، قد يستغرق ذلك بضع دقائق…',citiesFail:'تعذر تحديد المدن',radiusStatus:'النطاق',fogStatus:'الضباب',km:'كم',m2:'م²',speed:'كم/س',close:'إغلاق القائمة',allAlert:'يتم إنشاء ملف «الكل» تلقائياً. اختر «بالسيارة» أو «مشياً» لرفع المسارات.',noTracks:'لا توجد مسارات للتصدير',cloudError:'خطأ في تحميل المسارات: ',authError:'خطأ في تسجيل الدخول: ',setupError:'أدخل SUPABASE_URL وSUPABASE_ANON_KEY في ملف التطبيق أولاً.',mapYandex:'Yandex Maps (خريطة)',mapYandexSat:'Yandex Maps (قمر صناعي)',mapGoogle:'Google Maps (خريطة)',mapGoogleSat:'Google Maps (قمر صناعي)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'}
+    zh:{car:'驾车',walk:'步行',all:'全部',auth:'登录',map:'地图类型',settings:'设置',tracks:'轨迹',stats:'统计',carNote:'这里保存驾车路线。',walkNote:'这里保存步行路线。',allNote:'自动合并驾车和步行资料中的路线。此处不能单独上传轨迹。',notSigned:'未登录',login:'使用 Google 登录',logout:'退出登录',cloudSetup:'请在应用代码中配置 Supabase，以便在设备之间同步轨迹。',cloudSync:'轨迹正在与 Supabase 账户同步。',cloudLogin:'使用 Google 登录，将轨迹保存到云端。',localOnly:'尚未配置 Supabase：应用目前仅在本地运行。',fog:'雾',radius:'雾气消散半径',density:'雾密度',style:'雾样式',color:'颜色',edge:'消散边缘',black:'黑色',blue:'蓝色',gray:'灰色',white:'白色',green:'绿色',hard:'清晰边缘',soft:'柔和渐变',scalloped:'波浪边缘（云朵）',organic:'不规则雾边',appearance:'外观主题',light:'浅色',dark:'深色',auto:'自动',language:'语言',showRoutes:'显示路线',drop1:'将 .gpx 文件拖到这里',drop2:'或点击选择',share:'手机：GPX Tracker → 分享 → myxwalk',upload:'上传 GPX',empty:'暂无轨迹。上传 .gpx 文件后，路线经过的区域将开始消散雾气。',points:'点',exportAll:'导出所有轨迹',filename:'文件名',export:'导出 .gpx',profileStats:'资料统计',distance:'总行程',area:'总探索面积',cities:'按城市',citiesAuto:'城市将自动识别…',citiesNone:'未确定城市',citiesFirst:'请先加载轨迹',citiesBusy:'正在识别城市，可能需要几分钟…',citiesFail:'无法确定城市',radiusStatus:'半径',fogStatus:'雾',km:'公里',m2:'平方米',speed:'公里/小时',close:'关闭菜单',allAlert:'“全部”资料会自动生成。请选择“驾车”或“步行”来上传轨迹。',noTracks:'没有可导出的轨迹',cloudError:'加载轨迹出错：',authError:'登录出错：',setupError:'请先在应用文件中填写 SUPABASE_URL 和 SUPABASE_ANON_KEY。',mapYandex:'Yandex 地图（地图）',mapYandexSat:'Yandex 地图（卫星）',mapGoogle:'Google 地图（地图）',mapGoogleSat:'Google 地图（卫星）',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    hi:{car:'कार से',walk:'पैदल',all:'सभी',auth:'प्राधिकरण',map:'मानचित्र प्रकार',settings:'सेटिंग्स',tracks:'ट्रैक',stats:'आंकड़े',carNote:'यहाँ कार यात्रा के मार्ग संग्रहीत हैं।',walkNote:'यहाँ पैदल मार्ग संग्रहीत हैं।',allNote:'कार और पैदल प्रोफ़ाइल के मार्ग स्वतः संयुक्त होते हैं। यहाँ अलग से ट्रैक अपलोड नहीं किए जा सकते।',notSigned:'साइन इन नहीं है',login:'Google से साइन इन करें',logout:'साइन आउट',cloudSetup:'डिवाइसों के बीच ट्रैक सिंक करने के लिए ऐप कोड में Supabase कॉन्फ़िगर करें।',cloudSync:'ट्रैक आपके Supabase खाते के साथ सिंक हो रहे हैं।',cloudLogin:'ट्रैक क्लाउड में रखने के लिए Google से साइन इन करें।',localOnly:'Supabase अभी कॉन्फ़िगर नहीं है: ऐप फिलहाल स्थानीय रूप से चलता है।',fog:'कोहरा',radius:'कोहरा हटाने की त्रिज्या',density:'कोहरे की घनता',style:'कोहरे की शैली',color:'रंग',edge:'हटने का किनारा',black:'काला',blue:'नीला',gray:'धूसर',white:'सफेद',green:'हरा',hard:'स्पष्ट किनारा',soft:'मुलायम किनारा',scalloped:'लहरदार किनारा (बादल)',organic:'अनियमित कोहरा',appearance:'दिखावट थीम',light:'हल्का',dark:'गहरा',auto:'ऑटो',language:'भाषा',showRoutes:'मार्ग दिखाएँ',drop1:'यहाँ .gpx फ़ाइलें खींचें',drop2:'या चुनने के लिए क्लिक करें',share:'फ़ोन पर: GPX Tracker → साझा करें → myxwalk',upload:'GPX अपलोड करें',empty:'अभी कोई ट्रैक नहीं है। .gpx फ़ाइलें अपलोड करें — जहाँ मार्ग जाता है वहाँ कोहरा हटेगा।',points:'बिंदु',exportAll:'सभी ट्रैक निर्यात करें',filename:'फ़ाइल नाम',export:'.gpx निर्यात करें',profileStats:'प्रोफ़ाइल आंकड़े',distance:'कुल दूरी',area:'कुल खोजा गया क्षेत्र',cities:'शहरों के अनुसार',citiesAuto:'शहर स्वतः पहचाने जाते हैं…',citiesNone:'शहर निर्धारित नहीं',citiesFirst:'पहले ट्रैक लोड करें',citiesBusy:'शहर निर्धारित किए जा रहे हैं, इसमें कुछ मिनट लग सकते हैं…',citiesFail:'शहर निर्धारित नहीं हो सके',radiusStatus:'त्रिज्या',fogStatus:'कोहरा',km:'किमी',m2:'वर्ग मीटर',speed:'किमी/घं',close:'मेनू बंद करें',allAlert:'“सभी” प्रोफ़ाइल स्वतः बनती है। ट्रैक अपलोड करने के लिए “कार से” या “पैदल” चुनें।',noTracks:'निर्यात के लिए कोई ट्रैक नहीं',cloudError:'ट्रैक लोड करने में त्रुटि: ',authError:'साइन इन त्रुटि: ',setupError:'पहले ऐप फ़ाइल में SUPABASE_URL और SUPABASE_ANON_KEY दर्ज करें।',mapYandex:'Yandex Maps (मानचित्र)',mapYandexSat:'Yandex Maps (सैटेलाइट)',mapGoogle:'Google Maps (मानचित्र)',mapGoogleSat:'Google Maps (सैटेलाइट)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    es:{car:'En coche',walk:'A pie',all:'Todo',auth:'Autorización',map:'Tipo de mapa',settings:'Ajustes',tracks:'Rutas',stats:'Estadísticas',carNote:'Aquí se guardan las rutas en coche.',walkNote:'Aquí se guardan las rutas a pie.',allNote:'Las rutas de los perfiles coche y a pie se combinan automáticamente. Aquí no se pueden cargar rutas por separado.',notSigned:'No has iniciado sesión',login:'Iniciar sesión con Google',logout:'Cerrar sesión',cloudSetup:'Configura Supabase en el código de la aplicación para sincronizar rutas entre dispositivos.',cloudSync:'Las rutas se sincronizan con tu cuenta de Supabase.',cloudLogin:'Inicia sesión con Google para guardar rutas en la nube.',localOnly:'Supabase aún no está configurado: la aplicación funciona localmente.',fog:'Niebla',radius:'Radio de eliminación de niebla',density:'Densidad de niebla',style:'Estilo de niebla',color:'Color',edge:'Borde de eliminación',black:'Negro',blue:'Azul',gray:'Gris',white:'Blanco',green:'Verde',hard:'Borde definido',soft:'Desvanecido suave',scalloped:'Borde ondulado (nubes)',organic:'Niebla irregular',appearance:'Tema de apariencia',light:'Claro',dark:'Oscuro',auto:'Automático',language:'Idioma',showRoutes:'Mostrar rutas',drop1:'Arrastra archivos .gpx aquí',drop2:'o haz clic para elegir',share:'En el teléfono: GPX Tracker → Compartir → myxwalk',upload:'Subir GPX',empty:'Aún no hay rutas. Sube archivos .gpx — la niebla se despejará donde pase la ruta.',points:'puntos',exportAll:'Exportar todas las rutas',filename:'nombre del archivo',export:'Exportar .gpx',profileStats:'Estadísticas del perfil',distance:'Distancia total',area:'Total explorado',cities:'Por ciudades',citiesAuto:'las ciudades se detectan automáticamente…',citiesNone:'ciudades no determinadas',citiesFirst:'carga primero las rutas',citiesBusy:'detectando ciudades, puede tardar un par de minutos…',citiesFail:'no se pudieron determinar las ciudades',radiusStatus:'radio',fogStatus:'niebla',km:'km',m2:'m²',speed:'km/h',close:'Cerrar menú',allAlert:'El perfil “Todo” se genera automáticamente. Elige “En coche” o “A pie” para cargar rutas.',noTracks:'No hay rutas para exportar',cloudError:'Error al cargar las rutas: ',authError:'Error de inicio de sesión: ',setupError:'Introduce SUPABASE_URL y SUPABASE_ANON_KEY en el archivo de la aplicación.',mapYandex:'Yandex Maps (mapa)',mapYandexSat:'Yandex Maps (satélite)',mapGoogle:'Google Maps (mapa)',mapGoogleSat:'Google Maps (satélite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    fr:{car:'En voiture',walk:'À pied',all:'Tout',auth:'Connexion',map:'Type de carte',settings:'Paramètres',tracks:'Traces',stats:'Statistiques',carNote:'Les itinéraires en voiture sont stockés ici.',walkNote:'Les itinéraires à pied sont stockés ici.',allNote:'Les itinéraires voiture et à pied sont combinés automatiquement. Les traces ne peuvent pas être importées séparément ici.',notSigned:'Non connecté',login:'Se connecter avec Google',logout:'Se déconnecter',cloudSetup:'Configurez Supabase dans le code de l’application pour synchroniser les traces entre appareils.',cloudSync:'Les traces sont synchronisées avec votre compte Supabase.',cloudLogin:'Connectez-vous avec Google pour enregistrer les traces dans le cloud.',localOnly:'Supabase n’est pas encore configuré : l’application fonctionne localement.',fog:'Brouillard',radius:'Rayon de dissipation du brouillard',density:'Densité du brouillard',style:'Style du brouillard',color:'Couleur',edge:'Bord de dissipation',black:'Noir',blue:'Bleu',gray:'Gris',white:'Blanc',green:'Vert',hard:'Bord net',soft:'Dégradé doux',scalloped:'Bord ondulé (nuages)',organic:'Brouillard irrégulier',appearance:'Thème',light:'Clair',dark:'Sombre',auto:'Auto',language:'Langue',showRoutes:'Afficher les itinéraires',drop1:'Déposez les fichiers .gpx ici',drop2:'ou cliquez pour choisir',share:'Sur téléphone : GPX Tracker → Partager → myxwalk',upload:'Importer GPX',empty:'Aucune trace pour le moment. Importez des fichiers .gpx — le brouillard se dissipera sur le parcours.',points:'points',exportAll:'Exporter toutes les traces',filename:'nom du fichier',export:'Exporter .gpx',profileStats:'Statistiques du profil',distance:'Distance totale',area:'Total exploré',cities:'Par villes',citiesAuto:'les villes sont détectées automatiquement…',citiesNone:'villes non déterminées',citiesFirst:'chargez d’abord les traces',citiesBusy:'détection des villes, cela peut prendre quelques minutes…',citiesFail:'impossible de déterminer les villes',radiusStatus:'rayon',fogStatus:'brouillard',km:'km',m2:'m²',speed:'km/h',close:'Fermer le menu',allAlert:'Le profil « Tout » est généré automatiquement. Choisissez « En voiture » ou « À pied » pour importer des traces.',noTracks:'Aucune trace à exporter',cloudError:'Erreur de chargement des traces : ',authError:'Erreur de connexion : ',setupError:'Indiquez d’abord SUPABASE_URL et SUPABASE_ANON_KEY dans le fichier de l’application.',mapYandex:'Yandex Maps (carte)',mapYandexSat:'Yandex Maps (satellite)',mapGoogle:'Google Maps (carte)',mapGoogleSat:'Google Maps (satellite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    pt:{car:'De carro',walk:'A pé',all:'Todos',auth:'Autorização',map:'Tipo de mapa',settings:'Configurações',tracks:'Rotas',stats:'Estatísticas',carNote:'Aqui ficam armazenadas as rotas de carro.',walkNote:'Aqui ficam armazenadas as rotas a pé.',allNote:'As rotas dos perfis carro e a pé são combinadas automaticamente. Não é possível carregar rotas separadamente aqui.',notSigned:'Não conectado',login:'Entrar com Google',logout:'Sair',cloudSetup:'Configure o Supabase no código do aplicativo para sincronizar rotas entre dispositivos.',cloudSync:'As rotas estão sincronizadas com sua conta Supabase.',cloudLogin:'Entre com o Google para guardar rotas na nuvem.',localOnly:'O Supabase ainda não está configurado: o aplicativo funciona localmente.',fog:'Névoa',radius:'Raio de dissipação da névoa',density:'Densidade da névoa',style:'Estilo da névoa',color:'Cor',edge:'Borda da dissipação',black:'Preto',blue:'Azul',gray:'Cinza',white:'Branco',green:'Verde',hard:'Borda nítida',soft:'Suave',scalloped:'Borda ondulada (nuvens)',organic:'Névoa irregular',appearance:'Tema de aparência',light:'Claro',dark:'Escuro',auto:'Automático',language:'Idioma',showRoutes:'Mostrar rotas',drop1:'Arraste arquivos .gpx aqui',drop2:'ou clique para escolher',share:'No telefone: GPX Tracker → Compartilhar → myxwalk',upload:'Carregar GPX',empty:'Ainda não há rotas. Carregue arquivos .gpx — a névoa será removida onde a rota passar.',points:'pontos',exportAll:'Exportar todas as rotas',filename:'nome do arquivo',export:'Exportar .gpx',profileStats:'Estatísticas do perfil',distance:'Distância total',area:'Total explorado',cities:'Por cidades',citiesAuto:'as cidades são detectadas automaticamente…',citiesNone:'cidades não determinadas',citiesFirst:'carregue as rotas primeiro',citiesBusy:'determinando cidades, isso pode levar alguns minutos…',citiesFail:'não foi possível determinar as cidades',radiusStatus:'raio',fogStatus:'névoa',km:'km',m2:'m²',speed:'km/h',close:'Fechar menu',allAlert:'O perfil “Todos” é gerado automaticamente. Escolha “De carro” ou “A pé” para carregar rotas.',noTracks:'Não há rotas para exportar',cloudError:'Erro ao carregar rotas: ',authError:'Erro de login: ',setupError:'Informe primeiro SUPABASE_URL e SUPABASE_ANON_KEY no arquivo do aplicativo.',mapYandex:'Yandex Maps (mapa)',mapYandexSat:'Yandex Maps (satélite)',mapGoogle:'Google Maps (mapa)',mapGoogleSat:'Google Maps (satélite)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'},
+    ar:{car:'بالسيارة',walk:'مشياً',all:'الكل',auth:'تسجيل الدخول',map:'نوع الخريطة',settings:'الإعدادات',tracks:'المسارات',stats:'الإحصاءات',carNote:'تُحفظ مسارات الرحلات بالسيارة هنا.',walkNote:'تُحفظ مسارات المشي هنا.',allNote:'يتم دمج مسارات السيارة والمشي تلقائياً. لا يمكن رفع المسارات بشكل منفصل هنا.',notSigned:'لم يتم تسجيل الدخول',login:'تسجيل الدخول باستخدام Google',logout:'تسجيل الخروج',cloudSetup:'قم بإعداد Supabase في كود التطبيق لمزامنة المسارات بين الأجهزة.',cloudSync:'تتم مزامنة المسارات مع حساب Supabase.',cloudLogin:'سجّل الدخول باستخدام Google لحفظ المسارات في السحابة.',localOnly:'لم يتم إعداد Supabase بعد: يعمل التطبيق محلياً حالياً.',fog:'الضباب',radius:'نطاق إزالة الضباب',density:'كثافة الضباب',style:'نمط الضباب',color:'اللون',edge:'حافة الإزالة',black:'أسود',blue:'أزرق',gray:'رمادي',white:'أبيض',green:'أخضر',hard:'حافة واضحة',soft:'تدرج ناعم',scalloped:'حافة متموجة (سحب)',organic:'ضباب غير منتظم',appearance:'المظهر',light:'فاتح',dark:'داكن',auto:'تلقائي',language:'اللغة',showRoutes:'إظهار المسارات',drop1:'اسحب ملفات .gpx إلى هنا',drop2:'أو انقر للاختيار',share:'على الهاتف: GPX Tracker ← مشاركة ← myxwalk',upload:'رفع GPX',empty:'لا توجد مسارات بعد. ارفع ملفات .gpx — سيزول الضباب حيث يمر المسار.',points:'نقاط',exportAll:'تصدير جميع المسارات',filename:'اسم الملف',export:'تصدير .gpx',profileStats:'إحصاءات الملف',distance:'إجمالي المسافة',area:'إجمالي المساحة المستكشفة',cities:'حسب المدن',citiesAuto:'يتم تحديد المدن تلقائياً…',citiesNone:'لم يتم تحديد المدن',citiesFirst:'حمّل المسارات أولاً',citiesBusy:'جارٍ تحديد المدن، قد يستغرق ذلك بضع دقائق…',citiesFail:'تعذر تحديد المدن',radiusStatus:'النطاق',fogStatus:'الضباب',km:'كم',m2:'م²',speed:'كم/س',close:'إغلاق القائمة',allAlert:'يتم إنشاء ملف «الكل» تلقائياً. اختر «بالسيارة» أو «مشياً» لرفع المسارات.',noTracks:'لا توجد مسارات للتصدير',cloudError:'خطأ في تحميل المسارات: ',authError:'خطأ في تسجيل الدخول: ',setupError:'أدخل SUPABASE_URL وSUPABASE_ANON_KEY في ملف التطبيق أولاً.',mapYandex:'Yandex Maps (خريطة)',mapYandexSat:'Yandex Maps (قمر صناعي)',mapGoogle:'Google Maps (خريطة)',mapGoogleSat:'Google Maps (قمر صناعي)',map2gis:'2GIS',mapOsm:'OpenStreetMaps'}
   };
   const langs={ru:'Русский',en:'English',zh:'中文',hi:'हिन्दी',es:'Español',ar:'العربية',fr:'Français',pt:'Português'};
   let lang=localStorage.getItem('myxwalk_language')||'ru';
   const tr=k=>(T[lang]&&T[lang][k])||T.ru[k]||k;
   window.myxT=tr;
   function setText(sel,key){const e=document.querySelector(sel);if(e)e.textContent=tr(key)}
+  const /* 10 slogan options for the Information hero:
+1. myxwalk — сохрани карту мест, где ты уже был
+2. myxwalk — твоя история путешествий на одной карте
+3. myxwalk — открывай карту там, где уже прошёл путь
+4. myxwalk — превращай пройденные маршруты в свою карту мира
+5. myxwalk — карта твоих дорог, прогулок и открытий
+6. myxwalk — каждый пройденный маршрут остаётся на карте
+7. myxwalk — открывай знакомые места заново и отмечай новые
+8. myxwalk — собирай свою карту из реальных путешествий
+9. myxwalk — карта, которая помнит, где ты был
+10. myxwalk — оставь на карте след своих путешествий
+*/
+INFO_COPY={
+    ru:{title:'Myxwalk - твоя история путешествий на одной карте',lead:'Загрузи свои маршруты из GPX Tracker — и myxwalk уберёт туман именно там, где ты уже побывал. Приложение помогает сохранять на карте память о местах, которые ты уже проехал или прошёл, превращая личные маршруты в историю твоих путешествий. Несколько маршрутов можно объединять, хранить по профилям и продолжать исследование на другом устройстве.',info:'Информация',s1:'Загрузи GPX',t1:'Выбери «На авто» или «Пешком» и добавь файл .gpx. Такие файлы можно получить, например, в GPX Tracker',s2:'Настрой туман',t2:'Задай радиус рассеивания и густоту тумана в «Настройках».',s3:'Исследуй карту',t3:'Переключай карты, объединяй маршруты и смотри статистику открытой территории.',tip:'После входа в аккаунт твои треки и настройки сохраняются в облаке — можно продолжить с другого устройства.'},
+    en:{title:'myxwalk — a map that opens up as you explore',lead:'Import routes from GPX Tracker and myxwalk clears the fog exactly where you have been. Combine routes, keep them in profiles and continue exploring on another device.',info:'Information',s1:'Import GPX',t1:'Choose “By car” or “On foot” and add a .gpx file.',s2:'Tune the fog',t2:'Set the clearing radius and fog density in Settings.',s3:'Explore the map',t3:'Switch maps, combine routes and view your explored-area statistics.',tip:'Tip: after signing in, your tracks and settings are saved to the cloud so you can continue on another device.'},
+    zh:{title:'myxwalk — 随着你的探索逐步打开地图',lead:'从 GPX Tracker 导入路线，myxwalk 会在你走过的地方清除雾气。可以合并路线、按资料保存，并在其他设备继续探索。',info:'信息',s1:'导入 GPX',t1:'选择“驾车”或“步行”，然后添加 .gpx 文件。',s2:'调整雾气',t2:'在“设置”中调整消雾半径和雾密度。',s3:'探索地图',t3:'切换地图、合并路线并查看探索面积统计。',tip:'提示：登录后，路线和设置会保存到云端，可在其他设备继续使用。'},
+    hi:{title:'myxwalk — जैसे-जैसे आप खोजते हैं, नक्शा खुलता जाता है',lead:'GPX Tracker से मार्ग आयात करें और myxwalk वहीं का कोहरा हटाता है जहाँ आप जा चुके हैं। मार्गों को मिलाएँ, प्रोफ़ाइल में रखें और दूसरे डिवाइस पर जारी रखें।',info:'जानकारी',s1:'GPX आयात करें',t1:'“कार से” या “पैदल” चुनें और .gpx फ़ाइल जोड़ें।',s2:'कोहरा सेट करें',t2:'सेटिंग्स में त्रिज्या और कोहरे की घनता बदलें।',s3:'नक्शा देखें',t3:'नक्शे बदलें, मार्ग मिलाएँ और खोजे गए क्षेत्र के आँकड़े देखें।',tip:'सुझाव: लॉग इन करने के बाद आपके मार्ग और सेटिंग्स क्लाउड में सुरक्षित रहते हैं।'},
+    es:{title:'myxwalk — un mapa que se abre mientras exploras',lead:'Importa rutas desde GPX Tracker y myxwalk despejará la niebla donde ya has estado. Combina rutas, guárdalas por perfiles y continúa en otro dispositivo.',info:'Información',s1:'Importa GPX',t1:'Elige “En coche” o “A pie” y añade un archivo .gpx.',s2:'Ajusta la niebla',t2:'Configura el radio y la densidad de la niebla en Ajustes.',s3:'Explora el mapa',t3:'Cambia de mapa, combina rutas y consulta las estadísticas.',tip:'Consejo: al iniciar sesión, tus rutas y ajustes se guardan en la nube.'},
+    ar:{title:'myxwalk — خريطة تنفتح مع استكشافك',lead:'استورد المسارات من GPX Tracker وسيزيل myxwalk الضباب حيث مررت. اجمع المسارات واحفظها في ملفات شخصية وتابع على جهاز آخر.',info:'معلومات',s1:'استيراد GPX',t1:'اختر بالسيارة أو مشياً وأضف ملف .gpx.',s2:'اضبط الضباب',t2:'حدد نصف قطر الإزالة وكثافة الضباب من الإعدادات.',s3:'استكشف الخريطة',t3:'بدّل الخرائط واجمع المسارات وشاهد إحصاءات المنطقة المستكشفة.',tip:'نصيحة: بعد تسجيل الدخول تُحفظ المسارات والإعدادات في السحابة.'},
+    fr:{title:'myxwalk — une carte qui se dévoile à mesure que vous explorez',lead:'Importez vos parcours depuis GPX Tracker et myxwalk dissipe le brouillard là où vous êtes déjà passé. Combinez les parcours et continuez sur un autre appareil.',info:'Informations',s1:'Importer un GPX',t1:'Choisissez « En voiture » ou « À pied » et ajoutez un fichier .gpx.',s2:'Régler le brouillard',t2:'Définissez le rayon et la densité dans Paramètres.',s3:'Explorer la carte',t3:'Changez de carte, combinez les parcours et consultez les statistiques.',tip:'Astuce : après connexion, vos parcours et réglages sont enregistrés dans le cloud.'},
+    pt:{title:'myxwalk — um mapa que se abre enquanto você explora',lead:'Importe rotas do GPX Tracker e o myxwalk remove a névoa onde você já passou. Combine rotas e continue em outro dispositivo.',info:'Informações',s1:'Importar GPX',t1:'Escolha “De carro” ou “A pé” e adicione um arquivo .gpx.',s2:'Ajustar a névoa',t2:'Defina o raio e a densidade da névoa em Configurações.',s3:'Explorar o mapa',t3:'Troque o mapa, combine rotas e veja as estatísticas.',tip:'Dica: após entrar na conta, suas rotas e configurações ficam salvas na nuvem.'}
+  };
+  function translateInfo(){const c=INFO_COPY[lang]||INFO_COPY.ru; const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;}; set('infoNavLabel',c.info);set('infoTitle',c.title);set('infoLead',c.lead);set('infoStep1Title',c.s1);set('infoStep1Text',c.t1);set('infoStep2Title',c.s2);set('infoStep2Text',c.t2);set('infoStep3Title',c.s3);set('infoStep3Text',c.t3);set('infoTip',c.tip);}
   function translateUI(){
     const q=(s,k)=>setText(s,k);
     document.documentElement.lang=lang; document.documentElement.dir=lang==='ar'?'rtl':'ltr';
@@ -1375,9 +1565,10 @@ consumeSharedGpx();
     const meta={car:'carNote',walk:'walkNote',all:'allNote'}; const note=document.getElementById('profileNote'); if(note)note.textContent=tr(meta[activeProfile]||'carNote');
     if(currentUser){
       const m=currentUser.user_metadata||{};
-      const n=m.full_name||m.name||currentUser.email||'Google';
+      const raw=m.full_name||m.name||currentUser.email||'Google';
+      const n=String(raw).trim().split(/\s+/)[0] || 'Google';
       const userEl=document.getElementById('authUser'); if(userEl) userEl.textContent=n;
-      const nav=document.getElementById('authNavLabel'); if(nav) nav.textContent=n;
+      const nav=document.getElementById('authNavLabel'); if(nav) nav.textContent=tr('auth');
       const btn=document.getElementById('authBtn'); if(btn) btn.textContent=tr('logout');
       const status=document.getElementById('authStatus'); if(status) status.textContent=tr('cloudSync');
     } else {
@@ -1391,15 +1582,15 @@ consumeSharedGpx();
     const colorOpts=document.querySelectorAll('#fogColorSelect option'); ['black','blue','gray','white','green'].forEach((k,i)=>{if(colorOpts[i])colorOpts[i].textContent=tr(k)});
     const edgeOpts=document.querySelectorAll('#fogEdgeSelect option'); ['hard','soft','scalloped','organic'].forEach((k,i)=>{if(edgeOpts[i])edgeOpts[i].textContent=tr(k)});
     q('#appearanceSettingsSection h2','appearance'); document.querySelectorAll('.theme-choice').forEach(b=>b.textContent=tr(b.dataset.mode)); q('#languageSettingsSection h2','language');
-    q('#mainToggleRow h2','showRoutes'); q('#shareHint','share'); q('#uploadGpxBtn','upload'); q('.recorder-title','recorder'); q('#recorderStatus','ready'); q('#startRecordingBtn','start'); q('#stopRecordingBtn','finish');
+    q('#mainToggleRow h2','showRoutes'); q('#uploadGpxBtn','upload');
     q('#emptyHint','empty'); q('#appearanceSettingsSection h2','appearance'); q('#languageSettingsSection h2','language'); q('#exportName','filename'); q('#exportBtn','export');
     q('#statsPanel .section:first-child div:first-child','profileStats'); q('#statsPanel .section:nth-of-type(2) .stat-row:first-child span','distance'); q('#statsPanel .section:nth-of-type(2) .stat-row:nth-child(2) span','area'); q('#statsPanel .section:nth-of-type(3) h2','cities');
-    if(document.getElementById('cityList')&&!cityStatsBusy) document.getElementById('cityList').textContent=tracks.length?tr('citiesAuto'):tr('citiesFirst');
+    if(document.getElementById('cityList')&&!cityStatsBusy) document.getElementById('cityList').textContent=tracks.length?'Нажмите «Рассчитать», чтобы определить площадь по городам.':tr('citiesFirst');
     const dn=document.getElementById('drawerClose'); if(dn)dn.setAttribute('aria-label',tr('close'));
     const radiusMinus=document.getElementById('radiusMinus'),radiusPlus=document.getElementById('radiusPlus'),opacityMinus=document.getElementById('opacityMinus'),opacityPlus=document.getElementById('opacityPlus');
     if(radiusMinus)radiusMinus.setAttribute('aria-label',lang==='ru'?'Уменьшить радиус':'Decrease radius'); if(radiusPlus)radiusPlus.setAttribute('aria-label',lang==='ru'?'Увеличить радиус':'Increase radius');
     if(opacityMinus)opacityMinus.setAttribute('aria-label',lang==='ru'?'Уменьшить густоту тумана':'Decrease fog density'); if(opacityPlus)opacityPlus.setAttribute('aria-label',lang==='ru'?'Увеличить густоту тумана':'Increase fog density');
-    translateMapButtons(); updateMapStatus();
+    translateMapButtons(); updateMapStatus(); translateInfo();
   }
   function translateMapButtons(){
     const keys={yandex_map:'mapYandex',yandex_sat:'mapYandexSat',google_map:'mapGoogle',google_sat:'mapGoogleSat',dgis:'map2gis',osm:'mapOsm'};
@@ -1444,31 +1635,273 @@ consumeSharedGpx();
   translateUI();
 })();
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style id="myxwalk-v3-ui-fixes">
+/* === myxwalk v3: one exact active green everywhere === */
+:root{--myx-active:#22c55e !important;}
+.settings-toggle.nav-toggle.open,
+.profile-btn.active,
+.map-btn.active,
+#mapThemeControl .theme-btn.active,
+.theme-choice.active,
+button:active,
+.radius-btn:active,
+.mini-btn:active,
+.auth-btn:active,
+.del:active,
+.upload-gpx-btn,
+#menuFab,
+.track-item .toggle.on{
+  background:#22c55e !important;
+  border-color:#22c55e !important;
+}
+.settings-toggle.nav-toggle.open{color:#fff !important;box-shadow:0 4px 12px rgba(34,197,94,.20) !important;}
+.settings-toggle.nav-toggle.open .nav-icon.nav-icon-mask{background-color:var(--ink-soft) !important;}
+
+/* Keep every navigation item in exactly the same geometry before and after login. */
+.settings-toggle.nav-toggle{
+  width:100% !important;
+  min-height:42px !important;
+  height:42px !important;
+  box-sizing:border-box !important;
+  display:grid !important;
+  grid-template-columns:24px minmax(0,1fr) 16px !important;
+  align-items:center !important;
+  gap:10px !important;
+  padding:9px 10px !important;
+  margin:0 !important;
+  overflow:hidden !important;
+}
+.settings-toggle.nav-toggle > span:not(.nav-icon){min-width:0 !important;overflow:hidden !important;text-overflow:ellipsis !important;white-space:nowrap !important;}
+#authToggle,#mapToggle,#settingsToggle,#tracksToggle,#statsToggle,#infoToggle{display:grid !important;}
+#infoToggle{visibility:visible !important;opacity:1 !important;}
+
+/* Active navigation text is white, icon stays in the normal icon color. */
+.settings-toggle.nav-toggle.open > span:not(.nav-icon),
+.settings-toggle.nav-toggle.open .chevron{color:#fff !important;stroke:#fff !important;}
+.settings-toggle.nav-toggle.open .nav-icon.nav-icon-mask{background-color:var(--ink-soft) !important;}
+
+/* Logout must always be an explicit, usable control after sign-in. */
+#authBtn{display:inline-flex !important;align-items:center !important;justify-content:center !important;white-space:nowrap !important;min-width:86px !important;}
+
+/* Footer copyright: +20% from the previous desktop size (13px -> 15.6px). */
+#footNote{font-size:15.6px !important;}
+@media (max-width:860px){#footNote{font-size:12px !important;}}
+@media (max-width:480px){#footNote{font-size:12px !important;}}
+
+#dropzone{min-height:138px !important;display:flex !important;align-items:center !important;justify-content:center !important;flex-direction:column !important;}
+@media (max-width:860px){#dropzone{min-height:87px !important;}}
+</style>
+
+<script>
+/* v3 auth/layout hardening: login must not alter sidebar geometry or remove Information. */
+(function(){
+  const infoToggle=document.getElementById('infoToggle'), infoPanel=document.getElementById('infoPanel');
+  if(infoToggle) infoToggle.style.display='grid';
+  if(infoPanel) infoPanel.style.boxSizing='border-box';
+  const navIds=['authToggle','mapToggle','settingsToggle','tracksToggle','statsToggle','infoToggle'];
+  navIds.forEach(id=>{const el=document.getElementById(id); if(el){el.style.display='grid'; el.style.boxSizing='border-box';}});
+})();
+</script>
+
+<style id="myxwalk-v7-final-invariant">
+/* Final invariant: authentication must never restyle or reflow the navigation. */
+#sidebar .settings-toggle.nav-toggle{
+  width:100% !important; height:42px !important; min-height:42px !important;
+  box-sizing:border-box !important; display:grid !important; grid-template-columns:24px minmax(0,1fr) 16px !important;
+  align-items:center !important; gap:10px !important; margin-left:12px !important; margin-right:12px !important;
+}
+#sidebar .settings-toggle.nav-toggle .nav-icon{width:21px !important;height:21px !important;}
+#sidebar .settings-toggle.nav-toggle > span:not(.nav-icon){font-size:14px !important;font-weight:400 !important;line-height:1.2 !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;}
+#sidebar .settings-toggle.nav-toggle.open{background:#22c55e !important;border-color:#22c55e !important;color:#fff !important;box-shadow:none !important;}
+#sidebar .settings-toggle.nav-toggle.open > span:not(.nav-icon){color:#fff !important;}
+#sidebar .settings-toggle.nav-toggle.open .nav-icon{background-color:var(--ink-soft) !important;color:var(--ink-soft) !important;}
+#authToggle .chevron{display:none !important;}
+#authToggle{grid-template-columns:24px minmax(0,1fr) !important;}
+#authBtn{width:100% !important;max-width:340px !important;height:44px !important;box-sizing:border-box !important;border:1px solid var(--line) !important;background:var(--surface) !important;color:var(--ink) !important;border-radius:9px !important;font-size:14px !important;font-weight:700 !important;padding:10px 18px !important;box-shadow:none !important;}
+#authBtn:hover,#authBtn:focus,#authBtn:active{background:var(--surface) !important;color:var(--ink) !important;border-color:var(--green) !important;box-shadow:none !important;}
+#authPanel .auth-box{align-items:stretch !important;}
+#infoToggle{display:grid !important;visibility:visible !important;opacity:1 !important;}
+#infoPanel .info-title{text-align:center !important;}
+#infoPanel .info-lead{text-align:justify !important;text-justify:inter-word !important;}
+#infoAnimation{display:none !important;}
+.icon-info{-webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/2910/2910760.png") !important;mask-image:url("https://cdn-icons-png.flaticon.com/512/2910/2910760.png") !important;}
+.city-calc-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:7px 12px;font:600 12px/1.1 inherit;cursor:pointer;white-space:nowrap;}
+.city-calc-btn:hover{border-color:#22c55e;}
+.city-calc-btn:active{background:#22c55e !important;border-color:#22c55e !important;color:#fff !important;}
+@media(max-width:860px){#authBtn{max-width:none !important;height:42px !important;font-size:13px !important;}}
+</style>
+<script id="myxwalk-v7-final-behavior">
+(function(){
+  const cityBtn=document.getElementById('cityCalcBtn');
+  if(cityBtn){
+    cityBtn.addEventListener('click',async()=>{
+      const el=document.getElementById('cityList');
+      if(!tracks.length){ if(el)el.textContent='Сначала загрузите треки'; return; }
+      if(cityStatsBusy)return;
+      cityStatsBusy=true;
+      cityBtn.disabled=true; cityBtn.textContent='Рассчитываем…';
+      if(el)el.textContent='Определяем населённые пункты и площадь открытия…';
+      try{ const results=await computeCityBreakdown(); renderCityList(results); }
+      catch(err){ console.error('Расчёт площади по городам:',err); if(el)el.textContent='Не удалось рассчитать площадь по городам'; }
+      finally{ cityStatsBusy=false; cityBtn.disabled=false; cityBtn.textContent='Рассчитать'; }
+    });
+  }
+  // Authentication may change only account state. It must not alter the navigation geometry.
+  const ids=['authToggle','mapToggle','settingsToggle','tracksToggle','statsToggle','infoToggle'];
+  function enforce(){
+    ids.forEach(id=>{const e=document.getElementById(id);if(!e)return;e.style.display='grid';e.style.width='100%';e.style.height='42px';e.style.minHeight='42px';e.style.boxSizing='border-box';});
+    const info=document.getElementById('infoToggle'); if(info){info.style.visibility='visible';info.style.opacity='1';}
+  }
+  enforce();
+  const sidebar=document.getElementById('sidebar');
+  if(sidebar)new MutationObserver(enforce).observe(sidebar,{subtree:true,attributes:true,attributeFilter:['style']});
+})();
+</script>
 </body>
-
-
-
-
 
 
 
 
 </html>
 
+<style id="myxwalk-v4-fixes">
+/* v4: authorization must never alter the visual state of navigation. */
+.settings-toggle.nav-toggle.open,
+.settings-toggle.nav-toggle.open:hover,
+.settings-toggle.nav-toggle.open:focus,
+.settings-toggle.nav-toggle.open:active,
+.settings-toggle.nav-toggle.open:focus-visible,
+#authToggle.open,#mapToggle.open,#settingsToggle.open,#tracksToggle.open,#statsToggle.open,#infoToggle.open{
+  background:#22c55e !important;
+  background-color:#22c55e !important;
+  border-color:#22c55e !important;
+  color:#fff !important;
+  box-shadow:0 4px 12px rgba(34,197,94,.20) !important;
+}
+.settings-toggle.nav-toggle.open > span:not(.nav-icon),
+.settings-toggle.nav-toggle.open .chevron{color:#fff !important;stroke:#fff !important;}
+.settings-toggle.nav-toggle.open .nav-icon.nav-icon-mask{background-color:var(--ink-soft) !important;}
+:root[data-theme="dark"] .settings-toggle.nav-toggle.open,
+:root[data-theme="dark"] #authToggle.open,
+:root[data-theme="dark"] #mapToggle.open,
+:root[data-theme="dark"] #settingsToggle.open,
+:root[data-theme="dark"] #tracksToggle.open,
+:root[data-theme="dark"] #statsToggle.open,
+:root[data-theme="dark"] #infoToggle.open{background:#22c55e !important;background-color:#22c55e !important;border-color:#22c55e !important;color:#fff !important;}
+/* Footer is always 10% smaller than the 14px desktop nav text. */
+#footNote{font-size:12.6px !important;}
+@media(max-width:860px){#footNote{font-size:12.15px !important;}}
+@media(max-width:480px){#footNote{font-size:12.15px !important;}}
+#infoToggle{display:grid !important;visibility:visible !important;opacity:1 !important;height:42px !important;min-height:42px !important;}
+</style>
+<script>
+/* v4: statistics are available immediately after local/cloud data becomes available. */
+(function(){
+  const originalOpen=window.toggleSidebarPanel;
+  // The function is lexical in the main script, so also refresh whenever the stats button is opened.
+  const statsToggle=document.getElementById('statsToggle');
+  if(statsToggle){
+    statsToggle.addEventListener('click',()=>{
+      requestAnimationFrame(()=>{
+        try{recomputeLocalStats();}catch(e){}
+        
+      });
+    },true);
+  }
+  // Defensive invariant: Information is always present after auth/UI translations.
+  const keepInfo=()=>{
+    const e=document.getElementById('infoToggle');
+    if(e){e.style.display='grid';e.style.visibility='visible';e.style.opacity='1';}
+  };
+  keepInfo();
+  const sidebar=document.getElementById('sidebar');
+  if(sidebar){new MutationObserver(keepInfo).observe(sidebar,{subtree:true,attributes:true,attributeFilter:['style','class']});}
+})();
+</script>
 
+<style id="myxwalk-v5-fixes">
+/* v5: authorization and information must look identical before/after login. */
+#authToggle .chevron{display:none !important;}
+#authToggle{grid-template-columns:24px minmax(0,1fr) !important;}
+#authBtn{font-size:12px !important;font-weight:700 !important;min-width:170px !important;height:36px !important;padding:7px 12px !important;background:#22c55e !important;border-color:#22c55e !important;color:#fff !important;}
+#authBtn:hover,#authBtn:focus,#authBtn:active{background:#22c55e !important;border-color:#22c55e !important;color:#fff !important;}
+#authPanel .auth-box{min-height:42px !important;}
+#infoToggle,#infoPanel{display:grid !important;visibility:visible !important;opacity:1 !important;}
+#infoPanel{display:none !important;}
+#infoPanel.open{display:block !important;}
+#infoPanel .info-title{text-align:center !important;}
+@media(max-width:860px){#authBtn{min-width:170px !important;font-size:11.5px !important;}}
+</style>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<style id="myxwalk-v6-fixes">
+/* v6: authentication is state-only; the application UI remains identical. */
+#authToggle,#mapToggle,#settingsToggle,#tracksToggle,#statsToggle,#infoToggle{
+  width:100% !important; height:42px !important; min-height:42px !important;
+  box-sizing:border-box !important;
+}
+#authToggle .nav-icon,#mapToggle .nav-icon,#settingsToggle .nav-icon,#tracksToggle .nav-icon,#statsToggle .nav-icon,#infoToggle .nav-icon{flex:0 0 20px !important;}
+#authToggle #authNavLabel{display:block !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;line-height:1.2 !important;}
+.settings-toggle.nav-toggle.open,
+.settings-toggle.nav-toggle.open:hover,
+.settings-toggle.nav-toggle.open:focus,
+.settings-toggle.nav-toggle.open:active,
+#authToggle.open,#mapToggle.open,#settingsToggle.open,#tracksToggle.open,#statsToggle.open,#infoToggle.open{
+ background:#22c55e !important;background-color:#22c55e !important;border-color:#22c55e !important;color:#fff !important;
+}
+.settings-toggle.nav-toggle.open .nav-icon.nav-icon-mask{background-color:var(--ink-soft) !important;}
+.settings-toggle.nav-toggle.open > span:not(.nav-icon){color:#fff !important;}
+#infoToggle{display:grid !important;visibility:visible !important;opacity:1 !important;}
+#infoPanel{box-sizing:border-box !important;}
+#authPanel .auth-box{display:flex !important;flex-direction:column !important;align-items:stretch !important;gap:10px !important;}
+#authBtn{width:100% !important;min-width:0 !important;max-width:340px !important;height:44px !important;padding:10px 18px !important;border-radius:9px !important;font-size:14px !important;font-weight:700 !important;background:#22c55e !important;border:1px solid #22c55e !important;color:#fff !important;box-sizing:border-box !important;}
+#authBtn:hover,#authBtn:focus,#authBtn:active{background:#22c55e !important;border-color:#22c55e !important;color:#fff !important;}
+#infoPanel .info-title{text-align:center !important;}
+#infoPanel .info-lead{text-align:justify !important;text-justify:inter-word !important;}
+/* Never expose recording/geolocation UI; myxwalk works from imported GPX files. */
+#recordBtn,#recordTrackBtn,#startRecording,#recordingControl,.record-btn,.recording-control,[data-action="record"]{display:none !important;}
+#infoAnimation{background:#edf7ef !important;}
+@media(max-width:860px){#authBtn{max-width:none !important;height:42px !important;font-size:13px !important;}}
+</style>
+<script>
+(function(){
+  const statsToggle=document.getElementById('statsToggle');
+  const infoToggle=document.getElementById('infoToggle');
+  const nav=['authToggle','mapToggle','settingsToggle','tracksToggle','statsToggle','infoToggle'];
+  function lockUI(){
+    nav.forEach(id=>{const e=document.getElementById(id);if(e){e.style.display='grid';e.style.width='100%';e.style.height='42px';e.style.minHeight='42px';}});
+    if(infoToggle){infoToggle.style.visibility='visible';infoToggle.style.opacity='1';}
+  }
+  lockUI();
+  new MutationObserver(lockUI).observe(document.getElementById('sidebar'),{subtree:true,attributes:true,attributeFilter:['style','class']});
+  if(statsToggle){statsToggle.addEventListener('click',()=>{setTimeout(()=>{try{recomputeLocalStats();}catch(e){console.warn('Статистика:',e);} },20);});}
+})();
+</script>
