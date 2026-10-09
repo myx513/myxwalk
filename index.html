@@ -1789,6 +1789,162 @@ button:active,
 
 
 
+
+<style id="myxwalk-final-polish-v4">
+/* Consistent neutral controls, 40% taller than the previous 42px controls. */
+#sidebar .settings-toggle.nav-toggle,
+#sidebar .profile-btn,
+#sidebar #mapThemeControl .theme-btn,
+#sidebar .maps-grid button,
+#sidebar .map-btn,
+#sidebar #authBtn {
+  background:var(--surface,#f8faf8) !important; color:var(--ink,#122417) !important;
+  border:1px solid var(--line,#d7ecdc) !important; box-shadow:none !important;
+}
+#sidebar .settings-toggle.nav-toggle.open,
+#sidebar .profile-btn.active,
+#sidebar #mapThemeControl .theme-btn.active,
+#sidebar .maps-grid button.active,
+#sidebar .map-btn.active {
+  background:var(--surface,#f8faf8) !important; color:var(--ink,#122417) !important;
+  border-color:var(--line,#d7ecdc) !important; box-shadow:none !important;
+}
+#sidebar .settings-toggle.nav-toggle,
+#sidebar .profile-btn { height:59px !important; min-height:59px !important; }
+#sidebar .settings-toggle.nav-toggle {
+  width:calc(100% - 24px) !important; max-width:320px !important; margin:5px auto !important;
+  display:flex !important; flex-direction:row !important; align-items:center !important;
+  justify-content:flex-start !important; gap:9px !important; padding:0 12px !important;
+  box-sizing:border-box !important; text-align:left !important; overflow:visible !important;
+}
+#sidebar .settings-toggle.nav-toggle .nav-icon { flex:0 0 21px !important; width:21px !important; height:21px !important; }
+#sidebar .settings-toggle.nav-toggle > span:not(.nav-icon) {
+  flex:0 0 auto !important; min-width:0 !important; max-width:none !important; width:auto !important;
+  display:inline-block !important; white-space:nowrap !important; overflow:visible !important;
+  text-overflow:clip !important; font-size:14px !important; line-height:1.15 !important; text-align:left !important;
+}
+#sidebar .settings-toggle.nav-toggle .chevron { margin-left:auto !important; flex:0 0 14px !important; }
+#sidebar #authBtn {
+  height:59px !important; min-height:59px !important; width:100% !important; max-width:none !important;
+  display:flex !important; flex-direction:row !important; align-items:center !important; justify-content:flex-start !important;
+  gap:10px !important; padding:0 14px !important; white-space:nowrap !important; text-align:left !important;
+  font-size:14px !important; font-weight:600 !important; border-radius:9px !important; box-sizing:border-box !important;
+}
+#authBtn .google-mark { display:block !important; flex:0 0 22px !important; width:22px !important; height:22px !important; }
+#authBtn .auth-btn-label { display:inline-block !important; flex:1 1 auto !important; white-space:nowrap !important; text-align:left !important; }
+#sidebar #mapThemeControl .theme-btn,
+#sidebar .maps-grid button,
+#sidebar .map-btn { min-height:37px !important; height:37px !important; text-align:left !important; justify-content:flex-start !important; }
+#sidebar .maps-grid button { padding-left:12px !important; }
+#sidebar .profile-btn { height:59px !important; min-height:59px !important; }
+#cityProgressWrap { margin-top:10px; width:100%; }
+#cityProgressTrack { width:100%; height:9px; overflow:hidden; border-radius:99px; background:var(--line,#d7ecdc); border:1px solid var(--line,#d7ecdc); box-sizing:border-box; }
+#cityProgressFill { width:0%; height:100%; border-radius:99px; background:#8b9b90; transition:width .18s ease; }
+#cityProgressText { display:flex; justify-content:space-between; gap:8px; margin-top:5px; font-size:11px; color:var(--ink-soft,#5c7568); }
+.city-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:start; padding:9px 0; border-bottom:1px solid var(--line); }
+.city-row-name { font-weight:700; }
+.city-row-detail { font-size:11px; color:var(--ink-soft); margin-top:3px; }
+@media(max-width:860px) {
+ #sidebar .settings-toggle.nav-toggle, #sidebar .profile-btn { height:59px !important; min-height:59px !important; }
+ #sidebar #authBtn { height:59px !important; min-height:59px !important; }
+}
+</style>
+<script id="myxwalk-final-city-stats-v4">
+(function(){
+  const $=id=>document.getElementById(id);
+  const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+  function progress(pct,label){
+    const fill=$('cityProgressFill'),txt=$('cityProgressPercent'),msg=$('cityProgressLabel');
+    const n=Math.max(0,Math.min(100,Math.round(pct)));
+    if(fill)fill.style.width=n+'%'; if(txt)txt.textContent=n+'%'; if(msg)msg.textContent=label||'Расчёт…'; const track=$('cityProgressTrack'); if(track)track.setAttribute('aria-valuenow',String(n));
+  }
+  function ensureProgress(){
+    let wrap=$('cityProgressWrap');
+    if(!wrap){wrap=document.createElement('div');wrap.id='cityProgressWrap';wrap.innerHTML='<div id="cityProgressTrack" role="progressbar" aria-label="Прогресс расчёта" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="cityProgressFill"></div></div><div id="cityProgressText"><span id="cityProgressLabel">Подготовка…</span><span id="cityProgressPercent">0%</span></div>';const list=$('cityList');if(list)list.insertAdjacentElement('afterend',wrap);}
+    return wrap;
+  }
+  function pointInRing(lon,lat,ring){let inside=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const xi=ring[i][0],yi=ring[i][1],xj=ring[j][0],yj=ring[j][1];const cross=((yi>lat)!==(yj>lat))&&(lon<(xj-xi)*(lat-yi)/(yj-yi+1e-20)+xi);if(cross)inside=!inside;}return inside;}
+  function pointInGeometry(lon,lat,g){if(!g)return false;const polys=g.type==='Polygon'?[g.coordinates]:g.type==='MultiPolygon'?g.coordinates:[];return polys.some(poly=>pointInRing(lon,lat,poly[0])&&!poly.slice(1).some(r=>pointInRing(lon,lat,r)));}
+  function geometryAreaM2(g){
+    const polys=g.type==='Polygon'?[g.coordinates]:g.type==='MultiPolygon'?g.coordinates:[];let area=0;
+    const ringArea=ring=>{let a=0;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const [x1,y1]=ring[j],[x2,y2]=ring[i];const lat=(y1+y2)*Math.PI/360;a+=(x2-x1)*Math.PI/180*6371008.8*6371008.8*Math.sin(lat);}return Math.abs(a/2);};
+    for(const poly of polys){if(!poly.length)continue;area+=ringArea(poly[0]);for(let i=1;i<poly.length;i++)area-=ringArea(poly[i]);}return Math.max(0,area);
+  }
+  async function reverseSettlement(lat,lon){
+    const key='settlement:'+lat.toFixed(4)+','+lon.toFixed(4);window.__myxwalkSettlementCache=window.__myxwalkSettlementCache||new Map();if(window.__myxwalkSettlementCache.has(key))return window.__myxwalkSettlementCache.get(key);
+    const url='https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+encodeURIComponent(lat)+'&lon='+encodeURIComponent(lon)+'&zoom=10&addressdetails=1';
+    const res=await fetch(url,{headers:{Accept:'application/json'}});if(!res.ok)throw new Error('Геокодер: HTTP '+res.status);const d=await res.json(),a=d.address||{};
+    // Only actual populated-place categories: never municipality, district, county, region or republic.
+    let result=null;for(const type of ['city','town'])if(typeof a[type]==='string'&&a[type].trim()){result={name:a[type].trim(),type};break;}
+    window.__myxwalkSettlementCache.set(key,result);return result;
+  }
+  async function fetchSettlementBoundary(name){
+    const cache=window.__myxwalkBoundaryCache=window.__myxwalkBoundaryCache||new Map();const key=name.toLocaleLowerCase();if(cache.has(key))return cache.get(key);
+    const url='https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&polygon_geojson=1&limit=10&q='+encodeURIComponent(name);
+    const res=await fetch(url,{headers:{Accept:'application/json'}});if(!res.ok)throw new Error('Не удалось загрузить границу «'+name+'» (HTTP '+res.status+')');const rows=await res.json();
+    const normalized=name.toLocaleLowerCase();const matches=rows.filter(r=>{const a=r.address||{};const named=String(r.name||'').toLocaleLowerCase()===normalized||String(a.city||a.town||'').toLocaleLowerCase()===normalized;return named&&r.geojson&&['Polygon','MultiPolygon'].includes(r.geojson.type)&&(['city','town'].includes(String(r.type||'').toLowerCase())||String(r.class||'').toLowerCase()==='boundary');});
+    const result=matches.sort((a,b)=>geometryAreaM2(a.geojson)-geometryAreaM2(b.geojson))[0]||null;cache.set(key,result);return result;
+  }
+  function routeSamplesInside(geometry,step=35){
+    const points=[];if(!Array.isArray(tracks))return points;
+    for(const t of tracks){if(!t||!Array.isArray(t.points)||!t.points.length)continue;const line=typeof resampleGeoPolyline==='function'?resampleGeoPolyline(t.points,step):t.points;
+      for(const p of line)if(pointInGeometry(p.lon,p.lat,geometry))points.push(p);
+    }return points;
+  }
+  function rasterCity(geometry,routePoints){
+    const total=geometryAreaM2(geometry);if(!total||!routePoints.length)return {area:0,total,percent:0};
+    // Rasterize only the polygon bounding box; cap grid size for large metros.
+    const polys=geometry.type==='Polygon'?[geometry.coordinates]:geometry.coordinates;let minLon=180,maxLon=-180,minLat=90,maxLat=-90;
+    for(const poly of polys){for(const ring of poly){for(const c of ring){minLon=Math.min(minLon,c[0]);maxLon=Math.max(maxLon,c[0]);minLat=Math.min(minLat,c[1]);maxLat=Math.max(maxLat,c[1]);}}}
+    const midLat=(minLat+maxLat)/2,cell=100,latStep=cell/111320,lonStep=cell/(111320*Math.max(.15,Math.cos(midLat*Math.PI/180)));
+    let rows=Math.ceil((maxLat-minLat)/latStep),cols=Math.ceil((maxLon-minLon)/lonStep);const count=rows*cols;if(count>90000){const factor=Math.sqrt(count/90000);return rasterCityWithStep(geometry,routePoints,cell*factor,total,minLon,maxLon,minLat,maxLat,midLat);}
+    return rasterCityWithStep(geometry,routePoints,cell,total,minLon,maxLon,minLat,maxLat,midLat);
+  }
+  function rasterCityWithStep(g,routePoints,cell,total,minLon,maxLon,minLat,maxLat,midLat){
+    const latStep=cell/111320,lonStep=cell/(111320*Math.max(.15,Math.cos(midLat*Math.PI/180)));const buckets=new Map();
+    const key=(i,j)=>i+','+j;for(const p of routePoints){const i=Math.floor(p.lat/latStep),j=Math.floor(p.lon/lonStep),k=key(i,j);if(!buckets.has(k))buckets.set(k,[]);buckets.get(k).push(p);}
+    const r=Number(typeof radiusMeters!=='undefined'?radiusMeters:60),reach=Math.ceil(r/cell)+1;let inside=0,visited=0;
+    const i0=Math.floor(minLat/latStep),i1=Math.ceil(maxLat/latStep),j0=Math.floor(minLon/lonStep),j1=Math.ceil(maxLon/lonStep);const cellArea=cell*cell;
+    for(let i=i0;i<=i1;i++){const lat=i*latStep;for(let j=j0;j<=j1;j++){const lon=j*lonStep;if(!pointInGeometry(lon,lat,g))continue;inside++;let seen=false;
+      for(let di=-reach;di<=reach&&!seen;di++)for(let dj=-reach;dj<=reach&&!seen;dj++){const pts=buckets.get(key(i+di,j+dj));if(!pts)continue;for(const p of pts){const dy=(p.lat-lat)*111320,dx=(p.lon-lon)*111320*Math.cos(lat*Math.PI/180);if(dx*dx+dy*dy<=r*r){seen=true;break;}}}
+      if(seen)visited++;
+    }}
+    const area=visited*cellArea,polygonRasterArea=inside*cellArea||total;return {area:Math.min(area,polygonRasterArea),total:polygonRasterArea,percent:polygonRasterArea?Math.min(100,area/polygonRasterArea*100):0};
+  }
+  async function calculateCities(){
+    let samples=[];for(const t of tracks||[])if(t&&Array.isArray(t.points)&&t.points.length)samples.push(...(typeof resampleForCity==='function'?resampleForCity(t.points,1500):t.points));
+    if(!samples.length)throw new Error('В активном профиле нет точек трека');
+    const MAX=35;if(samples.length>MAX){const all=samples;samples=Array.from({length:MAX},(_,i)=>all[Math.round(i*(all.length-1)/(MAX-1))]);}
+    const found=new Map();for(let i=0;i<samples.length;i++){const p=samples[i];try{const s=await reverseSettlement(p.lat,p.lon);if(s){const k=s.name.toLocaleLowerCase();if(!found.has(k))found.set(k,s);}}catch(e){console.warn(e);}
+      progress(5+(i+1)/samples.length*35,'Определяем города: '+(i+1)+' из '+samples.length);if(i<samples.length-1)await wait(1100);
+    }
+    if(!found.size)throw new Error('Не удалось определить города. Проверьте интернет и попробуйте ещё раз.');
+    const results=[],settlements=[...found.values()];for(let i=0;i<settlements.length;i++){
+      const s=settlements[i];progress(40+(i/settlements.length)*20,'Ищем границы: '+s.name);
+      let boundary=null;try{boundary=await fetchSettlementBoundary(s.name);}catch(e){console.warn(e);}if(!boundary){results.push({city:s.name,area:null,total:null,percent:null,noBoundary:true});}
+      else {const pts=routeSamplesInside(boundary.geojson,35);const stats=rasterCity(boundary.geojson,pts);results.push({city:s.name,area:stats.area,total:stats.total,percent:stats.percent,noBoundary:false});}
+      if(i<settlements.length-1)await wait(1100);
+    }
+    progress(98,'Формируем статистику…');results.sort((a,b)=>(b.area||0)-(a.area||0));return results;
+  }
+  function renderRows(rows){
+    const list=$('cityList');if(!list)return;if(!rows.length){list.textContent='Города не найдены.';return;}
+    list.innerHTML='';for(const r of rows){const row=document.createElement('div');row.className='city-row';const left=document.createElement('div');const name=document.createElement('div');name.className='city-row-name';name.textContent=r.city;left.appendChild(name);const detail=document.createElement('div');detail.className='city-row-detail';
+      if(r.noBoundary){detail.textContent='Граница населённого пункта не найдена в OpenStreetMap — площадь и процент не рассчитаны.';}else detail.textContent='Исследовано: '+r.percent.toLocaleString('ru-RU',{maximumFractionDigits:1})+'% из '+formatArea(r.total);
+      left.appendChild(detail);const area=document.createElement('div');area.textContent=r.noBoundary?'—':formatArea(r.area);row.append(left,area);list.appendChild(row);
+    }
+  }
+  const btn=$('cityCalcBtn');if(btn){const clean=btn.cloneNode(true);btn.replaceWith(clean);clean.addEventListener('click',async()=>{
+    if(typeof tracks==='undefined'||!tracks.length){$('cityList').textContent='Сначала загрузите треки';return;}if(typeof cityStatsBusy!=='undefined'&&cityStatsBusy)return;
+    cityStatsBusy=true;clean.disabled=true;clean.textContent='Рассчитываем…';ensureProgress();progress(0,'Подготовка данных…');
+    try{const rows=await calculateCities();renderRows(rows);progress(100,'Готово');}catch(e){console.error('Статистика по городам:',e);const list=$('cityList');if(list)list.textContent='Ошибка расчёта: '+(e&&e.message?e.message:'неизвестная ошибка');progress(100,'Расчёт завершился с ошибкой');}
+    finally{cityStatsBusy=false;clean.disabled=false;clean.textContent='Рассчитать';}
+  });}
+  // Keep the sign-in/out control in a single row after auth UI refreshes.
+  const auth=$('authBtn');if(auth){const observer=new MutationObserver(()=>{auth.style.display='flex';auth.style.flexDirection='row';auth.style.alignItems='center';auth.style.justifyContent='flex-start';auth.style.whiteSpace='nowrap';});observer.observe(auth,{childList:true,subtree:true,characterData:true});}
+})();
+</script>
+
 </html>
 
 <style id="myxwalk-v4-fixes">
