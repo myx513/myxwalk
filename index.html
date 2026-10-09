@@ -590,6 +590,7 @@ button:active,.radius-btn:active,.mini-btn:active,.auth-btn:active,.del:active{c
           <div class="info-step"><b>3</b><div><strong id="infoStep3Title">Исследуй карту</strong><span id="infoStep3Text">Переключай карты, объединяй маршруты и смотри статистику открытой территории.</span></div></div>
         </div>
         <div class="info-tip" id="infoTip">Совет: после входа в аккаунт твои треки и настройки сохраняются в облаке — можно продолжить с другого устройства.</div>
+        <div class="flaticon-credit"><a href="https://www.flaticon.com/free-icon/information_3145497" target="_blank" rel="noopener noreferrer">Иконка «Information» — Flaticon</a></div>
       </div>
     </div>
   </div>
@@ -1934,6 +1935,7 @@ button:active,
       left.appendChild(detail);const area=document.createElement('div');area.textContent=r.noBoundary?'—':formatArea(r.area);row.append(left,area);list.appendChild(row);
     }
   }
+  window.__myxwalkCalculateCities=calculateCities; window.__myxwalkRenderCityRows=renderRows; window.__myxwalkCityProgress=progress; window.__myxwalkEnsureCityProgress=ensureProgress;
   const btn=$('cityCalcBtn');if(btn){const clean=btn.cloneNode(true);btn.replaceWith(clean);clean.addEventListener('click',async()=>{
     if(typeof tracks==='undefined'||!tracks.length){$('cityList').textContent='Сначала загрузите треки';return;}if(typeof cityStatsBusy!=='undefined'&&cityStatsBusy)return;
     cityStatsBusy=true;clean.disabled=true;clean.textContent='Рассчитываем…';ensureProgress();progress(0,'Подготовка данных…');
@@ -2135,3 +2137,622 @@ button:active,
   }
 })();
 </script>
+
+
+<!-- Final definitive overrides: placed last so older styles cannot override them. -->
+<style id="myxwalk-final-definitive-fixes">
+/* Navigation: centered in the sidebar, icon and label on one line, no clipped text. */
+#sidebar > .settings-toggle.nav-toggle {
+  display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important;
+  align-items:center !important; justify-content:flex-start !important; gap:8px !important;
+  width:calc(100% - 12px) !important; max-width:320px !important; min-width:0 !important;
+  height:59px !important; min-height:59px !important; margin:5px auto !important;
+  padding:0 9px !important; box-sizing:border-box !important; text-align:left !important;
+  white-space:nowrap !important; overflow:visible !important;
+  background:var(--surface,#f8faf8) !important; background-color:var(--surface,#f8faf8) !important;
+  color:var(--ink,#122417) !important; border:1px solid var(--line,#d7ecdc) !important; box-shadow:none !important;
+}
+#sidebar > .settings-toggle.nav-toggle.open,
+#sidebar > .settings-toggle.nav-toggle.open:hover,
+#sidebar > .settings-toggle.nav-toggle.open:focus,
+#sidebar > .settings-toggle.nav-toggle.open:active {
+  background:var(--surface,#f8faf8) !important; background-color:var(--surface,#f8faf8) !important;
+  border-color:var(--line,#d7ecdc) !important; color:var(--ink,#122417) !important; box-shadow:none !important;
+}
+#sidebar > .settings-toggle.nav-toggle .nav-icon {
+  display:block !important; flex:0 0 20px !important; width:20px !important; height:20px !important;
+  min-width:20px !important; margin:0 !important;
+}
+#sidebar > .settings-toggle.nav-toggle > span:not(.nav-icon) {
+  display:inline-block !important; flex:0 1 auto !important; width:auto !important; min-width:0 !important;
+  max-width:none !important; white-space:nowrap !important; overflow:visible !important;
+  overflow-wrap:normal !important; text-overflow:clip !important; text-align:left !important;
+  color:var(--ink,#122417) !important; font-size:13px !important; line-height:1.2 !important;
+}
+#sidebar > .settings-toggle.nav-toggle .chevron { display:block !important; flex:0 0 12px !important; width:12px !important; height:12px !important; margin-left:auto !important; }
+#sidebar .settings-toggle.nav-toggle.open > span:not(.nav-icon),
+#sidebar .settings-toggle.nav-toggle.open .chevron { color:var(--ink,#122417) !important; stroke:var(--ink,#122417) !important; }
+/* Profile tabs, Google sign-in/out and map-source choices share neutral styling. */
+#sidebar .profile-btn,
+#sidebar #authBtn,
+#sidebar .maps-grid button,
+#sidebar #mapThemeControl .theme-btn,
+#sidebar .map-btn {
+  background:var(--surface,#f8faf8) !important; background-color:var(--surface,#f8faf8) !important;
+  color:var(--ink,#122417) !important; border:1px solid var(--line,#d7ecdc) !important;
+  box-shadow:none !important; border-radius:8px !important;
+}
+#sidebar .profile-btn.active,
+#sidebar .maps-grid button.active,
+#sidebar #mapThemeControl .theme-btn.active,
+#sidebar .map-btn.active,
+#sidebar .profile-btn:hover,
+#sidebar .maps-grid button:hover,
+#sidebar #mapThemeControl .theme-btn:hover,
+#sidebar .map-btn:hover {
+  background:var(--surface,#f8faf8) !important; background-color:var(--surface,#f8faf8) !important;
+  color:var(--ink,#122417) !important; border-color:var(--line,#d7ecdc) !important; box-shadow:none !important;
+}
+#sidebar .profile-btn { height:59px !important; min-height:59px !important; }
+#sidebar .maps-grid button,
+#sidebar #mapThemeControl .theme-btn,
+#sidebar .map-btn { height:37px !important; min-height:37px !important; text-align:left !important; justify-content:flex-start !important; padding-left:12px !important; }
+#sidebar #authBtn {
+  display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important;
+  justify-content:flex-start !important; gap:10px !important; width:100% !important; max-width:340px !important;
+  min-width:0 !important; height:59px !important; min-height:59px !important; padding:0 14px !important;
+  box-sizing:border-box !important; white-space:nowrap !important; text-align:left !important;
+  font:500 14px/1.2 Arial,sans-serif !important; background:#fff !important; color:#3c4043 !important;
+  border:1px solid #dadce0 !important; box-shadow:none !important;
+}
+#sidebar #authBtn:hover,#sidebar #authBtn:focus,#sidebar #authBtn:active {
+  background:#fff !important; background-color:#fff !important; color:#3c4043 !important; border-color:#dadce0 !important; box-shadow:none !important;
+}
+#authBtn .google-mark { display:block !important; flex:0 0 20px !important; width:20px !important; height:20px !important; }
+#authBtn .auth-btn-label { display:inline-block !important; flex:0 1 auto !important; min-width:0 !important; white-space:nowrap !important; text-align:left !important; color:#3c4043 !important; }
+#authPanel .auth-box { align-items:center !important; }
+#cityProgressWrap { display:block !important; margin-top:12px !important; width:100% !important; }
+#cityProgressTrack { width:100% !important; height:10px !important; border-radius:99px !important; overflow:hidden !important; background:var(--line,#d7ecdc) !important; }
+#cityProgressFill { height:100% !important; width:0%; background:#82998a !important; border-radius:99px !important; transition:width .2s ease !important; }
+#cityProgressText { display:flex !important; justify-content:space-between !important; gap:8px !important; margin-top:5px !important; font-size:11px !important; }
+.city-row { display:grid !important; grid-template-columns:minmax(0,1fr) auto !important; gap:8px !important; align-items:start !important; padding:9px 0 !important; border-bottom:1px solid var(--line) !important; }
+.city-row-name { font-weight:700 !important; }
+.city-row-detail { font-size:11px !important; color:var(--ink-soft) !important; margin-top:3px !important; }
+@media(max-width:860px) {
+ #sidebar > .settings-toggle.nav-toggle { width:calc(100% - 24px) !important; height:59px !important; min-height:59px !important; padding:0 14px !important; }
+ #sidebar > .settings-toggle.nav-toggle > span:not(.nav-icon) { font-size:14px !important; }
+ #sidebar #authBtn { height:59px !important; min-height:59px !important; max-width:none !important; }
+}
+</style>
+<script id="myxwalk-final-final-runtime-fix">
+(function(){
+  const $=id=>document.getElementById(id);
+  // Rebuild the button to discard all legacy competing click handlers.
+  let btn=$('cityCalcBtn');
+  if(btn){
+    const clean=btn.cloneNode(true); btn.replaceWith(clean); btn=clean;
+    btn.addEventListener('click',async function(){
+      const list=$('cityList');
+      if(typeof tracks==='undefined'||!tracks.length){if(list)list.textContent='Сначала загрузите треки';return;}
+      if(window.__myxwalkCityBusy)return;
+      window.__myxwalkCityBusy=true;btn.disabled=true;btn.textContent='Рассчитываем…';
+      const ensure=window.__myxwalkEnsureCityProgress,progress=window.__myxwalkCityProgress,calc=window.__myxwalkCalculateCities,render=window.__myxwalkRenderCityRows;
+      if(ensure)ensure();if(progress)progress(0,'Подготовка треков…');
+      try{
+        if(typeof calc!=='function'||typeof render!=='function')throw new Error('Модуль расчёта не загружен');
+        // The calculation routine updates progress as it geocodes settlements and checks boundaries.
+        const rows=await calc();render(rows);if(progress)progress(100,'Готово');
+      }catch(err){console.error('Статистика по городам:',err);if(list)list.textContent='Ошибка расчёта: '+(err&&err.message?err.message:'неизвестная ошибка');if(progress)progress(100,'Расчёт завершился с ошибкой');}
+      finally{window.__myxwalkCityBusy=false;btn.disabled=false;btn.textContent='Рассчитать';}
+    });
+  }
+  // If account text is refreshed asynchronously, retain inline icon/label layout and neutral colors.
+  const auth=$('authBtn');if(auth){const enforce=()=>{auth.style.display='flex';auth.style.flexDirection='row';auth.style.flexWrap='nowrap';auth.style.alignItems='center';auth.style.justifyContent='flex-start';auth.style.whiteSpace='nowrap';};enforce();new MutationObserver(enforce).observe(auth,{childList:true,subtree:true,characterData:true});}
+})();
+</script>
+
+
+<style id="myxwalk-auth-style-lock">
+/* Keep the sidebar and auth controls visually stable across OAuth state changes. */
+#sidebar #authBtn, #sidebar #authBtn:hover, #sidebar #authBtn:focus, #sidebar #authBtn:active {
+  display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important;
+  align-items:center !important; justify-content:flex-start !important; gap:10px !important;
+  width:100% !important; max-width:340px !important; min-width:0 !important;
+  height:59px !important; min-height:59px !important; box-sizing:border-box !important;
+  padding:0 14px !important; border:1px solid #dadce0 !important; border-radius:8px !important;
+  background:#fff !important; background-color:#fff !important; color:#3c4043 !important;
+  box-shadow:none !important; font:500 14px/1.2 Arial,sans-serif !important;
+  text-align:left !important; white-space:nowrap !important; transform:none !important;
+}
+#sidebar #authBtn .google-mark { display:block !important; flex:0 0 20px !important; width:20px !important; height:20px !important; }
+#sidebar #authBtn .auth-btn-label { display:inline-block !important; flex:0 1 auto !important; min-width:0 !important; white-space:nowrap !important; text-align:left !important; color:#3c4043 !important; }
+#sidebar .profile-btn, #sidebar .maps-grid button, #sidebar #mapThemeControl .theme-btn, #sidebar .map-btn {
+  background:var(--surface,#f8faf8) !important; background-color:var(--surface,#f8faf8) !important;
+  color:var(--ink,#122417) !important; border-color:var(--line,#d7ecdc) !important; box-shadow:none !important;
+}
+#sidebar .profile-btn.active, #sidebar .maps-grid button.active, #sidebar #mapThemeControl .theme-btn.active, #sidebar .map-btn.active,
+#sidebar .profile-btn:hover, #sidebar .maps-grid button:hover, #sidebar #mapThemeControl .theme-btn:hover, #sidebar .map-btn:hover {
+  background:var(--surface,#f8faf8) !important; background-color:var(--surface,#f8faf8) !important;
+  color:var(--ink,#122417) !important; box-shadow:none !important;
+}
+@media(max-width:860px){#sidebar #authBtn{max-width:none !important;height:59px !important;min-height:59px !important;}}
+</style>
+<script id="myxwalk-auth-style-lock-runtime">
+(function(){
+  const button=document.getElementById('authBtn');
+  if(!button) return;
+  const googleMark='<svg class="google-mark" aria-hidden="true" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.72 7.18l7.62 5.91c4.45-4.11 7.14-10.16 7.14-17.56z"/><path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.89l-7.62-5.91c-2.12 1.42-4.84 2.27-8.28 2.27-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
+  function expected(){
+    const user=typeof currentUser!=='undefined'&&currentUser;
+    const label=user?'Выйти из аккаунта':(window.myxT?window.myxT('login'):'Вход с аккаунтом Google');
+    const hasLabel=button.querySelector('.auth-btn-label');
+    const correct=hasLabel&&hasLabel.textContent===label&&(user?!button.querySelector('.google-mark'):!!button.querySelector('.google-mark'));
+    if(!correct) button.innerHTML=(user?'':googleMark)+'<span class="auth-btn-label">'+label+'</span>';
+    button.style.setProperty('display','flex','important');
+    button.style.setProperty('flex-direction','row','important');
+    button.style.setProperty('flex-wrap','nowrap','important');
+    button.style.setProperty('align-items','center','important');
+    button.style.setProperty('justify-content','flex-start','important');
+    button.style.setProperty('white-space','nowrap','important');
+  }
+  expected();
+  new MutationObserver(function(){
+    const user=typeof currentUser!=='undefined'&&currentUser;
+    const label=button.querySelector('.auth-btn-label');
+    const expectedText=user?'Выйти из аккаунта':(window.myxT?window.myxT('login'):'Вход с аккаунтом Google');
+    if(!label||label.textContent!==expectedText||(user?!!button.querySelector('.google-mark'):!button.querySelector('.google-mark'))) expected();
+  }).observe(button,{childList:true,subtree:true,characterData:true});
+  if(typeof window.updateAuthUI==='function'){
+    const old=window.updateAuthUI;
+    window.updateAuthUI=function(){old();expected();};
+  }
+})();
+</script>
+
+
+<!-- Last-pass UI lock: keep sidebar labels/icons readable and auth styling stable. -->
+<style id="myxwalk-last-ui-lock">
+  /* Center each navigation control as a whole; keep icon + complete label on one line. */
+  #sidebar > .settings-toggle.nav-toggle {
+    display:flex !important; flex-flow:row nowrap !important; align-items:center !important;
+    justify-content:flex-start !important; gap:9px !important;
+    width:min(210px, calc(100% - 24px)) !important; min-width:0 !important; max-width:210px !important;
+    height:48px !important; min-height:48px !important; margin:5px auto !important;
+    padding:0 12px !important; box-sizing:border-box !important;
+    overflow:visible !important; white-space:nowrap !important; text-align:left !important;
+    background:var(--surface, #f8faf8) !important; background-color:var(--surface, #f8faf8) !important;
+    color:var(--ink-soft, #4b5a50) !important; border:1px solid var(--line, #d7ecdc) !important;
+    border-radius:8px !important; box-shadow:none !important;
+  }
+  #sidebar > .settings-toggle.nav-toggle.open,
+  #sidebar > .settings-toggle.nav-toggle.open:hover,
+  #sidebar > .settings-toggle.nav-toggle.open:focus,
+  #sidebar > .settings-toggle.nav-toggle.open:active {
+    background:var(--surface, #f8faf8) !important; background-color:var(--surface, #f8faf8) !important;
+    color:var(--ink-soft, #4b5a50) !important; border-color:var(--line, #d7ecdc) !important;
+    box-shadow:none !important;
+  }
+  #sidebar > .settings-toggle.nav-toggle > .nav-icon {
+    display:block !important; flex:0 0 20px !important; width:20px !important; min-width:20px !important;
+    height:20px !important; margin:0 !important; transform:none !important;
+  }
+  #sidebar > .settings-toggle.nav-toggle > span:not(.nav-icon) {
+    display:inline-block !important; flex:0 1 auto !important; width:auto !important; min-width:0 !important;
+    max-width:none !important; overflow:visible !important; text-overflow:clip !important;
+    overflow-wrap:normal !important; white-space:nowrap !important; text-align:left !important;
+    font-size:13.5px !important; line-height:1.2 !important; color:var(--ink-soft, #4b5a50) !important;
+  }
+  #sidebar > .settings-toggle.nav-toggle > .chevron { display:none !important; }
+  #sidebar > .settings-toggle.nav-toggle.open > span:not(.nav-icon) { color:var(--ink-soft, #4b5a50) !important; }
+  /* Flaticon Information icon, served from the icon's CDN asset. */
+  #sidebar .settings-toggle.nav-toggle .icon-info {
+    background-image:url("https://cdn-icons-png.flaticon.com/512/3145/3145497.png") !important;
+    background-position:center !important; background-repeat:no-repeat !important; background-size:contain !important;
+    background-color:transparent !important; -webkit-mask-image:none !important; mask-image:none !important;
+  }
+  /* The auth button has identical dimensions/colors before and after auth state changes. */
+  #sidebar #authBtn, #sidebar #authBtn:hover, #sidebar #authBtn:focus, #sidebar #authBtn:active,
+  #sidebar #authBtn:disabled {
+    display:flex !important; flex-flow:row nowrap !important; align-items:center !important; justify-content:flex-start !important;
+    gap:10px !important; width:min(100%, 340px) !important; max-width:340px !important; min-width:0 !important;
+    height:59px !important; min-height:59px !important; box-sizing:border-box !important; padding:0 14px !important;
+    background:#fff !important; background-color:#fff !important; color:#3c4043 !important;
+    border:1px solid #dadce0 !important; border-radius:8px !important; box-shadow:none !important;
+    font:500 14px/1.2 Arial,sans-serif !important; text-align:left !important; white-space:nowrap !important;
+    transform:none !important; opacity:1 !important;
+  }
+  #sidebar #authBtn .google-mark { display:block !important; flex:0 0 20px !important; width:20px !important; height:20px !important; }
+  #sidebar #authBtn .auth-btn-label { display:inline-block !important; flex:0 1 auto !important; min-width:0 !important; white-space:nowrap !important; text-align:left !important; color:#3c4043 !important; }
+  #sidebar .profile-btn, #sidebar .maps-grid button, #sidebar #mapThemeControl .theme-btn, #sidebar .map-btn,
+  #sidebar .profile-btn:hover, #sidebar .maps-grid button:hover, #sidebar #mapThemeControl .theme-btn:hover, #sidebar .map-btn:hover,
+  #sidebar .profile-btn.active, #sidebar .maps-grid button.active, #sidebar #mapThemeControl .theme-btn.active, #sidebar .map-btn.active {
+    background:var(--surface, #f8faf8) !important; background-color:var(--surface, #f8faf8) !important;
+    color:var(--ink, #122417) !important; border-color:var(--line, #d7ecdc) !important; box-shadow:none !important;
+  }
+  .flaticon-credit { margin-top:12px; font-size:10px; line-height:1.35; text-align:right; }
+  .flaticon-credit a { color:var(--ink-soft); text-decoration:underline; }
+  @media(max-width:860px) {
+    #sidebar > .settings-toggle.nav-toggle { width:min(210px, calc(100% - 24px)) !important; max-width:210px !important; }
+    #sidebar #authBtn { max-width:100% !important; }
+  }
+</style>
+<script id="myxwalk-auth-ui-lock-runtime">
+(function(){
+  const button=document.getElementById('authBtn');
+  if(!button) return;
+  const googleMark='<svg class="google-mark" aria-hidden="true" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.72 7.18l7.62 5.91c4.45-4.11 7.14-10.16 7.14-17.56z"/><path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.89l-7.62-5.91c-2.12 1.42-4.84 2.27-8.28 2.27-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
+  function renderAuthButton(){
+    const user=typeof currentUser!=='undefined' && currentUser;
+    const label=user?'Выйти из аккаунта':(window.myxT?window.myxT('login'):'Вход с аккаунтом Google');
+    const mark=user?'':googleMark;
+    const span=button.querySelector('.auth-btn-label');
+    const hasMark=!!button.querySelector('.google-mark');
+    if(!span || span.textContent!==label || hasMark!==!!mark){
+      button.innerHTML=mark+'<span class="auth-btn-label"></span>';
+      button.querySelector('.auth-btn-label').textContent=label;
+    }
+    button.className='auth-btn';
+    button.style.setProperty('display','flex','important');
+    button.style.setProperty('flex-direction','row','important');
+    button.style.setProperty('flex-wrap','nowrap','important');
+    button.style.setProperty('align-items','center','important');
+    button.style.setProperty('justify-content','flex-start','important');
+    button.style.setProperty('white-space','nowrap','important');
+  }
+  const originalUpdate=window.updateAuthUI;
+  window.updateAuthUI=function(){
+    if(typeof originalUpdate==='function') { try { originalUpdate(); } catch(e) { console.warn('Auth UI refresh fallback',e); } }
+    renderAuthButton();
+  };
+  renderAuthButton();
+  // Translation code sometimes replaces button contents with plain text; restore the label/icon without touching layout.
+  new MutationObserver(function(){
+    const user=typeof currentUser!=='undefined' && currentUser;
+    const wanted=user?'Выйти из аккаунта':(window.myxT?window.myxT('login'):'Вход с аккаунтом Google');
+    const span=button.querySelector('.auth-btn-label');
+    if(!span || span.textContent!==wanted || (!!button.querySelector('.google-mark')===!!user)) renderAuthButton();
+  }).observe(button,{childList:true,subtree:true,characterData:true});
+  const language=document.getElementById('languageSelect');
+  if(language) language.addEventListener('change',function(){setTimeout(renderAuthButton,0);});
+})();
+</script>
+
+<!-- Final interaction-state and sidebar alignment fix -->
+<style id="myxwalk-final-button-state-fix">
+  /* Sidebar navigation: centered as a group, icon and full label on one line. */
+  #sidebar > .settings-toggle.nav-toggle {
+    display:flex !important;
+    flex-direction:row !important;
+    flex-wrap:nowrap !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:8px !important;
+    width:calc(100% - 12px) !important;
+    min-width:0 !important;
+    max-width:none !important;
+    margin:5px auto !important;
+    padding:0 9px !important;
+    box-sizing:border-box !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    text-align:left !important;
+  }
+  #sidebar > .settings-toggle.nav-toggle > .nav-icon,
+  #sidebar > .settings-toggle.nav-toggle > .nav-icon-img {
+    flex:0 0 19px !important;
+    width:19px !important;
+    min-width:19px !important;
+    height:19px !important;
+    margin:0 !important;
+    transform:none !important;
+  }
+  #sidebar > .settings-toggle.nav-toggle > span:not(.nav-icon) {
+    flex:0 1 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    white-space:nowrap !important;
+    overflow-wrap:normal !important;
+    font-size:13px !important;
+    line-height:1.15 !important;
+    text-align:left !important;
+  }
+  #sidebar > .settings-toggle.nav-toggle > .chevron { display:none !important; }
+
+  /* Every button gets the same green pressed feedback. Keep any icon black. */
+  #sidebar button:active,
+  #sidebar .settings-toggle.nav-toggle:active {
+    background:#22c55e !important;
+    background-color:#22c55e !important;
+    color:#fff !important;
+    border-color:#22c55e !important;
+    box-shadow:none !important;
+  }
+  #sidebar button:active > span,
+  #sidebar button:active .auth-btn-label,
+  #sidebar .settings-toggle.nav-toggle:active > span:not(.nav-icon) {
+    color:#fff !important;
+  }
+  #sidebar button:active svg,
+  #sidebar .settings-toggle.nav-toggle:active > .nav-icon:not(.nav-icon-mask),
+  #sidebar .settings-toggle.nav-toggle:active > .nav-icon-img {
+    filter:brightness(0) !important;
+  }
+  #sidebar button:active .nav-icon-mask,
+  #sidebar .settings-toggle.nav-toggle:active .nav-icon-mask {
+    background-color:#000 !important;
+    color:#000 !important;
+    filter:none !important;
+  }
+  #sidebar button:active .icon-info {
+    filter:brightness(0) !important;
+  }
+
+  /* Selected/open controls retain green + white text after the press. */
+  #sidebar .profile-btn.active,
+  #sidebar .maps-grid button.active,
+  #sidebar #mapThemeControl .theme-btn.active,
+  #sidebar .map-btn.active,
+  #sidebar > .settings-toggle.nav-toggle.open {
+    background:#22c55e !important;
+    background-color:#22c55e !important;
+    border-color:#22c55e !important;
+    color:#fff !important;
+    box-shadow:none !important;
+  }
+  #sidebar .profile-btn.active,
+  #sidebar .maps-grid button.active,
+  #sidebar #mapThemeControl .theme-btn.active,
+  #sidebar .map-btn.active { color:#fff !important; }
+  #sidebar > .settings-toggle.nav-toggle.open > span:not(.nav-icon) {
+    color:#fff !important;
+  }
+  #sidebar > .settings-toggle.nav-toggle.open .nav-icon-mask {
+    background-color:#000 !important;
+    color:#000 !important;
+    filter:none !important;
+  }
+  #sidebar > .settings-toggle.nav-toggle.open .nav-icon:not(.nav-icon-mask),
+  #sidebar > .settings-toggle.nav-toggle.open .nav-icon-img,
+  #sidebar .profile-btn.active svg,
+  #sidebar .maps-grid button.active svg,
+  #sidebar #mapThemeControl .theme-btn.active svg,
+  #sidebar .map-btn.active svg {
+    filter:brightness(0) !important;
+  }
+
+  /* Login/logout button styling is independent of auth state and text replacement. */
+  #sidebar #authBtn,
+  #sidebar #authBtn:hover,
+  #sidebar #authBtn:focus,
+  #sidebar #authBtn:disabled {
+    display:flex !important;
+    flex-direction:row !important;
+    flex-wrap:nowrap !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:10px !important;
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    height:59px !important;
+    min-height:59px !important;
+    padding:0 14px !important;
+    box-sizing:border-box !important;
+    background:#fff !important;
+    background-color:#fff !important;
+    color:#3c4043 !important;
+    border:1px solid #dadce0 !important;
+    border-radius:8px !important;
+    box-shadow:none !important;
+    text-align:left !important;
+    white-space:nowrap !important;
+    transform:none !important;
+    opacity:1 !important;
+  }
+  #sidebar #authBtn:active {
+    background:#22c55e !important;
+    background-color:#22c55e !important;
+    border-color:#22c55e !important;
+    color:#fff !important;
+  }
+  #sidebar #authBtn .auth-btn-label {
+    flex:0 1 auto !important;
+    min-width:0 !important;
+    white-space:nowrap !important;
+    color:inherit !important;
+    text-align:left !important;
+  }
+  #sidebar #authBtn:active .auth-btn-label { color:#fff !important; }
+  #sidebar #authBtn:active .google-mark { filter:grayscale(1) brightness(0) !important; }
+  #sidebar #authBtn .google-mark {
+    display:block !important;
+    flex:0 0 20px !important;
+    width:20px !important;
+    height:20px !important;
+  }
+  @media(max-width:860px) {
+    #sidebar > .settings-toggle.nav-toggle {
+      width:calc(100% - 24px) !important;
+      margin-left:auto !important;
+      margin-right:auto !important;
+    }
+  }
+</style>
+<style id="myxwalk-global-pressed-button-state">
+  button:active {
+    background:#22c55e !important;
+    background-color:#22c55e !important;
+    border-color:#22c55e !important;
+    color:#fff !important;
+  }
+  button:active span,
+  button:active .auth-btn-label,
+  button:active .button-label { color:#fff !important; }
+  button:active svg,
+  button:active img,
+  button:active .button-icon { filter:brightness(0) !important; }
+  button:active .nav-icon-mask { background-color:#000 !important; filter:none !important; }
+  #sidebar #authBtn:active .google-mark { filter:grayscale(1) brightness(0) !important; }
+</style>
+
+
+<style id="myxwalk-requested-navigation-consistency">
+/* One navigation appearance in every account state. */
+#sidebar > .settings-toggle.nav-toggle,
+#sidebar > .settings-toggle.nav-toggle:hover,
+#sidebar > .settings-toggle.nav-toggle:focus {
+  display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important;
+  align-items:center !important; justify-content:flex-start !important;
+  gap:9px !important; color:#5c7568 !important;
+  background:transparent !important; border:1px solid transparent !important;
+  box-shadow:none !important; text-align:left !important;
+  width:calc(100% - 12px) !important; max-width:100% !important;
+  min-width:0 !important; height:44px !important; min-height:44px !important;
+  margin:4px auto !important; padding:0 10px !important; box-sizing:border-box !important;
+  white-space:nowrap !important; overflow:visible !important;
+}
+#sidebar > .settings-toggle.nav-toggle > span:not(.nav-icon) {
+  color:#5c7568 !important; flex:1 1 auto !important; min-width:0 !important;
+  width:auto !important; max-width:none !important; overflow:visible !important;
+  text-overflow:clip !important; white-space:nowrap !important; text-align:left !important;
+  font-size:13px !important; line-height:1.2 !important; font-weight:400 !important;
+}
+#sidebar > .settings-toggle.nav-toggle > .nav-icon,
+#sidebar > .settings-toggle.nav-toggle > .nav-icon-img {
+  flex:0 0 20px !important; width:20px !important; min-width:20px !important;
+  height:20px !important; margin:0 !important; background-color:#5c7568 !important;
+  color:#5c7568 !important; align-self:center !important;
+}
+#sidebar > .settings-toggle.nav-toggle > .chevron {display:none !important;}
+#sidebar > .settings-toggle.nav-toggle.open,
+#sidebar > .settings-toggle.nav-toggle.open:hover,
+#sidebar > .settings-toggle.nav-toggle:active {
+  background:#22c55e !important; background-color:#22c55e !important;
+  border-color:#22c55e !important; color:#fff !important; box-shadow:none !important;
+}
+#sidebar > .settings-toggle.nav-toggle.open > span:not(.nav-icon),
+#sidebar > .settings-toggle.nav-toggle:active > span:not(.nav-icon) {color:#fff !important;}
+#sidebar > .settings-toggle.nav-toggle.open > .nav-icon.nav-icon-mask,
+#sidebar > .settings-toggle.nav-toggle:active > .nav-icon.nav-icon-mask {
+  background-color:#000 !important; color:#000 !important;
+}
+#sidebar > .settings-toggle.nav-toggle.open > .nav-icon:not(.nav-icon-mask),
+#sidebar > .settings-toggle.nav-toggle:active > .nav-icon:not(.nav-icon-mask),
+#sidebar > .settings-toggle.nav-toggle.open > .nav-icon-img,
+#sidebar > .settings-toggle.nav-toggle:active > .nav-icon-img {filter:brightness(0) !important;}
+#sidebar .icon-tracks {
+  -webkit-mask-image:url("https://cdn-icons-png.flaticon.com/512/8005/8005569.png") !important;
+  mask-image:url("https://cdn-icons-png.flaticon.com/512/8005/8005569.png") !important;
+  -webkit-mask-repeat:no-repeat !important; mask-repeat:no-repeat !important;
+  -webkit-mask-position:center !important; mask-position:center !important;
+  -webkit-mask-size:contain !important; mask-size:contain !important;
+  background-image:none !important;
+}
+/* Keep Statistics panel structure and progress feedback independent of login state. */
+#statsPanel {font-family:inherit !important;}
+#statsPanel > .section:first-child {display:grid !important;grid-template-columns:1fr 1fr !important;gap:8px !important;}
+#statsPanel > .section:first-child .stat-row {display:block !important;}
+#statsPanel #cityProgressWrap {display:block !important;width:100% !important;margin:10px 0 !important;}
+#statsPanel #cityProgressTrack {display:block !important;width:100% !important;}
+@media (min-width:861px) {
+  #sidebar > .settings-toggle.nav-toggle {width:150px !important;max-width:calc(100% - 4px) !important;margin-left:auto !important;margin-right:auto !important;}
+  #sidebar > .settings-toggle.nav-toggle > span:not(.nav-icon) {font-size:13px !important;}
+}
+@media (max-width:860px) {
+  #sidebar > .settings-toggle.nav-toggle {width:calc(100% - 24px) !important;max-width:none !important;margin-left:auto !important;margin-right:auto !important;}
+}
+</style>
+<script id="myxwalk-statistics-progress-state-fix">
+(function(){
+  const panel=document.getElementById('statsPanel');
+  if(!panel)return;
+  function keepStatsConsistent(){
+    const first=panel.querySelector('.section:first-child');
+    if(first){first.style.removeProperty('display');}
+    const wrap=document.getElementById('cityProgressWrap');
+    if(wrap) wrap.style.setProperty('display','block','important');
+  }
+  keepStatsConsistent();
+  const observer=new MutationObserver(keepStatsConsistent);
+  observer.observe(panel,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
+  document.addEventListener('click',function(e){
+    if(e.target && (e.target.id==='cityCalcBtn' || e.target.closest('#cityCalcBtn'))){
+      setTimeout(keepStatsConsistent,0);
+    }
+  },true);
+})();
+</script>
+
+<style id="myxwalk-navigation-final-adjustments">
+/* Final navigation colors and alignment. */
+#sidebar > .settings-toggle.nav-toggle,
+#sidebar > .settings-toggle.nav-toggle:hover,
+#sidebar > .settings-toggle.nav-toggle:focus {
+  display:flex !important;
+  align-items:center !important;
+  gap:13.5px !important; /* 50% wider than the previous 9px gap */
+  height:44px !important;
+  min-height:44px !important;
+  line-height:20px !important;
+}
+#sidebar > #authToggle {
+  align-items:center !important;
+  justify-content:flex-start !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+#sidebar > .settings-toggle.nav-toggle > .nav-icon.nav-icon-mask {
+  display:block !important;
+  align-self:center !important;
+  flex:0 0 20px !important;
+  width:20px !important;
+  height:20px !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+  background-color:#5c7568 !important;
+  color:#5c7568 !important;
+  filter:none !important;
+}
+#sidebar > .settings-toggle.nav-toggle > span:not(.nav-icon) {
+  align-self:center !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+  line-height:20px !important;
+}
+/* Use a self-contained SVG mask for Information so it cannot render as a solid square. */
+#sidebar > .settings-toggle.nav-toggle > .nav-icon.icon-info {
+  background-image:none !important;
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M12 10.5v6' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='7.2' r='1.2' fill='black'/%3E%3C/svg%3E") !important;
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M12 10.5v6' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='7.2' r='1.2' fill='black'/%3E%3C/svg%3E") !important;
+  -webkit-mask-repeat:no-repeat !important;
+  mask-repeat:no-repeat !important;
+  -webkit-mask-position:center !important;
+  mask-position:center !important;
+  -webkit-mask-size:contain !important;
+  mask-size:contain !important;
+  background-color:#5c7568 !important;
+}
+/* Normal icons stay #5c7568 even when their navigation item is pressed/open. */
+#sidebar > .settings-toggle.nav-toggle.open > .nav-icon.nav-icon-mask,
+#sidebar > .settings-toggle.nav-toggle:active > .nav-icon.nav-icon-mask {
+  background-color:#5c7568 !important;
+  color:#5c7568 !important;
+  filter:none !important;
+}
+#sidebar > .settings-toggle.nav-toggle.open,
+#sidebar > .settings-toggle.nav-toggle.open:hover,
+#sidebar > .settings-toggle.nav-toggle.open:focus,
+#sidebar > .settings-toggle.nav-toggle:active {
+  background:#22c55e !important;
+  background-color:#22c55e !important;
+  border-color:#22c55e !important;
+  color:#fff !important;
+}
+#sidebar > .settings-toggle.nav-toggle.open > span:not(.nav-icon),
+#sidebar > .settings-toggle.nav-toggle:active > span:not(.nav-icon) {
+  color:#fff !important;
+}
+</style>
