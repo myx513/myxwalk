@@ -1193,85 +1193,81 @@ function recomputeLocalStats(){
 
 // ---------- City breakdown (reverse geocoding via Nominatim, throttled) ----------
 async function geocodeLocality(lat, lon){
+  window.__myxwalkGeoCache = window.__myxwalkGeoCache || new Map();
+  const key = `${lat.toFixed(3)},${lon.toFixed(3)}`;
+  if(window.__myxwalkGeoCache.has(key)) return window.__myxwalkGeoCache.get(key);
   try{
-    window.__myxwalkGeoCache = window.__myxwalkGeoCache || new Map();
-    const key = `${lat.toFixed(3)},${lon.toFixed(3)}`;
-    if(window.__myxwalkGeoCache.has(key)) return window.__myxwalkGeoCache.get(key);
-
-    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
+    const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&zoom=10&addressdetails=1`;
+    const res = await fetch(url, {headers:{'Accept':'application/json'}});
+    if(!res.ok) throw new Error(`Геокодер вернул HTTP ${res.status}`);
     const data = await res.json();
     const a = data.address || {};
-
-    // Count ONLY populated places. Administrative units such as
-    // municipality, district, county, council/selsoviet are deliberately ignored.
-    const placeType = String(data.addresstype || '').toLowerCase();
-    const placeAllowed = ['city','town','village','hamlet','isolated_dwelling'].includes(placeType);
-    const name = placeAllowed ? (a.city || a.town || a.village || a.hamlet || a.locality || null) : null;
-    const type = a.city ? 'city' : a.town ? 'town' : a.village ? 'village' : a.hamlet ? 'hamlet' : a.locality ? 'locality' : null;
-    const result = name && type ? {name, type} : null;
-    window.__myxwalkGeoCache.set(key, result);
+    // Prefer settlement names; use suburb/municipality as fallback so results
+    // are not empty for regions where OSM has no city/town tag.
+    const candidates = [
+      ['city',a.city],['town',a.town],['village',a.village],['hamlet',a.hamlet],
+      ['locality',a.locality],['suburb',a.suburb],['municipality',a.municipality],
+      ['county',a.county],['state',a.state]
+    ];
+    const found = candidates.find(([,v])=>typeof v==='string'&&v.trim());
+    const result = found ? {type:found[0],name:found[1].trim()} : null;
+    window.__myxwalkGeoCache.set(key,result);
     return result;
   }catch(err){
+    console.warn('Ошибка геокодирования точки:',err);
     return null;
   }
 }
 
-function resampleForCity(points, stepMeters=500){
+function resampleForCity(points, stepMeters=1500){
   const out=[];
-  if(!points.length) return out;
+  if(!points.length)return out;
   out.push(points[0]);
   let carry=0;
   for(let i=1;i<points.length;i++){
-    const a=points[i-1], b=points[i];
+    const a=points[i-1],b=points[i];
     const segLen=haversine(a.lat,a.lon,b.lat,b.lon);
-    if(segLen<1e-6) continue;
+    if(segLen<1e-6)continue;
     let d=0;
-    while(carry + (segLen-d) >= stepMeters){
-      const need=stepMeters-carry;
-      d+=need;
-      const tt=d/segLen;
-      out.push({lat:a.lat+(b.lat-a.lat)*tt,lon:a.lon+(b.lon-a.lon)*tt});
+    while(carry+(segLen-d)>=stepMeters){
+      d+=stepMeters-carry;
+      const t=d/segLen;
+      out.push({lat:a.lat+(b.lat-a.lat)*t,lon:a.lon+(b.lon-a.lon)*t});
       carry=0;
     }
-    carry += segLen-d;
+    carry+=segLen-d;
   }
   return out;
 }
 
 async function computeCityBreakdown(){
-  const groups = {};
-  const samples = [];
-
-  // Split each route into sampled points. Points outside settlements are ignored,
-  // so the road between two populated places contributes no city area.
+  const groups = new Map();
+  let samples=[];
   for(const t of tracks){
-    if(!t.points.length) continue;
-    const pts = resampleForCity(t.points, 150);
-    for(const p of pts) samples.push(p);
+    if(!t || !Array.isArray(t.points) || !t.points.length)continue;
+    samples.push(...resampleForCity(t.points,1500));
   }
-
+  if(!samples.length) throw new Error('В активном профиле нет точек трека');
+  // Bound the number of public geocoder requests so a large GPX does not appear
+  // to hang forever. Samples are distributed over the complete route collection.
+  const MAX_SAMPLES=35;
+  if(samples.length>MAX_SAMPLES){
+    const all=samples;
+    samples=Array.from({length:MAX_SAMPLES},(_,i)=>all[Math.round(i*(all.length-1)/(MAX_SAMPLES-1))]);
+  }
   for(let i=0;i<samples.length;i++){
     const p=samples[i];
-    window.__myxwalkGeoCache = window.__myxwalkGeoCache || new Map();
-    const cacheKey=`${p.lat.toFixed(3)},${p.lon.toFixed(3)}`;
-    const wasCached=window.__myxwalkGeoCache.has(cacheKey);
     const locality=await geocodeLocality(p.lat,p.lon);
     if(locality){
-      const key=`${locality.type}:${locality.name}`;
-      if(!groups[key]) groups[key]={city:locality.name,points:[]};
-      groups[key].points.push(p);
+      const key=`${locality.type}:${locality.name.toLocaleLowerCase()}`;
+      if(!groups.has(key))groups.set(key,{city:locality.name,points:[]});
+      groups.get(key).points.push(p);
     }
-
-    // Respect Nominatim's public-service request rate for uncached samples.
-    if(i < samples.length-1 && !wasCached){
-      await new Promise(r=>setTimeout(r,1100));
-    }
+    const list=document.getElementById('cityList');
+    if(list)list.textContent=`Определяем населённые пункты… ${i+1} из ${samples.length}`;
+    if(i<samples.length-1) await new Promise(r=>setTimeout(r,1100));
   }
-
-  const results=Object.values(groups).map(g=>({
-    city:g.city,
-    area:computeExploredAreaM2([{points:g.points}],radiusMeters)
-  }));
+  const results=[...groups.values()].map(g=>({city:g.city,area:computeExploredAreaM2([{points:g.points}],radiusMeters)}));
   results.sort((a,b)=>b.area-a.area);
   return results;
 }
@@ -1338,21 +1334,23 @@ const authUser=document.getElementById('authUser');
 const authNavLabel=document.getElementById('authNavLabel');
 const authStatus=document.getElementById('authStatus');
 function updateAuthUI(){
+  const googleMark = '<svg class="google-mark" aria-hidden="true" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.72 7.18l7.62 5.91c4.45-4.11 7.14-10.16 7.14-17.56z"/><path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.89l-7.62-5.91c-2.12 1.42-4.84 2.27-8.28 2.27-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
   if(currentUser){
     const meta=currentUser.user_metadata||{};
     const rawName=meta.full_name||meta.name||currentUser.email||'Google аккаунт';
     const displayName=String(rawName).trim().split(/\s+/)[0] || 'Google аккаунт';
     authUser.textContent=displayName;
-    authNavLabel.textContent=window.myxT?window.myxT('auth'):'Авторизация';
-    authBtn.textContent=window.myxT?window.myxT('logout'):'Выйти';
+    authNavLabel.textContent=displayName;
+    authBtn.innerHTML = '<span class="auth-btn-label">Выйти из аккаунта</span>';
     authStatus.textContent=window.myxT?window.myxT('cloudSync'):'Треки синхронизируются с аккаунтом Supabase.';
   } else {
     authUser.textContent=window.myxT?window.myxT('notSigned'):'Не выполнен вход';
     authNavLabel.textContent=window.myxT?window.myxT('auth'):'Авторизация';
-    authBtn.textContent=window.myxT?window.myxT('login'):'Войти через Google';
+    authBtn.innerHTML = googleMark + '<span class="auth-btn-label">'+(window.myxT?window.myxT('login'):'Вход с аккаунтом Google')+'</span>';
     authStatus.textContent=window.myxT?(cloudReady?window.myxT('cloudLogin'):window.myxT('localOnly')):(cloudReady?'Войдите через Google, чтобы хранить треки в облаке.':'Supabase ещё не настроен: приложение пока работает локально.');
   }
 }
+
 function cloudPayload(track,profile){
   const filename=normalizeTrackFilename(track.filename||track.name);
   track.name=filename;
@@ -1497,7 +1495,7 @@ consumeSharedGpx();
     ru:{
       car:'На авто',walk:'Пешком',all:'Общее',auth:'Авторизация',map:'Тип карты',settings:'Настройки',tracks:'Треки',stats:'Статистика',
       carNote:'Здесь хранятся маршруты поездок на автомобиле.',walkNote:'Здесь хранятся пешие прогулки',allNote:'Автоматическое объединение маршрутов из профилей «На авто» и «Пешком». Здесь треки не загружаются отдельно.',
-      notSigned:'Не выполнен вход',login:'Вход с аккаунтом Google',logout:'выход из аккаунта',cloudSetup:'Для синхронизации треков между устройствами настройте Supabase ниже в коде приложения.',cloudSync:'Треки синхронизируются с аккаунтом Supabase.',cloudLogin:'Войдите через Google, чтобы хранить треки в облаке.',localOnly:'Supabase ещё не настроен: приложение пока работает локально.',
+      notSigned:'Не выполнен вход',login:'Вход с аккаунтом Google',logout:'Выйти из аккаунта',cloudSetup:'Для синхронизации треков между устройствами настройте Supabase ниже в коде приложения.',cloudSync:'Треки синхронизируются с аккаунтом Supabase.',cloudLogin:'Войдите через Google, чтобы хранить треки в облаке.',localOnly:'Supabase ещё не настроен: приложение пока работает локально.',
       fog:'Туман',radius:'Радиус рассеивания тумана',density:'Густота тумана',style:'Стиль тумана',color:'Цвет',edge:'Край рассеивания',
       black:'Чёрный',blue:'Синий',gray:'Серый',white:'Белый',green:'Зелёный',hard:'Чёткий край',soft:'Мягкое рассеивание',scalloped:'Волнистый край (облачка)',organic:'Рваный туман',
       appearance:'Тема оформления',light:'Светлая',dark:'Тёмная',auto:'Авто',language:'Язык',
@@ -1903,5 +1901,81 @@ button:active,
   lockUI();
   new MutationObserver(lockUI).observe(document.getElementById('sidebar'),{subtree:true,attributes:true,attributeFilter:['style','class']});
   if(statsToggle){statsToggle.addEventListener('click',()=>{setTimeout(()=>{try{recomputeLocalStats();}catch(e){console.warn('Статистика:',e);} },20);});}
+})();
+</script>
+
+<style id="myxwalk-final-requested-fixes">
+/* Center the navigation controls inside the existing sidebar without changing its width. */
+@media(min-width:861px){
+  #sidebar > .settings-toggle.nav-toggle{width:112px !important;min-width:112px !important;max-width:112px !important;height:52px !important;min-height:52px !important;margin:4px auto !important;padding:5px 3px !important;display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;gap:4px !important;text-align:center !important;box-sizing:border-box !important;}
+  #sidebar > .settings-toggle.nav-toggle::before{display:none !important;content:none !important;}
+  #sidebar > .settings-toggle.nav-toggle .nav-icon{display:block !important;width:19px !important;height:19px !important;flex:0 0 19px !important;}
+  #sidebar > .settings-toggle.nav-toggle span:not(.nav-icon){display:block !important;width:100% !important;text-align:center !important;white-space:normal !important;overflow-wrap:anywhere !important;line-height:1.1 !important;}
+  #sidebar > .settings-toggle.nav-toggle .chevron{display:none !important;}
+  #sidebar > .section.profile-section{display:flex !important;flex-direction:column !important;align-items:center !important;}
+  #profileTabs{width:100% !important;align-items:center !important;}
+  #profileTabs .profile-btn{width:112px !important;max-width:112px !important;margin-left:auto !important;margin-right:auto !important;text-align:center !important;}
+}
+/* Google sign-in and sign-out share a neutral, non-green button style. */
+#authPanel .auth-box{display:flex !important;flex-direction:column !important;align-items:center !important;gap:10px !important;}
+#authBtn{display:inline-flex !important;flex-direction:row !important;flex-wrap:nowrap !important;align-items:center !important;justify-content:center !important;gap:9px !important;width:100% !important;max-width:340px !important;min-width:0 !important;height:auto !important;min-height:42px !important;padding:9px 14px !important;box-sizing:border-box !important;border:1px solid #dadce0 !important;border-radius:8px !important;background:#fff !important;color:#3c4043 !important;box-shadow:0 1px 2px rgba(60,64,67,.15) !important;font:500 14px/1.25 Arial,sans-serif !important;white-space:nowrap !important;}
+#authBtn:hover,#authBtn:focus,#authBtn:active{background:#f8faff !important;color:#3c4043 !important;border-color:#c6c9ce !important;box-shadow:0 1px 3px rgba(60,64,67,.2) !important;}
+#authBtn .google-mark{display:block !important;flex:0 0 18px !important;width:18px !important;height:18px !important;}
+#authBtn .auth-btn-label{display:inline-block !important;flex:0 1 auto !important;min-width:0 !important;white-space:nowrap !important;text-align:center !important;font:500 14px/1.25 Arial,sans-serif !important;color:#3c4043 !important;}
+#authBtn::before{content:none !important;display:none !important;}
+@media(max-width:860px){#authBtn{max-width:none !important;font-size:13px !important;}}
+</style>
+<script id="myxwalk-auth-city-final-fix">
+(function(){
+  // Reassert a stable auth renderer after legacy translation wrappers.
+  window.updateAuthUI=function(){
+    const button=document.getElementById('authBtn');
+    const nav=document.getElementById('authNavLabel');
+    const userLabel=document.getElementById('authUser');
+    const status=document.getElementById('authStatus');
+    if(!button||!nav)return;
+    const googleMark='<svg class="google-mark" aria-hidden="true" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.72 7.18l7.62 5.91c4.45-4.11 7.14-10.16 7.14-17.56z"/><path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.89l-7.62-5.91c-2.12 1.42-4.84 2.27-8.28 2.27-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
+    if(typeof currentUser!=='undefined'&&currentUser){
+      const meta=currentUser.user_metadata||{};
+      const name=String(meta.full_name||meta.name||currentUser.email||'Google аккаунт').trim().split(/\s+/)[0]||'Google аккаунт';
+      nav.textContent=name;if(userLabel)userLabel.textContent=name;
+      button.innerHTML='<span class="auth-btn-label">Выйти из аккаунта</span>';
+      if(status)status.textContent=window.myxT?window.myxT('cloudSync'):'Треки синхронизируются с аккаунтом Supabase.';
+    }else{
+      nav.textContent=window.myxT?window.myxT('auth'):'Авторизация';
+      if(userLabel)userLabel.textContent=window.myxT?window.myxT('notSigned'):'Не выполнен вход';
+      button.innerHTML=googleMark+'<span class="auth-btn-label">'+(window.myxT?window.myxT('login'):'Вход с аккаунтом Google')+'</span>';
+      if(status)status.textContent=window.myxT?(typeof cloudReady!=='undefined'&&cloudReady?window.myxT('cloudLogin'):window.myxT('localOnly')):'Войдите через Google для синхронизации.';
+    }
+  };
+  // Keep the Google mark/text correct after language changes and auth refreshes.
+  const authBtn=document.getElementById('authBtn');
+  if(authBtn){
+    const refresh=()=>{ if(typeof updateAuthUI==='function') updateAuthUI(); };
+    const lang=document.getElementById('languageSelect');
+    if(lang) lang.addEventListener('change',()=>setTimeout(refresh,0));
+  }
+  // City calculation uses active-profile tracks, samples the route at 500 m,
+  // and reverse-geocodes at settlement zoom. Errors are shown instead of silently failing.
+  let btn=document.getElementById('cityCalcBtn');
+  if(btn){
+    // Remove legacy listeners that could race with the new calculation handler.
+    const clean=btn.cloneNode(true); btn.replaceWith(clean); btn=clean;
+    btn.addEventListener('click',async function(){
+      const list=document.getElementById('cityList');
+      if(typeof tracks==='undefined'||!tracks.length){if(list)list.textContent='Сначала загрузите треки';return;}
+      if(typeof cityStatsBusy!=='undefined'&&cityStatsBusy)return;
+      cityStatsBusy=true;btn.disabled=true;btn.textContent='Рассчитываем…';
+      if(list)list.textContent='Определяем населённые пункты. Для новых точек запросы могут занимать несколько секунд…';
+      try{
+        const rows=await computeCityBreakdown();
+        if(list){
+          if(!rows.length) list.textContent='Населённые пункты не определены. Проверьте подключение к интернету и попробуйте ещё раз.';
+          else list.innerHTML=rows.map(r=>'<div class="city-row"><span></span><span></span></div>').map((html,i)=>{const d=document.createElement('div');d.className='city-row';const n=document.createElement('span');n.textContent=rows[i].city;const a=document.createElement('span');a.textContent=formatArea(rows[i].area);d.append(n,a);return d.outerHTML;}).join('');
+        }
+      }catch(err){console.error('Расчёт площади по городам:',err);if(list)list.textContent='Ошибка расчёта: '+(err&&err.message?err.message:'неизвестная ошибка');}
+      finally{cityStatsBusy=false;btn.disabled=false;btn.textContent='Рассчитать';}
+    },true);
+  }
 })();
 </script>
