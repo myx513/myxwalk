@@ -488,7 +488,7 @@ button:active,.radius-btn:active,.mini-btn:active,.auth-btn:active,.del:active{c
   </div>
   <div class="myx-intro-progress" aria-label="Загрузка приложения">
     <div class="myx-intro-progress-track"><div class="myx-intro-progress-fill"></div></div>
-    <div class="myx-intro-progress-caption"><span>Готовим твой маршрут</span><span>100%</span></div>
+    <div class="myx-intro-progress-caption"><span>Готовим твой маршрут</span><span id="myxwalkIntroPercent">0%</span></div>
   </div>
 </div>
 
@@ -1900,6 +1900,13 @@ button:active,
   }
   try{sessionStorage.setItem('myxwalkIntroSeen','1');}catch(e){}
   const duration=reduced?450:5000;
+  const percent=document.getElementById('myxwalkIntroPercent');
+  const started=Date.now();
+  const counter=window.setInterval(function(){
+    const value=Math.min(100,Math.round((Date.now()-started)/duration*100));
+    if(percent)percent.textContent=value+'%';
+    if(value>=100)window.clearInterval(counter);
+  },50);
   if(reduced){
     const fill=intro.querySelector('.myx-intro-progress-fill');
     if(fill)fill.style.width='100%';
@@ -1908,6 +1915,8 @@ button:active,
     intro.querySelectorAll('.myx-intro-name,.myx-intro-tagline,.myx-intro-subtitle').forEach(el=>{el.style.animation='none';el.style.opacity='1';el.style.transform='none';});
   }
   window.setTimeout(function(){
+    window.clearInterval(counter);
+    if(percent)percent.textContent='100%';
     intro.classList.add('is-leaving');
     window.setTimeout(function(){if(intro.parentNode)intro.remove();},700);
   },duration);
