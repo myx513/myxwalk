@@ -452,10 +452,10 @@ button:active,.radius-btn:active,.mini-btn:active,.auth-btn:active,.del:active{c
 #myxwalkIntro .myx-intro-progress-fill{
   width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--myx-sage),var(--myx-mint));
   box-shadow:0 0 12px rgba(149,196,121,.55);
-  animation:myxIntroProgress 5s linear forwards;
+  transition:width .16s ease-out;
 }
 #myxwalkIntro .myx-intro-progress-caption{
-  display:flex;justify-content:space-between;margin-top:10px;
+  display:flex;justify-content:center;margin-top:10px;
   font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
   color:rgba(245,247,240,.72);
 }
@@ -484,11 +484,10 @@ button:active,.radius-btn:active,.mini-btn:active,.auth-btn:active,.del:active{c
     <img id="myxwalkIntroLogo" class="myx-intro-mark" alt="Логотип myxwalk">
     <div class="myx-intro-name">myx<span>walk</span></div>
     <div class="myx-intro-tagline">Твоя история путешествий</div>
-    <div class="myx-intro-subtitle">Исследуй мир своим маршрутом</div>
   </div>
   <div class="myx-intro-progress" aria-label="Загрузка приложения">
     <div class="myx-intro-progress-track"><div class="myx-intro-progress-fill"></div></div>
-    <div class="myx-intro-progress-caption"><span>Готовим твой маршрут</span><span id="myxwalkIntroPercent">0%</span></div>
+    <div class="myx-intro-progress-caption"><span id="myxwalkIntroPercent">0%</span></div>
   </div>
 </div>
 
@@ -1901,18 +1900,25 @@ button:active,
   try{sessionStorage.setItem('myxwalkIntroSeen','1');}catch(e){}
   const duration=reduced?450:5000;
   const percent=document.getElementById('myxwalkIntroPercent');
+  const fill=intro.querySelector('.myx-intro-progress-fill');
   const started=Date.now();
+  const checkpoints=[[0,0],[260,4],[760,4],[980,17],[1420,17],[1700,38],[2220,38],[2490,56],[3200,56],[3460,79],[4100,79],[4380,92],[4780,92],[5000,100]];
+  let checkpoint=0;
   const counter=window.setInterval(function(){
-    const value=Math.min(100,Math.round((Date.now()-started)/duration*100));
-    if(percent)percent.textContent=value+'%';
-    if(value>=100)window.clearInterval(counter);
-  },50);
+    const elapsed=(Date.now()-started)*5000/duration;
+    while(checkpoint<checkpoints.length&&elapsed>=checkpoints[checkpoint][0]){
+      const value=checkpoints[checkpoint][1];
+      if(fill)fill.style.width=value+'%';
+      if(percent)percent.textContent=value+'%';
+      checkpoint++;
+    }
+    if(elapsed>=5000)window.clearInterval(counter);
+  },30);
   if(reduced){
-    const fill=intro.querySelector('.myx-intro-progress-fill');
     if(fill)fill.style.width='100%';
     const mark=intro.querySelector('.myx-intro-mark');
     if(mark){mark.style.animation='none';mark.style.opacity='1';mark.style.transform='scale(1)';}
-    intro.querySelectorAll('.myx-intro-name,.myx-intro-tagline,.myx-intro-subtitle').forEach(el=>{el.style.animation='none';el.style.opacity='1';el.style.transform='none';});
+    intro.querySelectorAll('.myx-intro-name,.myx-intro-tagline').forEach(el=>{el.style.animation='none';el.style.opacity='1';el.style.transform='none';});
   }
   window.setTimeout(function(){
     window.clearInterval(counter);
