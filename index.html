@@ -3850,6 +3850,15 @@ html body .landing .landing-nav .landing-brand .brand-logo-dark { display: none 
 @media(max-width:700px) { .doc-modal-card.is-legal-summary { overflow:auto; } .doc-modal-card.is-legal-summary .doc-modal-body { grid-template-columns:1fr; gap:12px; } .doc-modal-card.is-legal-summary { padding:16px; } .contact-modal-socials { grid-template-columns:1fr; } }
 </style>
 
+
+/* Friend sharing selects: subdued placeholder tone, matching the header search hint. */
+#shareTrackSelect:has(option[value=""]:checked),
+#shareFriendSelect:has(option[value=""]:checked) { color: var(--ink-soft) !important; font-weight: 500 !important; }
+#shareTrackSelect option:not([value=""]),
+#shareFriendSelect option:not([value=""]) { color: var(--ink) !important; }
+#shareTrackSelect option[value=""],
+#shareFriendSelect option[value=""] { color: var(--ink-soft) !important; }
+
 </head>
 <body>
 <div class="landing" id="top">
@@ -3988,6 +3997,7 @@ html body .landing .landing-nav .landing-brand .brand-logo-dark { display: none 
           <button type="button" class="account-item" id="authLogoutBtn" hidden data-i18n="logout">Выйти</button>
           <hr class="account-hr"/>
           <button type="button" class="account-item" id="openFriendsFromAccount" data-i18n="friends">Друзья</button>
+          <div id="accountFriendsList" class="account-friends-list"><p class="muted" style="margin:4px 12px 8px;font-size:12px">Войдите через Google, чтобы увидеть друзей</p></div>
           <button type="button" class="account-item" id="exportTracksBtn" data-i18n="exportGpx">Экспорт GPX</button>
           <button type="button" class="account-item" id="importTracksBtn" data-i18n="importGpx">Импорт GPX</button>
           <input type="file" id="importGpxInput" class="sr-only" accept=".gpx,application/gpx+xml" multiple/>
@@ -4154,9 +4164,9 @@ html body .landing .landing-nav .landing-brand .brand-logo-dark { display: none 
       </div>
       <div class="section">
         <h3 data-i18n="shareTrack">Поделиться треком</h3>
-        <select id="shareTrackSelect" class="settings-select"></select>
+        <select id="shareTrackSelect" class="settings-select"><option value="">Выбрать трек</option></select>
         <select id="shareFriendSelect" class="settings-select" style="margin-top:8px">
-          <option value="">— друг —</option>
+          <option value="">Кому отправить</option>
         </select>
         <input type="text" id="shareCommentInput" class="settings-select" style="margin-top:8px" data-i18n-placeholder="shareComment" placeholder="Комментарий"/>
         <button type="button" class="btn-primary" id="shareTrackBtn" style="margin-top:8px;width:100%" data-i18n="shareTrack">Отправить другу</button>
@@ -4667,12 +4677,21 @@ window.MYX_CONFIG = Object.freeze({
     },
 
     setOpacity(o) {
-      this._opacity = Math.min(1, Math.max(0, Number(o) || 0));
+      // Density is independent of the selected fog color. Keep the exact color
+      // currently selected and only change the alpha used for the fog fill.
+      const selectedColor = this._color || '#0e4a28';
+      const n = Number(o);
+      this._opacity = Math.min(1, Math.max(0, Number.isFinite(n) ? n : 0));
+      this._color = selectedColor;
       this._redraw();
     },
 
     setColor(c) {
-      this._color = c || '#0c120e';
+      // Normalize empty/invalid values without replacing valid selected colors.
+      const candidate = String(c == null ? '' : c).trim();
+      if (candidate && (window.CSS && CSS.supports ? CSS.supports('color', candidate) : /^#[0-9a-f]{3,8}$/i.test(candidate))) {
+        this._color = candidate;
+      }
       this._redraw();
     },
 
@@ -5111,7 +5130,7 @@ window.MYX_CONFIG = Object.freeze({
     baseLayers = buildBaseLayers();
     map = L.map(containerId, {
       zoomControl: false,
-      attributionControl: true,
+      attributionControl: false,
       preferCanvas: true,
     }).setView(options.center || [55.75, 37.62], options.zoom || 11);
 
@@ -5578,6 +5597,12 @@ window.MYX_CONFIG = Object.freeze({
     fog.setTracks(state.tracks);
     fog.setRadius(state.radiusM);
     fog.setOpacity(state.fogOpacity);
+    // Re-assert the persisted manual color after opacity changes; these are
+    // deliberately independent settings.
+    if (state._fogColorManual) {
+      const savedColor = S.getPref('fogColor', state.fogColor);
+      if (savedColor) state.fogColor = savedColor;
+    }
     fog.setColor(state.fogColor);
     fog.setShowRoutes(state.showRoutes);
     fog.setProfileFilter(state.profile);
@@ -6121,7 +6146,20 @@ window.MYX_CONFIG = Object.freeze({
     window.addEventListener('myx:tracks-changed', loadTracks);
     window.MYX_APP = window.MYX_APP || {};
     window.MYX_APP.getTracks = function () { return state.tracks || []; };
+    window.MYX_APP.setFogColor = function (color) { state.fogColor = color; state._fogColorManual = true; savePrefs(); refreshFogAndStats(); };
     window.MYX_APP.closePanels = function () { setPanel(null); };
+    window.MYX_APP.openPanel = function (name) {
+      if (!name) return;
+      state.panel = null;
+      setPanel(name);
+      var panel = document.querySelector('.panel[data-panel="' + String(name).replace(/[^a-z0-9_-]/gi, '') + '"]');
+      if (panel) {
+        panel.hidden = false;
+        panel.classList.add('is-open');
+        var btn = document.querySelector('[data-open-panel="' + name + '"]');
+        if (btn) positionPanel(panel, btn);
+      }
+    };
   }
 
   function renderMapButtons() {
@@ -6254,9 +6292,17 @@ window.MYX_CONFIG = Object.freeze({
     if (!btn) return;
     var c = btn.getAttribute('data-fog-color');
     document.querySelectorAll('[data-fog-color]').forEach(function(b){ b.classList.toggle('is-active', b===btn); });
-    var f = fog();
-    if (f) f.setColor(c);
-    try { localStorage.setItem('myxwalk_v2_fogColor', JSON.stringify(c)); } catch(_){}
+    var select = document.getElementById('fogColorSelect');
+    if (select) {
+      var matching = Array.from(select.options).find(function (o) { return o.value.toLowerCase() === String(c).toLowerCase(); });
+      if (matching) select.value = matching.value;
+    }
+    if (window.MYX_APP && typeof window.MYX_APP.setFogColor === 'function') {
+      window.MYX_APP.setFogColor(c);
+    } else {
+      var f = fog(); if (f) f.setColor(c);
+      try { localStorage.setItem('myxwalk_v2_fogColor', JSON.stringify(c)); } catch(_){}
+    }
   });
   var fogEn = document.getElementById('fogEnabledToggle');
   if (fogEn) fogEn.addEventListener('change', function(){
@@ -6420,7 +6466,10 @@ window.MYX_CONFIG = Object.freeze({
     const color = document.getElementById('fogColorSelect');
     const edge = document.getElementById('fogEdgeSelect');
     if (color) color.addEventListener('change', function(){
-      const f = fog(); if (f) f.setColor(color.value);
+      const f = fog();
+      if (window.MYX_APP && window.MYX_APP.setFogColor) window.MYX_APP.setFogColor(color.value);
+      else if (f) f.setColor(color.value);
+      try { localStorage.setItem('myxwalk_v2_fogColor', JSON.stringify(color.value)); } catch (_) {}
     });
     if (edge) edge.addEventListener('change', function(){
       const f = fog(); if (f && f.setEdgeStyle) f.setEdgeStyle(edge.value);
@@ -6439,11 +6488,35 @@ window.MYX_CONFIG = Object.freeze({
 
 /* Account menu */
 (function(){
-  document.getElementById('openFriendsFromAccount')?.addEventListener('click', function(){
+  function ensureAccountFriendsModal(){
+    var modal = document.getElementById('accountFriendsModal');
+    if (modal) return modal;
+    modal = document.createElement('div');
+    modal.id = 'accountFriendsModal';
+    modal.className = 'account-friends-modal';
+    modal.hidden = true;
+    modal.setAttribute('role','dialog');
+    modal.setAttribute('aria-modal','true');
+    modal.setAttribute('aria-labelledby','accountFriendsModalTitle');
+    modal.innerHTML = '<div class="account-friends-modal-backdrop" data-close-account-friends></div><section class="account-friends-modal-card"><header><h2 id="accountFriendsModalTitle">Друзья</h2><button type="button" class="btn-ghost" aria-label="Закрыть" data-close-account-friends>×</button></header><div id="accountFriendsModalList" class="account-friends-modal-list"><p class="muted">Загрузка списка друзей…</p></div></section>';
+    document.body.appendChild(modal);
+    modal.addEventListener('click', function(e){ if(e.target.closest('[data-close-account-friends]')) modal.hidden = true; });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !modal.hidden) modal.hidden = true; });
+    return modal;
+  }
+  document.getElementById('openFriendsFromAccount')?.addEventListener('click', function(e){
+    e.preventDefault(); e.stopPropagation();
     var menu = document.getElementById('accountMenu');
+    var backdrop = document.getElementById('accountMenuBackdrop');
     if (menu) menu.hidden = true;
-    var friendsBtn = document.querySelector('[data-open-panel="friends"]');
-    if (friendsBtn) friendsBtn.click();
+    if (backdrop) backdrop.hidden = true;
+    var accountBtn = document.getElementById('accountBtn');
+    if (accountBtn) accountBtn.setAttribute('aria-expanded', 'false');
+    var modal = ensureAccountFriendsModal();
+    var source = document.getElementById('accountFriendsList');
+    var target = document.getElementById('accountFriendsModalList');
+    if (target) target.innerHTML = source ? source.innerHTML : '<p class="muted">Пока нет друзей</p>';
+    modal.hidden = false;
   });
   const btn = document.getElementById('accountBtn');
   const menu = document.getElementById('accountMenu');
@@ -7239,310 +7312,85 @@ window.MYX_CONFIG = Object.freeze({
 
 
 
-/* Friends via codes + Supabase when configured */
+/* Friends, requests, notifications and track sharing through Supabase */
 (function () {
   var KEY_CODE = 'myxwalk_friend_code_v1';
   var KEY_FRIENDS = 'myxwalk_friends_v1';
   var KEY_FT = 'myxwalk_friend_tracks_v1';
-
-  function t(k) {
-    return (window.MYX_I18N && window.MYX_I18N.t(k)) || k;
+  var seenNotifications = new Set();
+  var refreshTimer = null;
+  function t(k) { return (window.MYX_I18N && window.MYX_I18N.t(k)) || k; }
+  function load(key, fb) { try { return JSON.parse(localStorage.getItem(key) || '') || fb; } catch (e) { return fb; } }
+  function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]); }); }
+  function user() { try { return window.MYX_AUTH && window.MYX_AUTH.getUser && window.MYX_AUTH.getUser(); } catch (e) { return null; } }
+  function displayName(u) { var m = (u && u.user_metadata) || {}; var name = m.full_name || m.name || m.user_name || m.preferred_username || m.given_name || (u && u.email ? u.email.split('@')[0] : ''); return String(name || 'Пользователь').trim(); }
+  function genCode() { var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s = ''; for (var i=0;i<6;i++) s += chars[Math.floor(Math.random()*chars.length)]; return s; }
+  function myCode() { var c = localStorage.getItem(KEY_CODE); if (!c) { c = genCode(); localStorage.setItem(KEY_CODE,c); } return c; }
+  async function client() { if (!window.MYX_AUTH || !window.MYX_AUTH.isConfigured || !window.MYX_AUTH.isConfigured()) return null; try { return window.supabase.createClient(window.MYX_CONFIG.supabaseUrl, window.MYX_CONFIG.supabaseAnonKey); } catch(e) { return null; } }
+  function ensureSections() {
+    var panel = document.querySelector('[data-panel="friends"]'); if (!panel) return;
+    var add = document.getElementById('friendsList');
+    if (add && !document.getElementById('friendRequestsList')) { var sec=document.createElement('div'); sec.className='section'; sec.innerHTML='<h3>Входящие заявки и уведомления</h3><div id="friendRequestsList" class="friends-list"><p class="empty-hint">Загрузка…</p></div>'; add.parentElement.insertBefore(sec, add); }
   }
-  function load(key, fb) {
+  function getLocalFriends() { return load(KEY_FRIENDS, []); }
+  function renderFriends(friends) {
+    var list=document.getElementById('friendsList'); if(!list)return;
+    if (!friends || !friends.length) { list.innerHTML='<p class="empty-hint">Пока нет друзей</p>'; return; }
+    var html=friends.map(function(f){ var nm=f.display_name || f.name || (f.email ? f.email.split('@')[0] : '') || 'Пользователь'; return '<div class="friend-item"><div><strong>'+esc(nm)+'</strong><div class="friend-track-meta">Пешком: уровень '+esc(f.walk_level || 1)+' · На авто: уровень '+esc(f.car_level || 1)+'</div></div><button type="button" class="btn" data-remove-friend="'+esc(f.friend_id || '')+'">Удалить</button></div>'; }).join('');
+    list.innerHTML=html;
+    var accountList=document.getElementById('accountFriendsList'); if(accountList) accountList.innerHTML=friends.length ? friends.map(function(f){var nm=f.display_name || f.name || (f.email ? f.email.split('@')[0] : '') || 'Пользователь';return '<div class="account-friend-row"><strong>'+esc(nm)+'</strong><span>Пешком · уровень '+esc(f.walk_level || 1)+'<br>На авто · уровень '+esc(f.car_level || 1)+'</span></div>';}).join('') : '<p class="muted" style="margin:4px 12px 8px;font-size:12px">Пока нет друзей</p>';
+    var modalList=document.getElementById('accountFriendsModalList'); if(modalList && !modalList.closest('#accountFriendsModal')?.hidden) modalList.innerHTML=accountList ? accountList.innerHTML : '<p class="muted">Пока нет друзей</p>';
+  }
+  function renderFriendTracks(items) {
+    var list=document.getElementById('friendTracksList'); if(!list)return;
+    if(!items || !items.length){list.innerHTML='<p class="empty-hint">Пока нет полученных треков</p>';return;}
+    list.innerHTML=items.map(function(tr){return '<div class="friend-track-item"><div><strong>'+esc(tr.track_name || tr.name || 'Трек')+'</strong><div class="friend-track-meta">От: '+esc(tr.from_name || tr.from || 'Друг')+(tr.comment?' · '+esc(tr.comment):'')+'</div>'+(tr.status==='pending'?'<button class="btn-primary" data-accept-track="'+esc(tr.id)+'">Добавить трек</button>':'')+'</div></div>';}).join('');
+  }
+  function fillFriendSelect(friends) { var sel=document.getElementById('shareFriendSelect'); if(!sel)return; sel.innerHTML='<option value="">Кому отправить</option>'+(friends||[]).map(function(f){return '<option value="'+esc(f.friend_id)+'">'+esc(f.display_name || f.name || f.email || 'Друг')+'</option>';}).join(''); }
+  async function refreshShareTracks(){var sel=document.getElementById('shareTrackSelect');if(!sel)return;var tracks=[];try{if(window.MYX_STORAGE)tracks=window.MYX_STORAGE.getAllTracks?await window.MYX_STORAGE.getAllTracks():(window.MYX_STORAGE.listTracks?await window.MYX_STORAGE.listTracks():[]);}catch(e){} sel.innerHTML='<option value="">Выбрать трек</option>'+tracks.map(function(tr){return '<option value="'+esc(tr.id)+'">'+esc(tr.name||'Без названия')+'</option>';}).join('');}
+  async function refresh() {
+    ensureSections(); var u=user(), codeEl=document.getElementById('myFriendCode'); if(codeEl)codeEl.value=myCode();
+    if(!u){ renderFriends(getLocalFriends()); renderFriendTracks(load(KEY_FT,[])); fillFriendSelect([]); var rq=document.getElementById('friendRequestsList');if(rq)rq.innerHTML='<p class="empty-hint">Войдите через Google, чтобы получать заявки и треки на разных устройствах.</p>'; await refreshShareTracks(); return; }
+    var sb=await client(); if(!sb){renderFriends([]);return;}
     try {
-      return JSON.parse(localStorage.getItem(key) || '') || fb;
-    } catch (e) {
-      return fb;
-    }
+      var prof={id:u.id, friend_code:myCode(), display_name:displayName(u), email:u.email||null, avatar_url:(u.user_metadata||{}).avatar_url||(u.user_metadata||{}).picture||null, walk_level:Number((document.getElementById('accWalkLvl')||{}).textContent)||0, car_level:Number((document.getElementById('accCarLvl')||{}).textContent)||0, updated_at:new Date().toISOString()};
+      var pr=await sb.from('profiles').upsert(prof,{onConflict:'id'}); if(pr.error)console.warn('profile sync',pr.error);
+      var fr=await sb.from('friendships').select('user_a,user_b,created_at').or('user_a.eq.'+u.id+',user_b.eq.'+u.id);
+      if(fr.error)throw fr.error;
+      var ids=(fr.data||[]).map(function(x){return x.user_a===u.id?x.user_b:x.user_a;});
+      var profiles=[]; if(ids.length){var pp=await sb.from('profiles').select('id,display_name,email,friend_code,walk_level,car_level').in('id',ids);if(pp.error)throw pp.error;profiles=pp.data||[];}
+      var friends=profiles.map(function(f){return Object.assign({},f,{friend_id:f.id});}); renderFriends(friends); fillFriendSelect(friends);
+      var req=await sb.from('friend_requests').select('id,from_user,to_user,status,created_at').eq('to_user',u.id).eq('status','pending').order('created_at',{ascending:false});
+      if(req.error)throw req.error;
+      var incoming=req.data||[];
+      var shares=await sb.from('shared_tracks').select('id,from_user,to_user,track,comment,status,created_at').eq('to_user',u.id).order('created_at',{ascending:false});
+      if(shares.error)throw shares.error;
+      var senderIds=Array.from(new Set(incoming.map(function(r){return r.from_user;}).concat((shares.data||[]).map(function(s){return s.from_user;}))));
+      var senderProfiles=[]; if(senderIds.length){var sp=await sb.from('profiles').select('id,display_name,email').in('id',senderIds);if(sp.error)throw sp.error;senderProfiles=sp.data||[];}
+      function senderName(id){var p=senderProfiles.find(function(x){return x.id===id;});return p&&(p.display_name||p.email)||'Пользователь';}
+      var notifications=[];
+      incoming.forEach(function(r){var name=senderName(r.from_user);notifications.push('<div class="friend-item"><div><strong>'+esc(name)+'</strong><div class="friend-track-meta">Хочет добавить вас в друзья</div></div><div><button class="btn-primary" data-accept-friend="'+esc(r.id)+'">Принять</button> <button class="btn" data-reject-friend="'+esc(r.id)+'">Отклонить</button></div></div>');});
+      (shares.data||[]).filter(function(s){return s.status==='pending';}).forEach(function(s){var name=senderName(s.from_user);notifications.push('<div class="friend-item"><div><strong>'+esc(name)+'</strong><div class="friend-track-meta">Поделился треком «'+esc((s.track||{}).name||'Трек')+'»</div></div><button class="btn-primary" data-accept-track="'+esc(s.id)+'">Получить</button></div>');});
+      var rq=document.getElementById('friendRequestsList'); if(rq)rq.innerHTML=notifications.join('')||'<p class="empty-hint">Новых уведомлений нет</p>';
+      var received=(shares.data||[]).map(function(s){return {id:s.id, track_name:(s.track||{}).name, from_name:senderName(s.from_user), comment:s.comment,status:s.status, track:s.track};}); renderFriendTracks(received);
+      save(KEY_FRIENDS,friends); await refreshShareTracks();
+    } catch(e) { console.error('friends refresh',e); var rq2=document.getElementById('friendRequestsList');if(rq2)rq2.innerHTML='<p class="empty-hint">Не удалось загрузить друзей. Проверьте SQL-настройку Supabase и политики доступа.</p>'; }
   }
-  function save(key, val) {
-    localStorage.setItem(key, JSON.stringify(val));
-  }
-  function genCode() {
-    var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    var s = '';
-    for (var i = 0; i < 6; i++) s += chars[Math.floor(Math.random() * chars.length)];
-    return s;
-  }
-  function myCode() {
-    var c = localStorage.getItem(KEY_CODE);
-    if (!c) {
-      c = genCode();
-      localStorage.setItem(KEY_CODE, c);
-    }
-    // Prefer user id short when logged in
-    try {
-      var u = window.MYX_AUTH && window.MYX_AUTH.getUser && window.MYX_AUTH.getUser();
-      if (u && u.id) {
-        var short = u.id.replace(/-/g, '').slice(0, 6).toUpperCase();
-        localStorage.setItem(KEY_CODE, short);
-        return short;
-      }
-    } catch (e) {}
-    return c;
-  }
-
-  function getFriends() {
-    return load(KEY_FRIENDS, []);
-  }
-  function getFriendTracks() {
-    return load(KEY_FT, []);
-  }
-
-  async function supabaseClient() {
-    if (!window.MYX_AUTH || !window.MYX_AUTH.isConfigured || !window.MYX_AUTH.isConfigured()) return null;
-    try {
-      return window.supabase && window.MYX_CONFIG
-        ? window.supabase.createClient(window.MYX_CONFIG.supabaseUrl, window.MYX_CONFIG.supabaseAnonKey)
-        : null;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function renderFriends() {
-    var list = document.getElementById('friendsList');
-    if (!list) return;
-    var friends = getFriends();
-    if (!friends.length) {
-      list.innerHTML = '<p class="empty-hint">' + t('noFriends') + '</p>';
-      return;
-    }
-    list.innerHTML = friends
-      .map(function (f) {
-        return (
-          '<div class="friend-item"><div><strong>' +
-          (f.name || f.code) +
-          '</strong><div class="friend-track-meta">' +
-          f.code +
-          '</div></div><button type="button" class="btn" data-remove-friend="' +
-          f.code +
-          '">' +
-          t('removeFriend') +
-          '</button></div>'
-        );
-      })
-      .join('');
-  }
-
-  function renderFriendTracks() {
-    var list = document.getElementById('friendTracksList');
-    if (!list) return;
-    var items = getFriendTracks();
-    if (!items.length) {
-      list.innerHTML = '<p class="empty-hint">' + t('noFriendTracks') + '</p>';
-      return;
-    }
-    list.innerHTML = items
-      .map(function (tr) {
-        return (
-          '<div class="friend-track-item"><div><strong>' +
-          (tr.name || 'Track') +
-          '</strong><div class="friend-track-meta">' +
-          (tr.from || '') +
-          (tr.comment ? ' · ' + tr.comment : '') +
-          '</div></div></div>'
-        );
-      })
-      .join('');
-  }
-
-  function fillFriendSelect() {
-    var sel = document.getElementById('shareFriendSelect');
-    if (!sel) return;
-    var friends = getFriends();
-    sel.innerHTML =
-      '<option value="">—</option>' +
-      friends
-        .map(function (f) {
-          return '<option value="' + f.code + '">' + (f.name || f.code) + '</option>';
-        })
-        .join('');
-  }
-
-  async function refreshShareTracks() {
-    var sel = document.getElementById('shareTrackSelect');
-    if (!sel || !window.MYX_STORAGE) return;
-    var tracks = [];
-    try {
-      tracks = window.MYX_STORAGE.getAllTracks ? await window.MYX_STORAGE.getAllTracks() : (window.MYX_STORAGE.listTracks ? await window.MYX_STORAGE.listTracks() : []);
-    } catch (e) {}
-    sel.innerHTML =
-      '<option value="">—</option>' +
-      tracks
-        .map(function (tr) {
-          return '<option value="' + tr.id + '">' + (tr.name || tr.id) + '</option>';
-        })
-        .join('');
-  }
-
-  function render() {
-    var codeEl = document.getElementById('myFriendCode');
-    if (codeEl) codeEl.value = myCode();
-    renderFriends();
-    renderFriendTracks();
-    fillFriendSelect();
-    refreshShareTracks();
-  }
-
-  document.addEventListener('click', function (e) {
-    if (e.target.closest('#copyMyFriendCode')) {
-      var code = myCode();
-      navigator.clipboard.writeText(code).then(
-        function () {
-          alert(t('copyCode') + ': ' + code);
-        },
-        function () {
-          prompt('Code', code);
-        }
-      );
-    }
-    if (e.target.closest('#addFriendBtn')) {
-      var input = document.getElementById('friendCodeInput');
-      var code = ((input && input.value) || '').trim().toUpperCase();
-      if (!code || code.length < 4) return;
-      if (code === myCode()) {
-        alert('Это ваш код');
-        return;
-      }
-      var friends = getFriends();
-      if (friends.some(function (f) { return f.code === code; })) {
-        alert('Уже в списке');
-        return;
-      }
-      friends.push({ code: code, name: code, addedAt: Date.now() });
-      save(KEY_FRIENDS, friends);
-      if (input) input.value = '';
-      render();
-    }
-    var rm = e.target.closest('[data-remove-friend]');
-    if (rm) {
-      var code = rm.getAttribute('data-remove-friend');
-      save(
-        KEY_FRIENDS,
-        getFriends().filter(function (f) {
-          return f.code !== code;
-        })
-      );
-      render();
-    }
-    if (e.target.closest('#shareTrackBtn')) {
-      (async function () {
-        var trackId = (document.getElementById('shareTrackSelect') || {}).value;
-        var friendCode = (document.getElementById('shareFriendSelect') || {}).value;
-        var comment = (document.getElementById('shareCommentInput') || {}).value || '';
-        var hint = document.getElementById('shareHint');
-        if (!trackId || !friendCode) {
-          if (hint) hint.textContent = 'Выберите трек и друга';
-          return;
-        }
-        var tracks = window.MYX_STORAGE.getAllTracks ? await window.MYX_STORAGE.getAllTracks() : (window.MYX_STORAGE.listTracks ? await window.MYX_STORAGE.listTracks() : []);
-        var track = tracks.find(function (t) {
-          return t.id === trackId;
-        });
-        if (!track) return;
-        var payload = {
-          id: 'sh_' + Date.now(),
-          name: track.name,
-          segments: track.segments,
-          distanceM: track.distanceM,
-          pointCount: track.pointCount,
-          comment: comment,
-          from: myCode(),
-          to: friendCode,
-          sharedAt: Date.now(),
-        };
-        // Always keep local outbox for friend (simulated inbox by to-code matching on same device for demo)
-        var ft = getFriendTracks();
-        // Store shared payload under key for recipient code
-        var outbox = load('myxwalk_share_outbox_v1', []);
-        outbox.push(payload);
-        save('myxwalk_share_outbox_v1', outbox);
-        // If same browser testing different codes: deliver if matches
-        if (friendCode) {
-          // Deliver to local inbox keyed by friend code
-          var inboxKey = 'myxwalk_inbox_' + friendCode;
-          var inbox = load(inboxKey, []);
-          inbox.unshift(payload);
-          save(inboxKey, inbox);
-        }
-        // Supabase optional push
-        try {
-          if (window.MYX_AUTH && window.MYX_AUTH.isConfigured()) {
-            var client = window.supabase.createClient(
-              window.MYX_CONFIG.supabaseUrl,
-              window.MYX_CONFIG.supabaseAnonKey
-            );
-            var user = window.MYX_AUTH.getUser();
-            if (user) {
-              await client.from('shared_tracks').insert({
-                from_user: user.id,
-                to_friend_code: friendCode,
-                track: payload,
-                comment: comment,
-              });
-            }
-          }
-        } catch (err) {
-          console.warn('supabase share', err);
-        }
-        if (hint) hint.textContent = t('shareTrack') + ' ✓';
-      })();
-    }
+  async function runRpc(name,args){var sb=await client();if(!sb)throw new Error('Сначала войдите через Google');var r=await sb.rpc(name,args||{});if(r.error)throw r.error;return r.data;}
+  document.addEventListener('click',function(e){
+    if(e.target.closest('#copyMyFriendCode')){var c=myCode();navigator.clipboard.writeText(c).then(function(){alert('Код друга: '+c);},function(){prompt('Код друга',c);});}
+    if(e.target.closest('#addFriendBtn')){(async function(){var input=document.getElementById('friendCodeInput'),code=((input&&input.value)||'').trim().toUpperCase();if(!code){alert('Введите код друга');return;}try{await runRpc('send_friend_request',{p_friend_code:code});if(input)input.value='';alert('Заявка отправлена. Друг увидит её в разделе «Друзья».');await refresh();}catch(err){alert('Не удалось отправить заявку: '+(err.message||err));}})();}
+    var accept=e.target.closest('[data-accept-friend]');if(accept){(async function(){try{await runRpc('respond_friend_request',{p_request_id:accept.getAttribute('data-accept-friend'),p_accept:true});await refresh();}catch(err){alert('Не удалось принять заявку: '+(err.message||err));}})();}
+    var reject=e.target.closest('[data-reject-friend]');if(reject){(async function(){try{await runRpc('respond_friend_request',{p_request_id:reject.getAttribute('data-reject-friend'),p_accept:false});await refresh();}catch(err){alert('Не удалось отклонить заявку: '+(err.message||err));}})();}
+    var acceptTrack=e.target.closest('[data-accept-track]');if(acceptTrack){(async function(){try{var id=acceptTrack.getAttribute('data-accept-track'),sb=await client(),u=user();var q=await sb.from('shared_tracks').select('*').eq('id',id).eq('to_user',u.id).single();if(q.error)throw q.error;var payload=q.data.track||{};if(window.MYX_STORAGE&&payload.segments){await window.MYX_STORAGE.putTrack({id:'shared_'+q.data.id,profile:payload.profile||'walk',name:payload.name||'Трек друга',segments:payload.segments,distanceM:payload.distanceM||0,pointCount:payload.pointCount||0,createdAt:Date.now(),fromFriend:true});window.dispatchEvent(new CustomEvent('myx:tracks-changed'));}var up=await sb.from('shared_tracks').update({status:'accepted'}).eq('id',id).eq('to_user',u.id);if(up.error)throw up.error;await refresh();alert('Трек добавлен в ваши треки.');}catch(err){alert('Не удалось получить трек: '+(err.message||err));}})();}
+    var rm=e.target.closest('[data-remove-friend]');if(rm){(async function(){try{var sb=await client(),u=user(),fid=rm.getAttribute('data-remove-friend');if(!u)throw new Error('Войдите через Google');var del=await sb.from('friendships').delete().or('and(user_a.eq.'+u.id+',user_b.eq.'+fid+'),and(user_a.eq.'+fid+',user_b.eq.'+u.id+')');if(del.error)throw del.error;await refresh();}catch(err){alert('Не удалось удалить друга: '+(err.message||err));}})();}
+    if(e.target.closest('#shareTrackBtn')){(async function(){var trackId=(document.getElementById('shareTrackSelect')||{}).value,friendId=(document.getElementById('shareFriendSelect')||{}).value,comment=(document.getElementById('shareCommentInput')||{}).value||'',hint=document.getElementById('shareHint');if(!trackId||!friendId){if(hint)hint.textContent='Выберите трек и друга';return;}try{var u=user();if(!u)throw new Error('Войдите через Google');var tracks=window.MYX_STORAGE.getAllTracks?await window.MYX_STORAGE.getAllTracks():await window.MYX_STORAGE.listTracks();var tr=tracks.find(function(x){return String(x.id)===String(trackId);});if(!tr)throw new Error('Трек не найден');var sb=await client();var result=await sb.rpc('send_shared_track',{p_to_user:friendId,p_track:{id:tr.id,name:tr.name,profile:tr.profile,segments:tr.segments,distanceM:tr.distanceM,pointCount:tr.pointCount},p_comment:comment});if(result.error)throw result.error;if(hint)hint.textContent='Трек отправлен. Получатель увидит уведомление в разделе «Друзья».';await refresh();}catch(err){if(hint)hint.textContent='Не удалось отправить: '+(err.message||err);}})();}
   });
-
-  // Pull inbox for my code
-  function pullInbox() {
-    var code = myCode();
-    var inbox = load('myxwalk_inbox_' + code, []);
-    if (!inbox.length) return;
-    var ft = getFriendTracks();
-    var known = {};
-    ft.forEach(function (x) {
-      known[x.id] = true;
-    });
-    inbox.forEach(function (payload) {
-      if (known[payload.id]) return;
-      ft.unshift({
-        id: payload.id,
-        name: payload.name,
-        comment: payload.comment,
-        from: payload.from,
-      });
-      // also add map track
-      if (window.MYX_STORAGE && payload.segments) {
-        window.MYX_STORAGE.putTrack({
-          id: payload.id,
-          profile: 'walk',
-          name: payload.name || 'Friend',
-          segments: payload.segments,
-          distanceM: payload.distanceM || 0,
-          pointCount: payload.pointCount || 0,
-          createdAt: Date.now(),
-          fromFriend: true,
-        }).then(function () {
-          window.dispatchEvent(new CustomEvent('myx:tracks-changed'));
-        });
-      }
-    });
-    save(KEY_FT, ft);
-    save('myxwalk_inbox_' + code, []);
-  }
-
-  window.addEventListener('myx:tracks-changed', refreshShareTracks);
-  window.addEventListener('myx:lang', render);
-  window.addEventListener('myx:auth', render);
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-      pullInbox();
-      render();
-    });
-  } else {
-    pullInbox();
-    render();
-  }
-  window.MYX_FRIENDS = { render: render };
+  window.addEventListener('myx:tracks-changed',refreshShareTracks);window.addEventListener('myx:lang',refresh);window.addEventListener('myx:auth',refresh);
+  document.addEventListener('DOMContentLoaded',function(){ensureSections();refresh();refreshTimer=setInterval(function(){if(!document.hidden)refresh();},30000);});
+  if(document.readyState!=='loading'){ensureSections();refresh();refreshTimer=setInterval(function(){if(!document.hidden)refresh();},30000);}
+  window.MYX_FRIENDS={render:refresh,refresh:refresh};
 })();
 
 
@@ -8624,13 +8472,27 @@ body.myxwalk-app-entered .landing-nav { opacity:0; transform:translate3d(0,-12px
     }, 120);
   }
   function enterApp() {
-    if (body.classList.contains('myxwalk-app-mode')) return;
-    body.classList.add('myxwalk-app-mode');
-    landing.classList.remove('is-morphing-out');
+    if (!body.classList.contains('myxwalk-app-mode')) {
+      body.classList.add('myxwalk-app-mode');
+      landing.classList.remove('is-morphing-out');
+      window.scrollTo(0, 0);
+      refreshMap();
+    }
     try { history.replaceState(null, '', location.pathname + location.search + '#app'); } catch (e) {}
-    window.scrollTo(0, 0);
-    refreshMap();
   }
+  // После возврата от Google/Supabase сразу показываем приложение, а не SEO-лендинг.
+  // Listen both to the app's custom event and Supabase auth events; defer one tick so
+  // auth UI state has time to update before switching the view.
+  function onAuthenticated(event) {
+    if (event && event.detail && event.detail.user) window.setTimeout(enterApp, 0);
+  }
+  window.addEventListener('myx:auth', onAuthenticated);
+  window.addEventListener('hashchange', function () {
+    if (location.hash === '#app') enterApp();
+  });
+  try {
+    if (window.MYX_AUTH && typeof window.MYX_AUTH.getUser === 'function' && window.MYX_AUTH.getUser()) enterApp();
+  } catch (_) {}
   function closeFloatingWindows() {
     try { if (window.MYX_APP && typeof window.MYX_APP.closePanels === 'function') window.MYX_APP.closePanels(); } catch (e) {}
     document.querySelectorAll('.panel').forEach(function (panel) {
@@ -8752,6 +8614,17 @@ body.myxwalk-app-entered .landing-nav { opacity:0; transform:translate3d(0,-12px
   :root[data-theme="dark"] .landing-theme-switch button.is-active { background:#32D74B;color:#073f32; }
   @media(max-width:800px){.landing-theme-switch button{padding:7px 8px;font-size:10px}.landing-app-previews{min-height:330px;max-width:500px;width:100%;margin:0 auto}.landing-shot-main{width:82%;top:15px}.landing-shot-map{height:190px}.landing-shot-stats{width:42%}.landing-shot-tracks{width:54%;bottom:0}}
   @media(max-width:560px){.landing-nav{flex-wrap:wrap}.landing-theme-switch{order:3;margin-left:auto}.landing-nav .landing-link.nav-btn{display:inline-flex}.landing-app-previews{min-height:300px}.landing-shot-map{height:165px}.landing-shot-main{width:86%}.landing-shot-stats{width:43%;padding:10px}.landing-shot-tracks{width:58%;padding:9px}.landing-shot-stats>strong{font-size:20px}}
+/* Account menu friends summary */
+.account-friends-list { max-height: 180px; overflow: auto; padding: 0 4px; }
+.account-friend-row { display:flex; flex-direction:column; gap:2px; padding:7px 8px; border-radius:9px; }
+.account-friend-row + .account-friend-row { border-top:1px solid var(--line); }
+.account-friend-row strong { font-size:12px; color:var(--ink); overflow-wrap:anywhere; }
+.account-friend-row span { font-size:11px; color:var(--ink-soft); }
+/* Невзрачные подсказки в селекторах — как placeholder поиска в шапке. */
+#shareTrackSelect:has(option[value=""]:checked),
+#shareFriendSelect:has(option[value=""]:checked) { color: var(--ink-soft, #8a9b91); opacity: .78; }
+#shareTrackSelect option, #shareFriendSelect option { color: var(--ink, #20372c); opacity: 1; }
+
 </style>
 <script id="landing-theme-switch-script">
 (function(){
@@ -8773,3 +8646,24 @@ body.myxwalk-app-entered .landing-nav { opacity:0; transform:translate3d(0,-12px
 
 </body>
 </html>
+
+
+/* Final fixes: weather pill remains fully opaque on hover; account friends dialog */
+.weather-pill,
+.weather-pill:hover,
+.weather-pill:focus,
+.weather-pill:active {
+  opacity: 1 !important;
+  filter: none !important;
+  background: var(--glass) !important;
+  transition: none !important;
+}
+.account-friends-modal[hidden] { display: none !important; }
+.account-friends-modal { position: fixed; inset: 0; z-index: 10050; display: grid; place-items: center; padding: 20px; }
+.account-friends-modal-backdrop { position: absolute; inset: 0; background: rgba(5, 20, 16, .42); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+.account-friends-modal-card { position: relative; width: min(460px, 100%); max-height: min(78vh, 680px); overflow: auto; border: 1px solid var(--glass-border); border-radius: 18px; padding: 18px; background: var(--panel); color: var(--text); box-shadow: 0 24px 80px rgba(0,0,0,.24); }
+.account-friends-modal-card > header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:14px; }
+.account-friends-modal-card h2 { margin:0; font-size:20px; }
+.account-friends-modal-list { display:grid; gap:8px; }
+.account-friends-modal-list .account-friend-row { display:flex; flex-direction:column; gap:5px; padding:12px 14px; border:1px solid var(--glass-border); border-radius:12px; background:var(--surface); }
+.account-friends-modal-list .account-friend-row span { font-size:12px; line-height:1.55; color:var(--muted); }
